@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="my-icons.html">
 
-<dom-module id="my-app">
+<dom-module id="wolke-7">
 
   <template>
 
@@ -58,26 +58,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list a.subroute {
         padding-left: 32px;
       }
-
-
     </style>
 
     <app-location route="{{route}}"></app-location>
+
     <app-route
         route="{{route}}"
         pattern="/:page"
         data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        tail="{{subroute}}">
+    </app-route>
 
     <app-drawer-layout fullbleed>
 
       <!-- Drawer content -->
       <app-drawer>
-        <app-toolbar>Menu</app-toolbar>
+        <app-toolbar>Chapters</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="view1" href="/view1">View One</a>
           <a name="view2" href="/view2">View Two</a>
           <a name="view3" href="/view3">View Three</a>
+          <a name="cloud-coding" href="/cloud-coding">Cloud coding</a>
         </iron-selector>
       </app-drawer>
 
@@ -87,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div title>My App</div>
+            <div title>About Clouds</div>
           </app-toolbar>
         </app-header>
 
@@ -95,6 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <my-view1 name="view1"></my-view1>
           <my-view2 name="view2"></my-view2>
           <my-view3 name="view3"></my-view3>
+          <my-cloud-coding name="cloud-coding"></my-cloud-coding>
         </iron-pages>
 
       </app-header-layout>
@@ -107,7 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
 
-      is: 'my-app',
+      is: 'wolke-7',
 
       properties: {
 
