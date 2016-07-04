@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<!--
+`cloud-class`
+cloud classification tables
+
+@demo demo/index.html 
+-->
+
+<dom-module id="class-data-ajax">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax url="[[url]]" last-response="{{clouds}}" auto></iron-ajax>
+
+    <h5>LOG.ajaxquery: [[url]]</h5>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'class-data-ajax',
+
+      properties: {
+        url: {
+          type: String,
+          value: '' // z.B. clouds-data.json'
+        },
+        clouds: {
+          type:Object,
+          notify:true
+        },  
+        categories: {
+          computed: 'getCategories(clouds)',
+          notify: true
+        }
+      },
+
+      getCategories: function(clouds) {
+        var categories = clouds.category.data; // console.log("calculated categories:", categories);
+        return categories;
+      }      
+    });
+  </script>
+</dom-module>

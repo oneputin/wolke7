@@ -2,7 +2,8 @@
 <link rel="import" href="../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-<link rel="import" href="clouds-class.html">
+<link rel="import" href="class-data-ajax.html">
+<link rel="import" href="class-table.html">
 
 <dom-module id="my-view-clouds1">
 
@@ -42,9 +43,10 @@
     <div class="card">
 
       <h1>Cloud coding</h1>
-      <!-- <span>(src = '[[url]]')</span> -->
 
-      <clouds-class></clouds-class>
+      <class-data-ajax url="[[url]]" categories="{{categories}}"></class-data-ajax>
+
+      <class-table categories="[[categories]]"></class-table>
 
     </div>
 
@@ -58,7 +60,7 @@
         route: Object,
         url:  {
           type: String,
-          value: 'clouds-data.json'
+          value: 'http://iimaps.de/data/clouds/?clouds-data.json'
         }
       }
     });

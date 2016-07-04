@@ -1,0 +1,64 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!--
+`class-table`
+cloud classification tables
+
+@demo demo/index.html 
+-->
+
+<dom-module id="class-table">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+      .sample {
+        height: 64px;
+        width: 64px;
+      }
+      iron-data-table {
+         @apply(--layout-horizontal);
+      }      
+    </style>
+
+    <iron-data-table selection-enabled multi-selection items="[[categories]]">
+      <data-table-column name="Sz" width="15px">
+        <template>[[item.id]]</template>
+      </data-table-column>
+      <data-table-column name="Samples" width="50px">
+        <template>
+          <a href="[[item.sample]]" target="_blank"><iron-image sizing="cover" class="sample" src="[[item.sample]]"></iron-image></a>
+        </template>
+      </data-table-column>
+      <data-table-column name="Category" width="100px">
+        <template>[[item.name]]</template>
+      </data-table-column>
+      <data-table-column name="Abbr." width="30px">
+        <template>[[item.abbr]]</template>
+      </data-table-column>
+      <data-table-column name="Symbol" width="30px">
+        <template>
+          <img src="[[item.symbol]]">
+        </template>
+      </data-table-column>
+    </iron-data-table>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'class-table',
+
+      properties: {
+        categories: Object
+      }
+
+    });
+  </script>
+</dom-module>

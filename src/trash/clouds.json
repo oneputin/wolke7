@@ -1,0 +1,80 @@
+{
+	"title": "Cloud classification", 
+	"genus": [
+		{
+			"id": 0,
+			"symbol": "../images/ci.gif",
+			"abbr": "Ci",
+			"name": "Cirrus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/cc.gif",
+			"abbr": "Cc",
+			"name": "Cirrocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+		},
+		{
+			"id": 2,
+			"symbol": "../images/cs.gif",
+			"abbr": "Cs",
+			"name": "Cirrostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		{
+			"id": 3,
+			"symbol": "../images/ac.gif",
+			"abbr": "Ac",
+			"name": "Altocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		{
+			"id": 4,
+			"symbol": "../images/as.gif",
+			"abbr": "As",
+			"name": "Altostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		},
+		{
+			"id": 5,
+			"symbol": "../images/ns.gif",
+			"abbr": "Ns",
+			"name": "Nimbostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+		},
+		{
+			"id": 6,
+			"symbol": "../images/sc.gif",
+			"abbr": "Sc",
+			"name": "Stratocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+		},
+		{
+			"id": 7,
+			"symbol": "../images/st.gif",
+			"abbr": "St",
+			"name": "Stratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		{
+			"id": 8,
+			"symbol": "../images/cu.gif",
+			"abbr": "Cu",
+			"name": "Cumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		{
+			"id": 9,
+			"symbol": "../images/cb.gif",
+			"abbr": "Cb",
+			"name": "Cumulonimbus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		}
+
+	],
+
+	"layers": [
+	]
+
+}
