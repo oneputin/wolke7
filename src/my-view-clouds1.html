@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="class-data-ajax.html">
+<link rel="import" href="class-data-fire.html">
 <link rel="import" href="class-table.html">
 
 <dom-module id="my-view-clouds1">
@@ -44,7 +45,9 @@
 
       <h1>Cloud coding</h1>
 
-      <class-data-ajax url="[[url]]" categories="{{categories}}"></class-data-ajax>
+      <!-- <class-data-ajax url="[[url]]" categories="{{categories}}"></class-data-ajax> -->
+
+      <class-data-fire categories="{{categories}}"></class-data-ajax>
 
       <class-table categories="[[categories]]"></class-table>
 
