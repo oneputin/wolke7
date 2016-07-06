@@ -2,8 +2,8 @@
 <link rel="import" href="../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-<link rel="import" href="class-data-ajax.html">
-<link rel="import" href="class-data-fire.html">
+<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="jsondata-fire.html">
 <link rel="import" href="class-table.html">
 
 <dom-module id="my-view-clouds1">
@@ -45,9 +45,9 @@
 
       <h1>Cloud coding</h1>
 
-      <class-data-ajax url="[[url]]" path="[[path]]" categories="{{categories}}"></class-data-ajax>
+      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajaxdata-ajax>
 
-      <!-- <class-data-fire categories="{{categories}}"></class-data-ajax> -->
+      <!-- <jsondata-fire data="{{categories}}"></jsondata-ajax> -->
 
       <class-table categories="[[categories]]"></class-table>
 

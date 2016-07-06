@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<!--
+`cloud-class`
+cloud classification tables
+
+@demo demo/index.html 
+-->
+
+<dom-module id="jsondata-ajax">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax url="[[url]]" last-response="{{rawdata}}" auto></iron-ajax>
+
+    <h5>LOG: ajaxquery from [[url]]</h5>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'jsondata-ajax',
+
+      properties: {
+        url: {
+          type: String,
+          value: ''
+        },
+        path: {
+          type: String,
+          value: ''
+        }, 
+        rawdata: {
+          type:Object,
+          notify:true
+        },  
+        data: {
+          computed: 'getdata(rawdata, path)',
+          notify: true
+        }
+      },
+
+      getdata: function(clouds, path) { // console.log("raw data to query by ["+path+"]", clouds);
+        var data = clouds; // .category.data; 
+        if (path) { // console.log(path);
+          path.split("/").forEach(function(entry) {
+            data = data[entry];
+          });
+        }
+        if (!Array.isArray(data)) {
+          var dataArray = new Array;
+          for(var o in data) { dataArray.push(data[o]); }
+          data = dataArray;          
+        }  // console.log("extracted cloud data:", data);
+        return data;
+      }      
+    });
+  </script>
+</dom-module>

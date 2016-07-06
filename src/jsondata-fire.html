@@ -1,0 +1,72 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+
+<!--
+`cloud-class`
+cloud classification data from firebase-db
+
+@demo demo/index.html 
+-->
+
+<dom-module id="jsondata-fire">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <!-- Configure Firebase app: -->
+    <firebase-app
+        name="[[appname]]"
+        api-key="AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk"
+        database-url="[[url]]">
+    </firebase-app>
+        <!-- auth-domain="wolke7-fd941.firebaseapp.com" -->
+
+    <firebase-query
+        id="query"
+        app-name="[[appname]]"
+        path="[[path]]"
+        data="{{categories}}">
+    </firebase-query>
+
+    <h5>firebase-query : [[url]][[path]]</h5>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'jsondata-fire',
+
+      properties: {
+        appname: {
+          type: String,
+          value: 'wolke77' 
+        },
+        url: {
+          type: String,
+          value: 'https://wolke7-fd941.firebaseio.com' 
+        },
+        path:{
+          type: String,
+          value: '/classes/data/' 
+          //value: '/category/data/' // z.B. 
+        },
+        categories: {
+          type: Object,
+          notify: true,
+          observer: '__dataChanged'
+        }
+      },
+
+      __dataChanged: function (newData, oldData) {
+        console.log("new:",newData,"old:", oldData) ; // do something when the query returns values
+      }
+
+    });
+  </script>
+</dom-module>
