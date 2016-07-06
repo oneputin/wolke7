@@ -32,20 +32,36 @@ cloud classification tables
       properties: {
         url: {
           type: String,
-          value: '' // z.B. clouds-data.json'
+          value: ''
         },
+        path: {
+          type: String,
+          value: ''
+        }, 
         clouds: {
           type:Object,
           notify:true
         },  
         categories: {
-          computed: 'getCategories(clouds)',
+          computed: 'getCategories(clouds, url, path)',
           notify: true
         }
       },
 
-      getCategories: function(clouds) {
-        var categories = clouds.category.data; // console.log("calculated categories:", categories);
+      getCategories: function(clouds, url, path) { // console.log("raw data from: "+url+", to query by ["+path+"]", clouds);
+        var categories = clouds; // .category.data; 
+        if (path) { // console.log(path);
+          path.split("/").forEach(function(entry) {
+            categories = categories[entry];
+          });
+        }
+
+        if (!Array.isArray(categories)) {
+          // categories = Object.values(categories); // does nt work yet
+          var dataArray = new Array;
+          for(var o in categories) { dataArray.push(categories[o]); }
+          categories = dataArray;          
+        }  // console.log("extracted cloud data:", categories);
         return categories;
       }      
     });

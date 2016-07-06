@@ -45,9 +45,9 @@
 
       <h1>Cloud coding</h1>
 
-      <!-- <class-data-ajax url="[[url]]" categories="{{categories}}"></class-data-ajax> -->
+      <class-data-ajax url="[[url]]" path="[[path]]" categories="{{categories}}"></class-data-ajax>
 
-      <class-data-fire categories="{{categories}}"></class-data-ajax>
+      <!-- <class-data-fire categories="{{categories}}"></class-data-ajax> -->
 
       <class-table categories="[[categories]]"></class-table>
 
@@ -63,8 +63,15 @@
         route: Object,
         url:  {
           type: String,
-          value: 'http://iimaps.de/data/clouds/?clouds-classes.json' // -data.json'
-        }
+          // value: 'http://iimaps.de/data/clouds/?name=clouds-classes.json'
+          value: 'http://iimaps.de/data/clouds/?name=clouds-data0.json'
+        },
+        path:  {
+          type: String,
+          // value: 'data'
+          value: 'category/data'
+        },
+
       }
     });
   </script>
