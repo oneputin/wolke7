@@ -20,7 +20,7 @@ cloud classification tables
 
     <iron-ajax url="[[url]]" last-response="{{rawdata}}" auto></iron-ajax>
 
-    <h5>LOG: ajaxquery from [[url]]</h5>
+    <h5>querylog: ajax from [[url]]</h5>
 
   </template>
 
@@ -48,8 +48,7 @@ cloud classification tables
         }
       },
 
-      getdata: function(clouds, path) { // console.log("raw data to query by ["+path+"]", clouds);
-        var data = clouds; // .category.data; 
+      getdata: function(data, path) { // console.log("raw data to query by ["+path+"]", data);
         if (path) { // console.log(path);
           path.split("/").forEach(function(entry) {
             data = data[entry];
@@ -59,7 +58,7 @@ cloud classification tables
           var dataArray = new Array;
           for(var o in data) { dataArray.push(data[o]); }
           data = dataArray;          
-        }  // console.log("extracted cloud data:", data);
+        }  // console.log("queried jsondata:", data);
         return data;
       }      
     });

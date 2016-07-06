@@ -6,7 +6,7 @@
 <link rel="import" href="jsondata-fire.html">
 <link rel="import" href="class-table.html">
 
-<dom-module id="my-view-clouds1">
+<dom-module id="my-view-clouds">
 
   <!-- Defines the element's style and local DOM -->
   <template>
@@ -45,11 +45,11 @@
 
       <h1>Cloud coding</h1>
 
-      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajaxdata-ajax>
+      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
 
-      <!-- <jsondata-fire data="{{categories}}"></jsondata-ajax> -->
+      <!-- <jsondata-fire data="{{categories}}"></jsondata-fire> -->
 
-      <class-table categories="[[categories]]"></class-table>
+      <class-table data="[[categories]]"></class-table>
 
     </div>
 
@@ -58,7 +58,7 @@
   <!-- Creates the element's prototype and registers it -->
   <script>
     Polymer({
-      is: 'my-view-clouds1',
+      is: 'my-view-clouds',
       properties: {
         route: Object,
         url:  {

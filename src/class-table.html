@@ -26,27 +26,30 @@ cloud classification tables
       }      
     </style>
 
-    <iron-data-table selection-enabled multi-selection items="[[categories]]">
-      <data-table-column name="Sz" width="15px">
-        <template>[[item.id]]</template>
-      </data-table-column>
-      <data-table-column name="Samples" width="50px">
-        <template>
-          <a href="[[item.sample]]" target="_blank"><iron-image sizing="cover" class="sample" src="[[item.sample]]"></iron-image></a>
-        </template>
-      </data-table-column>
-      <data-table-column name="Category" width="100px">
-        <template>[[item.name]]</template>
-      </data-table-column>
-      <data-table-column name="Abbr." width="30px">
-        <template>[[item.abbr]]</template>
-      </data-table-column>
-      <data-table-column name="Symbol" width="30px">
-        <template>
-          <img src="[[item.symbol]]">
-        </template>
-      </data-table-column>
-    </iron-data-table>
+    <template is="dom-if" if="{{countclasses(categories)}}">
+      <p>Select from ([[countclasses(categories)]]) cloud-categories</p>
+      <iron-data-table selection-enabled multi-selection items="[[categories]]">
+        <data-table-column name="Sz" width="15px">
+          <template>[[item.id]]</template>
+        </data-table-column>
+        <data-table-column name="Samples" width="50px">
+          <template>
+            <a href="[[item.sample]]" target="_blank"><iron-image sizing="cover" class="sample" src="[[item.sample]]"></iron-image></a>
+          </template>
+        </data-table-column>
+        <data-table-column name="Category" width="100px">
+          <template>[[item.name]]</template>
+        </data-table-column>
+        <data-table-column name="Abbr." width="30px">
+          <template>[[item.abbr]]</template>
+        </data-table-column>
+        <data-table-column name="Symbol" width="30px">
+          <template>
+            <img src="[[item.symbol]]">
+          </template>
+        </data-table-column>
+      </iron-data-table>
+    </template>
 
   </template>
 
@@ -56,9 +59,25 @@ cloud classification tables
       is: 'class-table',
 
       properties: {
-        categories: Object
-      }
+        data: Object,       
+        categories: {
+          computed: 'getclasses(data)',
+          notify: true
+        }
+      },
 
+      getclasses: function(data) { console.log("raw data to view", data);
+        if (!Array.isArray(data)) { // transform object to array
+          var dataArray = new Array;
+          for(var o in data) { dataArray.push(data[o]); }
+          data = dataArray;          
+        }  // console.log("processing categories-array:", data);
+        return data;
+      },
+      countclasses: function(data) { 
+        const len = data.length; // console.log("length of data-array:", len);
+        return len;
+      }
     });
   </script>
 </dom-module>

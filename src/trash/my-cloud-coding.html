@@ -1,0 +1,120 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
+
+<dom-module id="my-cloud-coding">
+
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .card {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        margin: 24px;
+        border-radius: 5px;
+        background-color: #fff;
+        color: #757575;
+      }
+      .circle {
+        display: inline-block;
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+        background: #ddd;
+        line-height: 64px;
+        font-size: 30px;
+        color: #555;
+        text-align: center;
+      }
+      .sample {
+        height: 64px;
+        width: 64px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
+      }
+    </style>
+  
+    <div class="card">
+      <h1>Cloud coding</h1>
+      
+      <!--
+      <iron-ajax url="users.json" last-response="{{users}}" auto></iron-ajax>
+      <iron-data-table items="[[users.results]]" selection-enabled multi-selection>
+        <data-table-column name="First Name">
+          <template>[[item.user.name.first]]</template>
+        </data-table-column>
+        <data-table-column name="Last Name">
+          <template>[[item.user.name.last]]</template>
+        </data-table-column>
+        <data-table-column name="Email">
+          <template>[[item.user.email]]</template>
+        </data-table-column>
+      </iron-data-table>
+      -->
+      <p>[[url]]</p>
+      <!-- <iron-ajax url="clouds.json" last-response="{{clouds}}" auto></iron-ajax> -->
+      <!-- <iron-ajax url="http://iimaps.de/data/clouds-data.json" last-response="{{clouds}}" auto></iron-ajax> -->
+      <!-- <iron-ajax url="http://iimaps.de/data/" last-response="{{clouds}}" auto></iron-ajax> -->
+      <iron-ajax url="{{src}}" last-response="{{clouds}}" auto></iron-ajax>
+
+      <iron-data-table selection-enabled multi-selection items="[[clouds.category.data]]">
+        <data-table-column name="Sz" width="15px" >
+          <template>[[item.id]]</template>
+        </data-table-column>
+        <data-table-column name="Symbol" width="50px" flex="0">
+          <template>
+            <img src="[[item.symbol]]">
+          </template>
+        </data-table-column>
+        <data-table-column name="Abbr." width="20px" >
+          <template>[[item.abbr]]</template>
+        </data-table-column>
+        <data-table-column name="Category">
+          <template>[[item.name]]</template>
+        </data-table-column>
+        <data-table-column name="sample">
+          <template>
+            <img class="sample" src="[[item.sample]]" >
+          </template>
+        </data-table-column>
+      </iron-data-table>
+
+    </div>
+
+  </template>
+
+  <!-- Creates the element's prototype and registers it -->
+  <script>
+    Polymer({
+      is: 'my-cloud-coding',
+      properties: {
+        route: Object,
+        clouds: Object,
+        src: {
+          type: String,
+          value: 'http://iimaps.de/data/',
+          notify: true
+        },
+        url: {
+          type: String,  
+          computed: 'geturl(src)'
+        }
+      },  
+      geturl: function(item) { console.log("geturl:", item);
+        return item;
+      }
+     
+    });
+  </script>
+
+</dom-module>
