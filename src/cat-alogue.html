@@ -1,0 +1,118 @@
+<!-- modified version of cat-alogue-iron -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animation.html">
+
+<dom-module id='cat-alogue'>
+
+	<style>
+		:host {
+			display: block;
+			height: 380px;
+		}
+		.pic {
+			max-height: 375px;
+			max-width: 100%;
+		}
+		neon-animatable {
+			height: 375px;		
+		}
+	</style>
+
+	<template>
+
+		<!-- <template is='dom-repeat' items='{{imas}}' as="img"> -->
+			<!-- <p>[[img.url]]</p> -->
+		<!-- </template> -->
+
+		<!-- OPTION: Ctrls for manual navigation  -->
+		<div class='controls layout horizontal justified'>
+			<button on-tap='_goPrev'>Previous</button>
+			<input type='text' value='{{selected::input}}'>
+			<button on-tap='_goNext'>Next</button>
+		</div>
+		
+		<!-- Animation scene -->
+	    <neon-animated-pages 
+	    	id="pagesId" 
+	    	selected="[[selected]]" 
+	    	class="flex" 
+	    	entry-animation="[[entryAnimation]]" 
+	    	exit-animation="[[exitAnimation]]">
+
+			<template is='dom-repeat' items='{{imas}}'>
+		        <neon-animatable>
+					<img src='{{item.url}}' alt='{{item.alt}}' class='pic'/>
+		        </neon-animatable>
+		    </template>
+
+		</neon-animated-pages>
+		
+
+	</template>
+
+	<script>
+	
+		Polymer({
+			is: 'cat-alogue',
+
+			properties:{
+
+				selected:{
+					type: Number,
+					value: 0
+				},
+
+				imas : {
+					type: Array,
+					value : [ 
+					],
+					observer: 'logImas'
+				}
+			},
+			
+			listeners:{	 
+				'pagesId.track': 'handleTrack'
+			},
+
+			logImas: function(imas, oldimas) {  //console.log("log imas:", imas, oldimas);
+
+			},
+			handleTrack: function(e) {  
+				switch(e.detail.state) { 
+					case 'start':
+						this.xstart = e.detail.x; 
+						this.tstart = e.timeStamp;
+						break;
+					case 'track': // onsole.log('Tracking in progress... ' + e.detail.x + ', ' + e.detail.y);
+						break;
+					case 'end':
+						this.triggerPage(e.detail.x - this.xstart, e.timeStamp - this.tstart);
+						break;
+				}
+			},
+
+			triggerPage: function(dx) { // , dy) { // console.log("SwipeLog dx,dt:",dx,dy);
+				// 
+			    if      (dx < -30) {
+			      	this._goNext(); 
+			    } else if (dx > 30) {
+			      	this._goPrev();
+			    } 
+			},
+
+			_goPrev: function() {
+				this.entryAnimation = 'slide-from-left-animation';
+				this.exitAnimation  = 'slide-right-animation';
+				this.$.pagesId.selectPrevious();
+			},
+
+			_goNext: function() {
+				this.entryAnimation = 'slide-from-right-animation';
+				this.exitAnimation  = 'slide-left-animation';
+				this.$.pagesId.selectNext();
+			}
+
+		});
+
+	</script>
+</dom-module>

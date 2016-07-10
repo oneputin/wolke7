@@ -1,0 +1,40 @@
+{
+	"data": [
+		{
+			"id": 5,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ns",
+			"name": "Nimbostratus",
+			"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+		},
+		{
+			"id": 6,
+			"symbol": "../images/symbols/sc.gif",
+			"abbr": "Sc",
+			"name": "Stratocumulus",
+			"url": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+		},
+		{
+			"id": 7,
+			"symbol": "../images/symbols/st.gif",
+			"abbr": "St",
+			"name": "Stratus",
+			"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		{
+			"id": 8,
+			"symbol": "../images/symbols/cu.gif",
+			"abbr": "Cu",
+			"name": "Cumulus",
+			"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		{
+			"id": 9,
+			"symbol": "../images/symbols/cb.gif",
+			"abbr": "Cb",
+			"name": "Cumulonimbus",
+			"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		}
+	]
+
+}

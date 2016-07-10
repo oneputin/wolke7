@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <!--
 `class-table`
@@ -9,7 +10,7 @@ cloud classification tables
 @demo demo/index.html 
 -->
 
-<dom-module id="class-table">
+<dom-module id="cats-table-basic">
 
   <template>
 
@@ -26,37 +27,50 @@ cloud classification tables
       }      
     </style>
 
+    <p>Basic categories-array</p>
+
     <template is="dom-if" if="{{countclasses(categories)}}">
+      
       <p>Select from ([[countclasses(categories)]]) cloud-categories</p>
+      
       <iron-data-table selection-enabled multi-selection items="[[categories]]">
+      
         <data-table-column name="Sz" width="15px">
           <template>[[item.id]]</template>
         </data-table-column>
+
         <data-table-column name="Samples" width="50px">
           <template>
-            <a href="[[item.sample]]" target="_blank"><iron-image sizing="cover" class="sample" src="[[item.sample]]"></iron-image></a>
+            <a href="[[item.sample]]" target="_blank">
+              <iron-image sizing="cover" class="sample" src="[[item.sample]]">
+              </iron-image></a>
           </template>
         </data-table-column>
+        
         <data-table-column name="Category" width="100px">
           <template>[[item.name]]</template>
         </data-table-column>
+        
         <data-table-column name="Abbr." width="30px">
           <template>[[item.abbr]]</template>
         </data-table-column>
+        
         <data-table-column name="Symbol" width="30px">
           <template>
             <img src="[[item.symbol]]">
           </template>
         </data-table-column>
+      
       </iron-data-table>
-    </template>
 
+    </template>
   </template>
 
   <script>
+
     Polymer({
 
-      is: 'class-table',
+      is: 'cats-table-basic',
 
       properties: {
         data: Object,       

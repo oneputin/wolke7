@@ -1,0 +1,74 @@
+{
+	"data": {
+		"0":{
+			"id": 0,
+			"symbol": "../images/ci.gif",
+			"abbr": "Ci",
+			"name": "Cirrus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+		},
+		"1":{
+			"id": 1,
+			"symbol": "../images/cc.gif",
+			"abbr": "Cc",
+			"name": "Cirrocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+		},
+		"2":{
+			"id": 2,
+			"symbol": "../images/cs.gif",
+			"abbr": "Cs",
+			"name": "Cirrostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		"3":{
+			"id": 3,
+			"symbol": "../images/ac.gif",
+			"abbr": "Ac",
+			"name": "Altocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		"4":{
+			"id": 4,
+			"symbol": "../images/as.gif",
+			"abbr": "As",
+			"name": "Altostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		},
+		"5":{
+			"id": 5,
+			"symbol": "../images/ns.gif",
+			"abbr": "Ns",
+			"name": "Nimbostratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+		},
+		"6":{
+			"id": 6,
+			"symbol": "../images/sc.gif",
+			"abbr": "Sc",
+			"name": "Stratocumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+		},
+		"7":{
+			"id": 7,
+			"symbol": "../images/st.gif",
+			"abbr": "St",
+			"name": "Stratus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		"8":{
+			"id": 8,
+			"symbol": "../images/cu.gif",
+			"abbr": "Cu",
+			"name": "Cumulus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		"9":{
+			"id": 9,
+			"symbol": "../images/cb.gif",
+			"abbr": "Cb",
+			"name": "Cumulonimbus",
+			"sample": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		}
+	}
+}

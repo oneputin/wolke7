@@ -1,10 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
-<link rel="import" href="class-table.html">
+<link rel="import" href="cat-alogue.html">
+
+<!-- <link rel="import" href="cat-alog.html"> -->
 
 <dom-module id="my-view-clouds">
 
@@ -40,16 +43,21 @@
         color: #212121;
       }
     </style>
+
+    <paper-tabs selected="0">
+      <paper-tab>LowerClouds</paper-tab>
+      <paper-tab>MiddleClouds</paper-tab>
+      <paper-tab>UpperClouds</paper-tab>
+    </paper-tabs>
   
     <div class="card">
 
-      <h1>Cloud coding</h1>
+      <h1>Cloud samples</h1>
 
-      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
+      <jsondata-ajax url="[[url]]" path="data" data="{{data}}"></jsondata-ajax>
 
       <!-- <jsondata-fire data="{{categories}}"></jsondata-fire> -->
-
-      <class-table data="[[categories]]"></class-table>
+      <cat-alogue imas="[[data]]"></cat-alogue>
 
     </div>
 
@@ -57,22 +65,45 @@
 
   <!-- Creates the element's prototype and registers it -->
   <script>
+
     Polymer({
+
       is: 'my-view-clouds',
+      
       properties: {
+
         route: Object,
+        
         url:  {
           type: String,
-          // value: 'http://iimaps.de/data/clouds/?name=clouds-classes.json'
-          value: 'http://iimaps.de/data/clouds/?name=clouds-data0.json'
+          computed: 'calcUrl(level)'
         },
-        path:  {
+        
+        level:  {
           type: String,
-          // value: 'data'
-          value: 'category/data'
+          value: 'low'
         },
 
+
+        data: {
+          type: Object,
+          value: {},
+          observe: 'logData'
+
+        }
+
+      },
+
+      calcUrl: function(level) {
+        // var url = 'http://iimaps.de/data/clouds/clouds-' + level + '.json';
+        var url = 'data/imas-' + level + '.json'; // console.log("load from",url)
+        return url;
+      },
+
+      logData: function(data, olddata) { //console.log("image index", data);
+
       }
+
     });
   </script>
 

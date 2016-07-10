@@ -48,7 +48,7 @@ cloud classification tables
         }
       },
 
-      getdata: function(data, path) { // console.log("raw data to query by ["+path+"]", data);
+      getdata: function(data, path) { //console.log("raw data to query by ["+path+"]", data);
         if (path) { // console.log(path);
           path.split("/").forEach(function(entry) {
             data = data[entry];
@@ -58,7 +58,7 @@ cloud classification tables
           var dataArray = new Array;
           for(var o in data) { dataArray.push(data[o]); }
           data = dataArray;          
-        }  // console.log("queried jsondata:", data);
+        }  //console.log("queried jsondata:", data);
         return data;
       }      
     });

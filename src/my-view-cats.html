@@ -1,0 +1,114 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="jsondata-fire.html">
+
+<link rel="import" href="cats-table-basic.html">
+<link rel="import" href="cats-table-low.html">
+<!-- <link rel="import" href="cats-table-middle.html"> -->
+<!-- <link rel="import" href="cats-table-high.html"> -->
+
+<dom-module id="my-view-cats">
+
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .link {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+      .card {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        margin: 24px;
+        border-radius: 5px;
+        background-color: #fff;
+        color: #757575;
+      }
+      .circle {
+        display: inline-block;
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+        background: #ddd;
+        line-height: 64px;
+        font-size: 30px;
+        color: #555;
+        text-align: center;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
+      }
+    </style>
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab link><a href="#link1" class="link" tabindex="-1">Basic categories</a></paper-tab>
+      <paper-tab link><a href="#link2" class="link" tabindex="-1">LowerClouds</a></paper-tab>
+      <paper-tab link><a href="#link3" class="link" tabindex="-1">MiddleClouds</a></paper-tab>
+      <paper-tab link><a href="#link4" class="link" tabindex="-1">UpperClouds</a></paper-tab>
+    </paper-tabs>
+
+    <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
+    <!-- <jsondata-fire data="{{categories}}"></jsondata-fire> -->
+
+    <iron-pages selected="{{selected}}">
+      
+      <div class="card">
+          <!-- <p>Placeholder Basic cloud categories</p> -->
+          <cats-table-basic data="[[categories]]"></cats-table-basic>
+      </div>
+      
+      <div class="card">
+          <!-- <class-table data="[[categories]]"></class-table> -->
+          <!-- <p>Placeholder Low clouds categories</p> -->
+          <cats-table-low data="[[categories]]"></cats-table-low>
+      </div>
+      
+      <div class="card">
+          <!-- <class-table data="[[categories]]"></class-table> -->
+        Placeholder Middle clouds categories
+      </div>
+
+      <div class="card">
+          <!-- <class-table data="[[categories]]"></class-table> -->
+        Placeholder High clouds categories
+      </div>
+    </iron-pages>
+
+  </template>
+
+  <!-- Creates the element's prototype and registers it -->
+  <script>
+    Polymer({
+
+      is: 'my-view-cats',
+      properties: {
+        route: Object,
+        url:  {
+          type: String,
+          // value: 'http://iimaps.de/data/clouds/?name=clouds-classes.json'
+          // value: 'http://iimaps.de/data/clouds/?name=clouds-data0.json'
+          value: 'data/clouds-data0.json'
+        },
+        path:  {
+          type: String,
+          // value: 'data'
+          value: 'category/data'
+        },
+        selected: 0
+      }
+      
+    });
+  </script>
+
+</dom-module>
