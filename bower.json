@@ -20,9 +20,11 @@
     "iron-image": "PolymerElements/iron-image#^1.2.3",
     "iron-data-table": "^1.0.0-rc1",
     "iron-ajax": "^1.2.1",
-    "polymerfire": "firebase/polymerfire#^0.9.3",
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
-    "neon-animation": "PolymerElements/neon-animation#^1.2.3"
+    
+    "neon-animation": "PolymerElements/neon-animation#^1.2.3",
+
+    "polymerfire": "firebase/polymerfire#^0.9.3",
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

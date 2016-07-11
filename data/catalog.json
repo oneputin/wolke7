@@ -1,44 +1,64 @@
 {
-	"data": {
-		"0":{
-			"id": 0,
-			"name": "none"
-		},
-		"1":{
+	"low": [
+		{
 			"id": 5,
 			"symbol": "../images/symbols/ns.gif",
 			"abbr": "Ns",
 			"name": "Nimbostratus",
 			"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
 		},
-		"6":{
+		{
 			"id": 6,
 			"symbol": "../images/symbols/sc.gif",
 			"abbr": "Sc",
 			"name": "Stratocumulus",
 			"url": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
 		},
-		"7":{
+		{
 			"id": 7,
 			"symbol": "../images/symbols/st.gif",
 			"abbr": "St",
 			"name": "Stratus",
 			"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
 		},
-		"8":{
+		{
 			"id": 8,
 			"symbol": "../images/symbols/cu.gif",
 			"abbr": "Cu",
 			"name": "Cumulus",
 			"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
 		},
-		"9":{
+		{
 			"id": 9,
 			"symbol": "../images/symbols/cb.gif",
 			"abbr": "Cb",
 			"name": "Cumulonimbus",
 			"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
 		}
-	}
+	],
+	"middle":[
+		{
+			"id": 7,
+			"symbol": "../images/symbols/st.gif",
+			"abbr": "St",
+			"name": "Alto-x1",
+			"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+		},
+		{
+			"id": 8,
+			"symbol": "../images/symbols/cu.gif",
+			"abbr": "Cu",
+			"name": "Alto-x2",
+			"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+		},
+		{
+			"id": 9,
+			"symbol": "../images/symbols/cb.gif",
+			"abbr": "Cb",
+			"name": "Alto-x3",
+			"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+		}
 
+	],
+	"high":[]
 }

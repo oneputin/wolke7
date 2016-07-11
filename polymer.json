@@ -1,8 +1,8 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/wolken-app.html",
+  "shell": 		"src/wolke-7.html",
   "fragments": [
-    "src/my-view-clouds.html",
-    "src/my-view-cats.html"
+    "src/my-viewer.html",
+    "src/my-categories.html"
   ]
 }

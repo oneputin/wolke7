@@ -79,7 +79,7 @@
         }
       },
 
-      getclasses: function(data) { console.log("raw data to view", data);
+      getclasses: function(data) { // console.log("raw data to view", data);
         if (!Array.isArray(data)) { // transform object to array
           var dataArray = new Array;
           for(var o in data) { dataArray.push(data[o]); }

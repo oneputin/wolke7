@@ -39,11 +39,11 @@
           </template>
         </data-table-column>
 
-        <data-table-column name="Cl clouds" width="100px">
+        <data-table-column name="Cl clouds" width="200px">
           <template>[[item.name]]</template>
         </data-table-column>
         
-        <data-table-column name="Sample" width="50px">
+<!--         <data-table-column name="Sample" width="50px">
           <template>
             <a href="[[item.sample]]" target="_blank">
               <iron-image sizing="cover" class="sample" src="[[item.sample]]">
@@ -51,7 +51,7 @@
             </a>
           </template>
         </data-table-column>
-              
+ -->              
       </iron-data-table>
 
     </template>
@@ -73,7 +73,7 @@
         }
       },
 
-      getclasses: function(data) { console.log("raw data to view", data);
+      getclasses: function(data) { // console.log("raw data to view", data);
         if (!Array.isArray(data)) { // transform object to array
           var dataArray = new Array;
           for(var o in data) { dataArray.push(data[o]); }

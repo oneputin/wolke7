@@ -20,7 +20,7 @@ cloud classification tables
 
     <iron-ajax url="[[url]]" last-response="{{rawdata}}" auto></iron-ajax>
 
-    <h5>querylog: ajax from [[url]]</h5>
+    <!-- <h5>querylog: ajax from [[url]]</h5> -->
 
   </template>
 
@@ -50,10 +50,15 @@ cloud classification tables
 
       getdata: function(data, path) { //console.log("raw data to query by ["+path+"]", data);
         if (path) { // console.log(path);
-          path.split("/").forEach(function(entry) {
+          // path.split("/").forEach(function(entry) {
+          path.split("/").every(function(entry, index) {  // see ECMA5
             data = data[entry];
+            if (!data) return false;
+            else return true;
           });
         }
+        if (!data) return ;
+
         if (!Array.isArray(data)) {
           var dataArray = new Array;
           for(var o in data) { dataArray.push(data[o]); }

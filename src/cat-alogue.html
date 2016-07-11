@@ -39,9 +39,10 @@
 	    	entry-animation="[[entryAnimation]]" 
 	    	exit-animation="[[exitAnimation]]">
 
-			<template is='dom-repeat' items='{{imas}}'>
+			<template is='dom-repeat' items='{{imas}}' as='img'>
 		        <neon-animatable>
-					<img src='{{item.url}}' alt='{{item.alt}}' class='pic'/>
+					<p>[[img.name]]</p>
+					<img src='{{img.url}}' alt='{{img.alias}}' class='pic'/>
 		        </neon-animatable>
 		    </template>
 
@@ -75,8 +76,8 @@
 			},
 
 			logImas: function(imas, oldimas) {  //console.log("log imas:", imas, oldimas);
-
 			},
+
 			handleTrack: function(e) {  
 				switch(e.detail.state) { 
 					case 'start':
