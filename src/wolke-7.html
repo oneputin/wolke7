@@ -8,16 +8,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
+
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
+
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
 <!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
@@ -51,8 +58,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 */
       app-header {
-        background-color: var(--app-primary-color);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        /*height: 440px;*/
+
         color: #fff;
+        background-color: var(--app-primary-color);
+        background-image: url(//wolkenbilder.de/start/bilder/bild-05.jpg);
+      }
+
+      app-toolbar.middle {
+        height: 120px;
+      }
+
+      app-toolbar.bottom {
+        height: 92px;
       }
     
       app-header paper-icon-button {
@@ -62,6 +84,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list {
         margin: 0 20px;
       }
+
       .drawer-list a {
         display: block;
         padding: 0 16px;
@@ -76,6 +99,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list a.subroute {
         padding-left: 32px;
       }
+
+      [main-title] {
+        margin-left: 64px;
+        font-size:   32px;
+        font-weight: 300;
+      }
+
+      [condensed-title] {
+        margin-left: 20px;
+        font-weight: 300;
+      }
+
     </style>
 
     <firebase-app
@@ -109,9 +144,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
 
-        <app-header condenses reveals effects="waterfall">
+        <app-header condenses reveals resize-title blend-background effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div condensed-title>More about Clouds in the sky</div>
+            <paper-icon-button icon="search"></paper-icon-button>
+          </app-toolbar>
+          <!-- <app-toolbar class="middle"></app-toolbar> -->
+          <app-toolbar class="bottom">
             <div main-title>More about Clouds</div>
           </app-toolbar>
         </app-header>
@@ -126,9 +166,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </app-drawer-layout>
 
+    <paper-dialog id="help">
+      <h2>Home page</h2>
+      <p>This services of this app are based on the data of <a herf="http://www.wolkenbilder.de">wolkenbilder.de</a>. 
+      s </p>
+      <div class="buttons">
+        <paper-button >More Info...</paper-button>
+        <paper-button dialog-dismiss>Close</paper-button>
+        <!-- <paper-button dialog-confirm autofocus>Accept</paper-button> -->
+      </div>
+    </paper-dialog>
+
   </template>
 
   <script>
+
+    // var header = document.querySelector('app-header');
+
+    // window.addEventListener('scroll', function() {
+    //   var progress = header.getScrollState().progress;
+    //   fab.toggleClass('shrink-to-hidden', progress > 0.5);
+    // });
 
     Polymer({
 

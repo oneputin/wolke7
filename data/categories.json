@@ -223,6 +223,79 @@
 		]
 	},
 
+	"high": {
+		"title": "Low clouds",
+		"data": [
+			{
+				"id": 0,
+				"name": "none"
+			},
+			{
+				"id": 1,
+				"symbol": "../images/symbols/cl1.gif",
+				"abbr": "",
+				"name": "Cu hum; Cu fra",
+				"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			},
+			{
+				"id": 2,
+				"symbol": "../images/symbols/cl2.gif",
+				"abbr": "",
+				"name": "Cu med; Cu con mit/ohne Cu hum/fra, Sc alles in einer Höhe",
+				"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			},
+			{
+				"id": 3,
+				"symbol": "../images/symbols/cl3.gif",
+				"abbr": "",
+				"name": "Cb cal mit/ohne Cu, Sc, St",
+				"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			},
+			{
+				"id": 4,
+				"symbol": "../images/symbols/cl4.gif",
+				"abbr": "",
+				"name": "Sc cugen",
+				"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			},
+			{
+				"id": 1,
+				"symbol": "../images/symbols/cl5.gif",
+				"abbr": "",
+				"name": "Sc str, len, cas, kein cugen",
+				"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			},
+			{
+				"id": 6,
+				"symbol": "../images/symbols/cl6.gif",
+				"abbr": "",
+				"name": "St neb und/oder St fr, keine Schlechtwetterwolke",
+				"url": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+			},
+			{
+				"id": 7,
+				"symbol": "../images/symbols/cl7.gif",
+				"abbr": "",
+				"name": "Schlechtwetter St/Cu fra, pan oder beides meist unter As/ Ns",
+				"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+			},
+			{
+				"id": 8,
+				"symbol": "../images/symbols/cl8.gif",
+				"abbr": "",
+				"name": "Cu und Sc mit verschiedener Basis (kein Sc cugen)",
+				"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+			},
+			{
+				"id": 9,
+				"symbol": "../images/symbols/cl9.gif",
+				"abbr": "",
+				"name": "Cb cap (oft mit Amboß), mit/ohne Cb cal, Cu, Sc oder St",
+				"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+			}
+		]
+	},
+
 	"layers": {
 		"title": "Layers",
 		"data": [

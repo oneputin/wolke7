@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-<dom-module id="cats-table-low">
+<dom-module id="cats-table-layer">
 
   <template>
 
@@ -25,7 +25,6 @@
     <template is="dom-if" if="{{countclasses(categories)}}">
       
       <!-- <p>Select from ([[countclasses(categories)]]) cloud-categories</p> -->
-      
       <!-- <iron-data-table selection-enabled multi-selection items="[[categories]]"> -->
       <iron-data-table items="[[categories]]">
       
@@ -61,7 +60,7 @@
 
     Polymer({
 
-      is: 'cats-table-low',
+      is: 'cats-table-layer',
 
       properties: {
 

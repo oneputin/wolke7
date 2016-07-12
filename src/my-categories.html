@@ -8,7 +8,7 @@
 <link rel="import" href="jsondata-fire.html">
 
 <link rel="import" href="cats-table-basic.html">
-<link rel="import" href="cats-table-low.html">
+<link rel="import" href="cats-table-layer.html">
 <!-- <link rel="import" href="cats-table-middle.html"> -->
 <!-- <link rel="import" href="cats-table-high.html"> -->
 
@@ -51,17 +51,18 @@
       }
     </style>
 
-    <paper-tabs selected="{{cardindex}}">
+    <paper-tabs selected="{{tabindex}}">
       <paper-tab link><a href="#basic"  class="link" tabindex="-1">Basic categories</a></paper-tab>
-      <paper-tab link><a href="#low"    class="link" tabindex="-1">Low Clouds</a></paper-tab>
-      <paper-tab link><a href="#middle" class="link" tabindex="-1">Middle Clouds</a></paper-tab>
-      <paper-tab link><a href="#high"   class="link" tabindex="-1">High Clouds</a></paper-tab>
+      <paper-tab link><a href="#low"    class="link" tabindex="-1">Low ( - 2000m)</a></paper-tab>
+      <paper-tab link><a href="#middle" class="link" tabindex="-1">Middle (2000-6000)m</a></paper-tab>
+      <paper-tab link><a href="#high"   class="link" tabindex="-1">High (6000m +)</a></paper-tab>
+
     </paper-tabs>
 
     <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
     <!-- <jsondata-fire data="{{categories}}"></jsondata-fire> -->
 
-    <iron-pages selected="{{cardindex}}">
+    <iron-pages selected="{{tabindex}}">
       
       <div class="card">
           <!-- <p>Placeholder Basic cloud categories</p> -->
@@ -69,20 +70,20 @@
       </div>
       
       <div class="card">
-          <!-- <class-table data="[[categories]]"></class-table> -->
           <!-- <p>Placeholder Low clouds categories</p> -->
-          <cats-table-low data="[[categories]]"></cats-table-low>
+          <cats-table-layer data="[[categories]]"></cats-table-layer>
       </div>
       
       <div class="card">
-          <!-- <class-table data="[[categories]]"></class-table> -->
-        Placeholder Middle clouds categories
+        <!-- Placeholder Middle clouds categories -->
+          <cats-table-layer data="[[categories]]"></cats-table-layer>
       </div>
 
       <div class="card">
-          <!-- <class-table data="[[categories]]"></class-table> -->
-        Placeholder High clouds categories
+        <!-- Placeholder High clouds categories -->
+          <cats-table-layer data="[[categories]]"></cats-table-layer>
       </div>
+      
     </iron-pages>
 
   </template>
@@ -100,17 +101,17 @@
           value: 'http://iimaps.de/data/clouds/?name=categories.json'
         },
 
-        cardindex : -1,
+        tabindex : -1,
 
         path:  {
           type: String,
-          computed: 'calcPath(cardindex)'
+          computed: 'calcPath(tabindex)'
         }
 
       },
 
       ready: function() {
-        this.cardindex = 0;
+        this.tabindex = 0;
       },
 
       calcPath: function(index) { // console.log("catcard index=", index);

@@ -26,8 +26,9 @@
       
       <p>Select from ([[countclasses(categories)]]) cloud-categories</p>
       
-      <!-- <iron-data-table selection-enabled multi-selection items="[[categories]]"> -->
-      <iron-data-table items="[[categories]]">
+      <iron-data-table selection-enabled multi-selection items="[[categories]]">
+      <!-- <iron-data-table selection-enabled items="[[categories]]"> -->
+      <!-- <iron-data-table items="[[categories]]"> -->
       
         <data-table-column name="Sz" width="15px">
           <template>[[item.id]]</template>

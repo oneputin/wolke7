@@ -6,7 +6,7 @@
 <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
 
-<link rel="import" href="cat-alogue.html">
+<link rel="import" href="slide-show.html">
 
 <!-- <link rel="import" href="cat-alog.html"> -->
 
@@ -45,31 +45,31 @@
       }
     </style>
 
-    <paper-tabs selected="{{cardindex}}">
-      <paper-tab>Low Clouds</paper-tab>
-      <paper-tab>Middle Clouds</paper-tab>
-      <paper-tab>High Clouds</paper-tab>
+    <paper-tabs selected="{{tabindex}}">
+      <paper-tab>Low ( - 2000m)</paper-tab>
+      <paper-tab>Middle (2000-6000)m</paper-tab>
+      <paper-tab>High (6000m +)</paper-tab>
     </paper-tabs>
 
-    <jsondata-ajax url="[[url]]" path="[[path]]" data="{{data}}"></jsondata-ajax>
+    <jsondata-ajax url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-ajax>
     <!-- <jsondata-fire data="{{categories}}"></jsondata-fire> -->
 
-    <iron-pages selected="[[cardindex]]">
+    <iron-pages selected="[[tabindex]]">
     
       <div class="card">
         <h1>Low clouds</h1>
 
-        <cat-alogue imas="[[data]]"></cat-alogue>
+        <slide-show imas="[[imas]]"></slide-show>
       </div>
 
       <div class="card">
         <h1>Middle clouds</h1>
-        <cat-alogue imas="[[data]]"></cat-alogue>
+        <slide-show imas="[[imas]]"></slide-show>
       </div>
       
       <div class="card">
         <h1>High clouds</h1>
-        <cat-alogue imas="[[data]]"></cat-alogue>
+        <slide-show imas="[[imas]]"></slide-show>
       </div>
     </iron-pages>
 
@@ -92,11 +92,11 @@
           // computed: 'calcUrl(level)'
         },
 
-        cardindex : -1,
+        tabindex : -1,
 
         path:  {
           type: String,
-          computed: 'calcPath(cardindex)'
+          computed: 'calcPath(tabindex)'
         },
 
         data: {
@@ -109,7 +109,7 @@
       },
 
       ready: function(){
-        this.cardindex = 0;
+        this.tabindex = 0;
       },
 
       calcUrl: function(level) {
