@@ -27,6 +27,5 @@
     "paper-dialog": "PolymerElements/paper-dialog#^1.0.4"
   },
   "devDependencies": {
-    // "web-component-tester": "^4.0.0"
   }
 }

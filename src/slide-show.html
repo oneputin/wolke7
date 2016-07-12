@@ -1,5 +1,7 @@
 <!-- modified version of cat-alogue-iron -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation.html">
 
 <dom-module id='slide-show'>
@@ -16,38 +18,37 @@
 		neon-animatable {
 			height: 375px;		
 		}
+
 	</style>
 
 	<template>
 
-		<!-- <template is='dom-repeat' items='{{imas}}' as="img"> -->
-			<!-- <p>[[img.url]]</p> -->
-		<!-- </template> -->
-
-		<!-- OPTION: Ctrls for manual navigation  -->
-		<div class='controls layout horizontal justified'>
-			<button on-tap='_goPrev'>Previous</button>
-			<input type='text' value='{{selected::input}}'>
-			<button on-tap='_goNext'>Next</button>
-		</div>
+		<div class='layout vertical'>
+			<!-- OPTION: Ctrls for manual navigation  -->
+			<!-- <div class='controls layout horizontal justified'>
+				<button on-tap='_goPrev'>Previous</button>
+				<input type='text' value='{{selected::input}}'>
+				<button on-tap='_goNext'>Next</button>
+			</div> -->
 		
-		<!-- Animation scene -->
-	    <neon-animated-pages 
-	    	id="pagesId" 
-	    	selected="[[selected]]" 
-	    	class="flex" 
-	    	entry-animation="[[entryAnimation]]" 
-	    	exit-animation="[[exitAnimation]]">
+			<!-- Animation scene -->
+	    	<!-- class="flex"  -->
+		    <neon-animated-pages 
+		    	id="pagesId" 
+		    	selected="[[selected]]" 
+		    	entry-animation="[[entryAnimation]]" 
+		    	exit-animation="[[exitAnimation]]">
 
-			<template is='dom-repeat' items='{{imas}}' as='img'>
-		        <neon-animatable>
-					<p>[[img.abbr]]: ([[img.name]])</p>
-					<img src='{{img.url}}' alt='{{img.alias}}' class='pic'/>
-		        </neon-animatable>
-		    </template>
+				<template is='dom-repeat' items='{{imas}}' as='img'>
+			        <neon-animatable>
+						<p>[[img.abbr]]: ([[img.name]])</p>
+						<img src='{{img.url}}' alt='{{img.alias}}' class='pic'/>
+			        </neon-animatable>
+			    </template>
 
-		</neon-animated-pages>
-		
+			</neon-animated-pages>
+			
+		</div>	
 
 	</template>
 
@@ -68,7 +69,10 @@
 					value : [ 
 					],
 					observer: 'logImas'
-				}
+				},
+				entryAnimation: '',
+				exitAnimation: '',
+
 			},
 			
 			listeners:{	 

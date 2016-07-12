@@ -1,64 +1,106 @@
 {
 	"low": [
 		{
-			"id": 5,
+			"id": 1,
 			"symbol": "../images/symbols/ns.gif",
-			"abbr": "Ns",
-			"name": "Nimbostratus",
-			"url": "http://wolkenbilder.de/start/bilder/bild-01.jpg"
+			"abbr": "Cu-con",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/low/cu-con-baerbel.jpg"
 		},
 		{
-			"id": 6,
-			"symbol": "../images/symbols/sc.gif",
-			"abbr": "Sc",
-			"name": "Stratocumulus",
-			"url": "http://wolkenbilder.de/start/bilder/bild-02.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ns-pan",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/low/ns-pan.jpg"
 		},
 		{
-			"id": 7,
-			"symbol": "../images/symbols/st.gif",
-			"abbr": "St",
-			"name": "Stratus",
-			"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Sc-cas",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/low/sc-cas.jpg"
 		},
 		{
-			"id": 8,
-			"symbol": "../images/symbols/cu.gif",
-			"abbr": "Cu",
-			"name": "Cumulus",
-			"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "St-pra",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/low/st-pra.jpg"
 		},
 		{
-			"id": 9,
-			"symbol": "../images/symbols/cb.gif",
-			"abbr": "Cb",
-			"name": "Cumulonimbus",
-			"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "",
+			"name": "Wolkenstrasse",
+			"url": "http://iimaps.de/data/clouds/cat640/low/wolkenstrasse.jpg"
 		}
 	],
 	"middle":[
 		{
-			"id": 7,
-			"symbol": "../images/symbols/st.gif",
-			"abbr": "St",
-			"name": "Alto-x1",
-			"url": "http://wolkenbilder.de/start/bilder/bild-03.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ac-cas",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/middle/ac-cas.jpg"
 		},
 		{
-			"id": 8,
-			"symbol": "../images/symbols/cu.gif",
-			"abbr": "Cu",
-			"name": "Alto-x2",
-			"url": "http://wolkenbilder.de/start/bilder/bild-04.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ac-pe",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/middle/ac-pe.jpg"
 		},
 		{
-			"id": 9,
-			"symbol": "../images/symbols/cb.gif",
-			"abbr": "Cb",
-			"name": "Alto-x3",
-			"url": "http://wolkenbilder.de/start/bilder/bild-05.jpg"
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ac-un",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/middle/ac-un.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "As-op",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/middle/as-op.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "As-tr",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/middle/as-tr.jpg"
 		}
-
 	],
-	"high":[]
+	"high":[
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ci-fib",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/high/ci-fib.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Ci-unc",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/high/ci-unc.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Cc-flo",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/high/cc-flo.jpg"
+		},
+		{
+			"id": 1,
+			"symbol": "../images/symbols/ns.gif",
+			"abbr": "Cs-fib",
+			"name": "xxx",
+			"url": "http://iimaps.de/data/clouds/cat640/high/cs-fib.jpg"
+		}
+	]	
 }

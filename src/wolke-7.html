@@ -43,7 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-secondary-color: black;
       }
 
-/*      app-header {
+        /*app-header {
         position: fixed;
         top: 0;
         left: 0;
@@ -55,8 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-image: url(//app-layout-assets.appspot.com/assets/bg1.jpg);
           background-position: left center;
         };
-      }
-*/
+      }*/
       app-header {
         position: fixed;
         top: 0;
@@ -66,7 +65,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         color: #fff;
         background-color: var(--app-primary-color);
-        background-image: url(//wolkenbilder.de/start/bilder/bild-05.jpg);
+        /*background-image: url(//wolkenbilder.de/start/bilder/bild-04.jpg);*/
+        background-image: url(//iimaps.de/data/clouds/ac-flo.jpg);
       }
 
       app-toolbar.middle {
@@ -114,7 +114,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <firebase-app
-      name        = "wolke7"
       api-key     = "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk"
       auth-domain = "wolke7-fd941.firebaseapp.com"
       database-url= "https://wolke7-fd941.firebaseio.com">
@@ -156,10 +155,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
         </app-header>
 
+
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <my-viewer     name="viewer"></my-viewer>
-          <my-categories name="categories"></my-categories>
-          <!-- <my-view1 name="view1"></my-view1> -->
+
+          <cloud-viewer     apiflag="[[apiflag]]" name="viewer"></cloud-viewer>
+
+          <cloud-categories apiflag="[[apiflag]]" name="categories"></cloud-categories>
+          <!-- <cloud-view1 name="view1"></cloud-view1> -->
         </iron-pages>
 
       </app-header-layout>
@@ -193,6 +195,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'wolke-7',
 
       properties: {
+        apiflag : 0,
 
         page: {
           type: String,
@@ -213,7 +216,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _pageChanged: function(page) {
         // load page import on demand.
         this.importHref(
-          this.resolveUrl('my-' + page + '.html'), null, null, true);
+          this.resolveUrl('cloud-' + page + '.html'), null, null, true);
       }
 
     });

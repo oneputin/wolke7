@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-<dom-module id="cats-table-layer">
+<dom-module id="cats-table-level">
 
   <template>
 
@@ -42,7 +42,7 @@
           <template>[[item.name]]</template>
         </data-table-column>
         
-<!--         <data-table-column name="Sample" width="50px">
+        <!--<data-table-column name="Sample" width="50px">
           <template>
             <a href="[[item.sample]]" target="_blank">
               <iron-image sizing="cover" class="sample" src="[[item.sample]]">
@@ -50,7 +50,7 @@
             </a>
           </template>
         </data-table-column>
- -->              
+        -->              
       </iron-data-table>
 
     </template>
@@ -60,7 +60,7 @@
 
     Polymer({
 
-      is: 'cats-table-layer',
+      is: 'cats-table-level',
 
       properties: {
 
@@ -72,6 +72,9 @@
         }
       },
 
+      ready: function() {
+        // console.log("created level-table");
+      },
       getclasses: function(data) { // console.log("raw data to view", data);
         if (!Array.isArray(data)) { // transform object to array
           var dataArray = new Array;
