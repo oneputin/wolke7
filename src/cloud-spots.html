@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="my-icons.html">
 
-<dom-module id="wolke-7">
+<dom-module id="cloud-spots">
 
   <template>
 
@@ -151,7 +151,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
           <!-- <app-toolbar class="middle"></app-toolbar> -->
           <app-toolbar class="bottom">
-            <div main-title>More about Clouds</div>
+            <!-- <div main-title>Sky spotter</div> -->
+            <div main-title>Cloudspots</div>
           </app-toolbar>
         </app-header>
 
@@ -161,7 +162,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <cloud-viewer     apiflag="[[apiflag]]" name="viewer"></cloud-viewer>
 
           <cloud-categories apiflag="[[apiflag]]" name="categories"></cloud-categories>
+
           <!-- <cloud-view1 name="view1"></cloud-view1> -->
+        
         </iron-pages>
 
       </app-header-layout>
@@ -192,7 +195,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
 
-      is: 'wolke-7',
+      is: 'cloud-spots',
 
       properties: {
         apiflag : 0,

@@ -1,8 +1,8 @@
 {
   "entrypoint": "index.html",
-  "shell": 		"src/wolke-7.html",
+  "shell": 		"src/cloud-spots.html",
   "fragments": [
-    "src/my-viewer.html",
-    "src/my-categories.html"
+    "src/cloud-viewer.html",
+    "src/cloud-categories.html"
   ]
 }

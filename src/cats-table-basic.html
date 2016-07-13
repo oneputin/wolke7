@@ -26,23 +26,19 @@
       }      
     </style>
 
-    <!-- <p>Basic cloud categories</p> -->
-
     <template is="dom-if" if="{{countclasses(categories)}}">
-      
-      <!-- <p>Select from ([[countclasses(categories)]]) cloud-categories</p> -->
-  
+      <!-- Template of MODAL popup window to be "very top" of app in  -->
       <paper-dialog 
           id="fullpop" 
-          alwaysOnTop 
+          modal
           entry-animation="scale-up-animation"
           exit-animation="fade-out-animation"><!--  modal> -->
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
         <iron-image id="fullimage" class="pop" src="[[fullsrc]]">
         </iron-image>
-        <p id="fulltext"></p>
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
-        </div>
+        <p id="metatext"></p>
       </paper-dialog>
       
 
@@ -56,13 +52,10 @@
 
         <data-table-column name="Samples" width="50px">
           <template>
-            <!-- <a href="[[item.sample]]" target="_blank"> -->
-            <!-- <paper-button onclick="showImage([[item.sample]])" raised> -->
-            <paper-button on-tap="showImage" raised>
-              <iron-image sizing="cover" class="thumb" src="[[item.sample]]">
+            <paper-button on-tap="contentToTop">
+              <iron-image class="thumb" src="[[item.sample]]" sizing="cover"> <!-- sizing="cover" to see full image -->
               </iron-image>
             </paper-button>
-            <!-- </a> -->
           </template>
         </data-table-column>
         
@@ -102,7 +95,10 @@
           notify: true
         },
 
-        fullsrc : ""
+        fullsrc : "",
+        
+        thumbclass : "thumb"
+
       },
 
       getclasses: function(data) { // console.log("raw data to view", data);
@@ -113,18 +109,44 @@
         }  // console.log("processing categories-array:", data);
         return data;
       },
+
       countclasses: function(data) { 
         const len = data.length; // console.log("length of data-array:", len);
         return len;
       },
-      showImage: function(e,b) {
-        var src = Polymer.dom(e).path[2].src; // ABGEZAEHLT !!aus path-log
-        var e1  = Polymer.dom(this.root).querySelector('#fullimage');
-        var e2  = Polymer.dom(this.root).querySelector('#fullpop');
-        var e3  = Polymer.dom(this.root).querySelector('#fulltext');
-        this.fullsrc = src; // console.log("src=",src, e1, e2, e3);
-        e3.innerText = src;
-        e2.open();
+
+      contentToTop: function(e) { // console.log("contentToTop:", this, "class=" + this.thumbclass)
+        // click event action from content within a paper-button 
+        // if (!this.thumbclass) return; 
+
+        // A. detect src of click-content
+        var epath = Polymer.dom(e).path; // console.log("event-path-log:", epath)
+        var fullsrc;
+        for (let el of epath) { // console.log("typ="+typeof el, el);
+            // if (el.className === this.thumbclass) {
+            if (el.className === "thumb") {
+                fullsrc = el.src;
+                break;
+            }
+        } 
+        if (!fullsrc) return ;  // console.log("thumb-src=", fullsrc); // return; 
+
+        // B. Fill content of popup
+        this.fullsrc = fullsrc; 
+
+        var body = document.querySelector('body'),
+            popup = body.querySelector('#fullpop');
+
+        if (!popup) {
+            popup = Polymer.dom(this.root).querySelector('#fullpop');
+            body.appendChild(popup);
+        }
+
+        // Option : add metatext
+        var metaContainer = popup.querySelector('#metatext');
+        if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
+
+        popup.open();
       }
 
     });
