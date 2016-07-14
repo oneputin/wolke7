@@ -4,7 +4,9 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <dom-module id="cats-table-basic">
 
   <template>
@@ -21,9 +23,16 @@
         height: 100%;
         width:  100%;
       }
+      #fullpop {
+        height: 100%;
+        width:  100%;
+      }
       iron-data-table {
          @apply(--layout-horizontal);
-      }      
+      }  
+      paper-dialog { 
+        margin: 0;        
+      }    
     </style>
 
     <template is="dom-if" if="{{countclasses(categories)}}">
@@ -36,9 +45,12 @@
         <div class="buttons">
           <paper-button dialog-confirm autofocus>Close</paper-button>
         </div>
-        <iron-image id="fullimage" class="pop" src="[[fullsrc]]">
-        </iron-image>
-        <p id="metatext"></p>
+        <h2 id="metatext"></h2>
+        <paper-dialog-scrollable>
+          <iron-image id="fullimage" src="[[fullsrc]]">
+          </iron-image>
+          <!-- <p id="metatext"></p> -->
+        </paper-dialog-scrollable>
       </paper-dialog>
       
 
@@ -99,6 +111,10 @@
         
         thumbclass : "thumb"
 
+      },
+
+      ready: function(){
+        this.fullsrc = "images/clouds/bild-03.jpg";
       },
 
       getclasses: function(data) { // console.log("raw data to view", data);

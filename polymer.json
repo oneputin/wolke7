@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": 		"src/cloud-spots.html",
   "fragments": [
+    "src/cloud-spots.html",  	
     "src/cloud-viewer.html",
     "src/cloud-categories.html"
   ]

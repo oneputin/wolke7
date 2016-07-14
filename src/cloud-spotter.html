@@ -1,14 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
-<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<!-- <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html"> -->
+<!-- <link rel="import" href="../bower_components/iron-image/iron-image.html"> -->
+<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
 
 <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
 
-<link rel="import" href="slide-show.html">
-
-<dom-module id="cloud-viewer">
+<dom-module id="cloud-spotter">
 
   <!-- Defines the element's style and local DOM -->
   <template>
@@ -17,53 +16,57 @@
         display: block;
         padding: 10px;
       }
-      /*.card {
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-        padding: 16px;
-        margin: 24px;
-        border-radius: 5px;
-        background-color: #fff;
-        color: #757575;
-      }*/    
+      .circle {
+        display: inline-block;
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+        background: #ddd;
+        line-height: 64px;
+        font-size: 30px;
+        color: #555;
+        text-align: center;
+      }
       h1 {
         font-size: 22px;
         margin: 16px 0;
         color: #212121;
       }
+      iron-data-table {
+         @apply(--layout-horizontal);
+      }      
+
     </style>
-
-    <paper-tabs selected="{{tabindex}}">
-      <paper-tab>Low </paper-tab>
-      <paper-tab>Middle </paper-tab>
-      <paper-tab>High</paper-tab>
-    </paper-tabs>
-
     
     <!-- Alternative query-methods -->
-    <template is="dom-if" if="{{apiflag}}">
+    <!-- <template is="dom-if" if="{{apiflag}}">
       <jsondata-fire url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-fire>
     </template>
     <template is="dom-if" if="{{!apiflag}}">
       <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>
-    </template>
+    </template> -->
 
-    <iron-pages selected="[[tabindex]]">
+    <h1>Level classes</h1>
+
+    <iron-data-table items="[[levels]]">
     
-      <div class="card">
-        <!-- <h1>Low clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
+      <data-table-column name="Class" width="15px">
+        <template>[[item.alias]]</template>
+      </data-table-column>
 
-      <div class="card">
-        <!-- <h1>Middle clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
-      
-      <div class="card">
-        <!-- <h1>High clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
-    </iron-pages>
+      <data-table-column name="Height [m]" width="30px">
+        <template>
+          [[item.text]]
+        </template>
+      </data-table-column>
+
+      <data-table-column name="Description" width="100px">
+        <template>
+          [[item.symbol]]
+        </template>
+      </data-table-column>
+
+    </iron-data-table>
 
   </template>
 
@@ -72,7 +75,7 @@
 
     Polymer({
 
-      is: 'cloud-viewer',
+      is: 'cloud-spotter',
       
       properties: {
 
@@ -93,10 +96,22 @@
           computed: 'calcPath(tabindex)'
         },
 
-        data: {
+        levels: {
           type: Object,
-          value: [],
-          observe: 'logData'
+          value: [
+            {"alias":"Low",
+             "text": " 0 - 2000",
+             "symbol":"C<sub>L</sub>"
+            },
+            {"alias":"Middle",
+             "text": "2000 - 6000",
+             "symbol":"C<sub>M</sub>"
+            },
+            {"alias":"High",
+             "text": "+ 6000",
+             "symbol":"C<sub>H</sub>"
+           }
+          ]
         }
 
       },
