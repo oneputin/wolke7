@@ -1,12 +1,25 @@
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+<script>
+
+  // Initialize Firebase
+  var config = {
+    apiKey:        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
+    authDomain:    "wolke7-fd941.firebaseapp.com",
+    databaseURL:   "https://wolke7-fd941.firebaseio.com",
+    storageBucket: "wolke7-fd941.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
 <!-- <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html"> -->
 <!-- <link rel="import" href="../bower_components/iron-image/iron-image.html"> -->
-<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
+<!-- <link rel="import" href="../bower_components/iron-data-table/iron-data-table.html"> -->
 
-<link rel="import" href="jsondata-ajax.html">
+<!-- <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
-
+ -->
 <dom-module id="cloud-spotter">
 
   <!-- Defines the element's style and local DOM -->
@@ -39,6 +52,7 @@
     </style>
     
     <!-- Alternative query-methods -->
+
     <!-- <template is="dom-if" if="{{apiflag}}">
       <jsondata-fire url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-fire>
     </template>
@@ -46,10 +60,7 @@
       <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>
     </template> -->
 
-    <h1>Level classes</h1>
-
-    <iron-data-table items="[[levels]]">
-    
+    <!-- <iron-data-table items="[[levels]]">
       <data-table-column name="Class" width="15px">
         <template>[[item.alias]]</template>
       </data-table-column>
@@ -65,19 +76,36 @@
           [[item.symbol]]
         </template>
       </data-table-column>
+    </iron-data-table> -->
 
-    </iron-data-table>
+      <p>Activate a cloud-image you want to analyse. It will be displayed when it is activated.</p>
+  
+      <h6>Choose File from your device:</h6>
+      <input id="file" type="file" name="file" on-change="handleFileSelect" disabled="[[disabled]]"/>
+  
+      <h6>Download URL:</h6>
+      <span id="linkbox"></span>
 
+      <img  id="imgbox" src="">
+  
   </template>
 
   <!-- Creates the element's prototype and registers it -->
   <script>
 
+    var auth       = firebase.auth();  
+    var storageRef = firebase.storage().ref();
+    var dataRef    = firebase.database().ref();  // console.log("auth,store,db:", auth, storageRef, dataRef);
+   
     Polymer({
 
       is: 'cloud-spotter',
       
       properties: {
+
+        uploadpath : "clouds", // /symbols", 
+
+        disabled : true,   // disable before signin=ok
 
         apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
 
@@ -87,13 +115,13 @@
         
         url:  {
           type: String,
-          computed: 'calcUrl(apiflag)'
+          value: ""
         },
 
 
         path:  {
           type: String,
-          computed: 'calcPath(tabindex)'
+          value: ""
         },
 
         levels: {
@@ -116,29 +144,87 @@
 
       },
 
-      ready: function(){
+            // event-action of file-button 
+      handleFileSelect: function(evt) { console.log("this", this); 
+
+        var gui_uploadbtn  = this.$.file,
+            gui_linkbox    = this.$.linkbox,
+            gui_imgbox     = this.$.imgbox;
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var file = evt.target.files[0]; console.log("file=", file);
+        var filetype = file.type;
+
+        if (filetype.indexOf("image") > -1) {
+          // uploadpath = "images"
+        }
+        var metadata = {
+          'contentType': filetype,
+          'customMetadata':{
+            'srcApp': 'fb-quickstart',
+            'author': 'wolf'
+          }
+        };
+
+        // Push to child path.
+        // var uploadTask = storageRef.child(uploadpath +'/'+ file.name).put(file, metadata);
+        var uploadRef  = firebase.storage().ref(this.uploadpath);
+        var uploadTask = uploadRef.child(file.name).put(file, metadata);
+
+        // Listen for errors and completion of the upload.
+        // [START oncomplete]
+        uploadTask.on('state_changed', null, function(error) {
+          // [START onfailure]
+          console.error('Upload failed:', error);
+          // [END onfailure]
+        }, function() {
+          var metaData = uploadTask.snapshot.metadata;
+
+          console.log("Metadata:",   metaData);
+          console.log('UploadSize',  uploadTask.snapshot.totalBytes,'bytes.');
+
+          var url = metaData.downloadURLs[0];  console.log('File downloadUrl:', url);
+
+          gui_linkbox.innerHTML = '<a href="'+url+'" target="_blank">Click For File</a>';
+          if (filetype.indexOf("image") > -1) {
+            gui_imgbox.src = url ;
+          }        
+
+          // save the doc-reference to database 
+          // 1. Get new key at the target path
+          if (!dataRef.child('clouds')) { // target must exist to enable key-generator
+            firebase.database().ref('clouds').set([]);
+          }  
+          
+          var dbKey  = dataRef.child('clouds').push().key;
+          var dbData = {
+            "url"  : metaData.fullPath,
+            "name" : metaData.name,
+            "type" : metaData.contentType,
+            "updated": metaData.updated,
+            "custom" : metaData.customMetadata  
+          } ;
+
+          // 2. 
+          firebase.database().ref('clouds/' + dbKey).set(dbData); 
+
+        });
+      },
+
+      ready: function() {
+
         this.tabindex = 0;
-        this.apiflag = 0;
-      },
+        this.apiflag  = 0;
 
-      calcUrl: function(apiflag) {
-        var url = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
-        if (apiflag < 1) {
-          url = url + '/catalog.json';                    // FB-REST-access
-          // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
-        } // console.log("db-url=",url);
-        return url;
-      },
-
-      calcPath: function(index) { //console.log("viewcard index=", index);
-        var pathes = {0:"low",1:"middle",2:"high"},
-            path = pathes[index];
-        if (0) path = 'catalog/' + path;
-        return path;
-      },
-
-      logData: function(data, olddata) { //console.log("image index", data);
-
+        // Sign the user in anonymously since accessing Storage requires the user to be authorized.
+        auth.signInAnonymously().then(function(user) {
+          console.log('Anonymous Sign In Success', user);   
+          this.disabled = false; // enable uploadbutton after signIn
+        }).catch(function(error) {
+          console.error('Anonymous Sign In Error', error);
+        });
       }
 
     });
