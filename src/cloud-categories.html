@@ -109,34 +109,32 @@
 
         url:  {
           type: String,
-          computed: 'calcUrl(apiflag)'
+          computed: 'calcUrl()'
         },
-
 
         path:  {
           type: String,
-          computed: 'calcPath(tabindex)'
+          computed: 'calcPath(tabindex, apiflag)'
         }
 
       },
 
       ready: function() {
         this.tabindex = 0;
-        this.apiflag = 0;  
+        this.apiflag = 1;  
       },
 
-      calcUrl: function(apiflag) {
-        var url = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
-        if  (!apiflag ) {
-          url = url + '/categories.json';                 // FB-REST-access
-          // url = 'http://iimaps.de/data/clouds/?name=categories.json'; // RESERVE: phpIF to files
-        } // console.log("service-url=",url);
-        return url;
+      calcUrl: function() {
+        //url = 'http://iimaps.de/data/clouds/?name='     // RESERVE: phpIF to files
+        var url = 'https://wolke7-fd941.firebaseio.com/'; // FB-REST interface
+        return url + 'categories.json';
       },
 
-      calcPath: function(index) { // console.log("catcard index=", index);
-        var pathes = {0:"basic",1:"low",2:"middle",3:"high"};
-        return pathes[index] + "/data";
+      calcPath: function(index, apiflag) { // console.log("catcard index=", index);
+        var pathes = {0:"basic",1:"low",2:"middle",3:"high"},
+            path = pathes[index] + "/data";
+        if (apiflag) path = 'categories/' + path;
+       return path;
       }
       
     });

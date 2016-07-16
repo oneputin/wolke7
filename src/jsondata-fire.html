@@ -1,14 +1,16 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
-<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 
-<!--
-`cloud-class`
-cloud classification data from firebase-db
-
-@demo demo/index.html 
--->
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey:       "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
+    authDomain:   "wolke7-fd941.firebaseapp.com",
+    databaseURL:  "https://wolke7-fd941.firebaseio.com",
+    storageBucket: "wolke7-fd941.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
 
 <dom-module id="jsondata-fire">
 
@@ -20,22 +22,15 @@ cloud classification data from firebase-db
       }
     </style>
 
-    <firebase-query
-        id="query"
-        path="[[path]]"
-        data="{{dataset}}">
-    </firebase-query>
-        <!-- app-name="[[appname]]" -->
-
-    <!-- <h5>query-log: firebase [[url]]/[[path]]</h5> -->
+    <h5>query-log: firebase [[url]]/[[path]]</h5>
 
   </template>
 
   <script>
+
+
     Polymer({
-
       is: 'jsondata-fire',
-
       properties: {
         appname: {
           type: String,
@@ -43,22 +38,30 @@ cloud classification data from firebase-db
         },
         url: {
           type: String,
-          value: '' // https://wolke7-fd941.firebaseio.com' 
+          value: '', // https://wolke7-fd941.firebaseio.com' 
         },
         path:{
           type: String,
-          value: '' //'/catalog/low' 
+          value: '', //'/catalog/low' 
+          observer : 'updateQuery'
         },
-        dataset: {
+        data: {
           type: Object,
           notify: true,
           observer: '__dataChanged'
         }
       },
 
+      updateQuery: function(path, oldpath) { console.log("fbquery, path=", path);
+        var that = this; // ALTMODISCH 
+        firebase.database().ref(path).once('value').then(function(snapshot) { 
+          that.data = snapshot.val();
+          // this.data = snapshot.val(); console.log("fb-queried:", data);
+        })
+      },
 
       __dataChanged: function (newData, oldData) {
-          console.log("new:",newData,"old:", oldData) ; // do something when the query returns values
+        // console.log("LOG:new=",newData,"old=", oldData) ; // do something when the query returns values
       }
 
     });

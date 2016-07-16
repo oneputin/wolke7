@@ -91,7 +91,7 @@
 
         path:  {
           type: String,
-          computed: 'calcPath(tabindex)'
+          computed: 'calcPath(tabindex, apiflag)'
         },
 
         data: {
@@ -104,7 +104,7 @@
 
       ready: function(){
         this.tabindex = 0;
-        this.apiflag = 0;
+        this.apiflag = 1;
       },
 
       calcUrl: function(apiflag) {
@@ -112,14 +112,18 @@
         if (apiflag < 1) {
           url = url + '/catalog.json';                    // FB-REST-access
           // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
+        } else {
+
         } // console.log("db-url=",url);
         return url;
       },
 
-      calcPath: function(index) { //console.log("viewcard index=", index);
+      calcPath: function(index, apiflag) { //console.log("viewcard index=", index);
         var pathes = {0:"low",1:"middle",2:"high"},
             path = pathes[index];
-        if (0) path = 'catalog/' + path;
+        if (apiflag) {
+          path = 'catalog/' + path;
+        }  
         return path;
       },
 
