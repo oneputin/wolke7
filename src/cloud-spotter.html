@@ -13,6 +13,14 @@
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<!-- <link rel="import" href="../bower_components/paper-menu/paper-menu.html"> -->
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
 <!-- <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
@@ -26,22 +34,22 @@
         display: block;
         padding: 10px;
       }
-      .circle {
-        display: inline-block;
-        height: 64px;
-        width: 64px;
-        border-radius: 50%;
-        background: #ddd;
-        line-height: 64px;
-        font-size: 30px;
-        color: #555;
-        text-align: center;
-      }
      
       .flex {
         @apply(--layout-horizontal);
       }   
-  
+
+      .flexvert {
+        @apply(--layout-vertical);
+      }   
+
+      div.hidden {
+        display: none;
+      }
+      
+      label {
+        font-weight: bold;
+      }
       paper-fab {
         margin: 0px 20px;
       }
@@ -92,6 +100,66 @@
           </iron-image>
         </a>  
       </div>  
+
+      <!-- <form id="metaform" is="iron-form" method="get" action="processform"> -->
+      <!-- <form id="metaform" is="iron-form" method="get" action="/"> -->
+      <div id="metaform" class="flexvert hidden">
+
+        <paper-input value="{{maintitle}}" label="title" required></paper-input>
+        <paper-input value="{{subtitle}}" label="subtitleName"></paper-input>
+        <!-- <paper-checkbox name="ref" checked="{{ref}}" required>Use in reference sets</paper-checkbox><br> -->
+        <paper-dropdown-menu label="Calendar year">
+          <paper-listbox class="dropdown-content" attr-for-selected="year" selected="{{year}}">
+            <paper-item year="2002">2002</paper-item>
+            <paper-item year="2003">2003</paper-item>
+            <paper-item year="2004">2004</paper-item>
+            <paper-item year="2005">2005</paper-item>
+            <paper-item year="2006">2006</paper-item>
+            <paper-item year="2007">2007</paper-item>
+            <paper-item year="2008">2008</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        
+        <div>  
+          <label id="label11">Howard</label>
+          <paper-radio-group aria-labelledby="label11" required attrForSelected="name" selected="{{howard}}">
+            <paper-radio-button name="heap">Heapy</paper-radio-button>
+            <paper-radio-button name="sheet">Sheety</paper-radio-button>
+            <paper-radio-button name="fleece">Fleecy</paper-radio-button>
+          </paper-radio-group>
+        </div>  
+        
+        <div>
+          <label id="label21">Level</label>
+          <paper-radio-group aria-labelledby="label21" attrForSelected="name" selected="{{level}}">
+            <paper-radio-button name="low">low</paper-radio-button>
+            <paper-radio-button name="middle">middle</paper-radio-button>
+            <paper-radio-button name="high">high</paper-radio-button>
+          </paper-radio-group>
+        </div>
+          
+        <paper-dropdown-menu label="Main types (genus)" name="genus" required >
+          <paper-listbox id="catmenu" class="dropdown-content" attr-for-selected="abbr" selected="{{genus}}">
+            <paper-item abbr="ci">Cirrus</paper-item>
+            <paper-item abbr="cc">Cirrocumulus</paper-item>
+            <paper-item abbr="cs">Cirrostratus</paper-item>
+            <paper-item abbr="ac">Altocumulus</paper-item>
+            <paper-item abbr="as">Altostratus</paper-item>
+            <paper-item abbr="ns">Nimbostratus</paper-item>
+            <paper-item abbr="cu">Cumulus</paper-item>
+            <paper-item abbr="cb">Cumulonimbus</paper-item>
+            <paper-item abbr="sc">Stratocumulus</paper-item>
+            <paper-item abbr="st">Stratus</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <div>
+          <paper-button raised on-click="formSubmit">Submit</paper-button>
+          <paper-button raised on-click="formReset">Reset</paper-button>
+        </div>
+        <div class="output"></div>
+      </div>
+
   </template>
 
   <!-- Creates the element's prototype and registers it -->
@@ -122,36 +190,28 @@
         
         url:  {
           type: String,
-          value: ""
+          value: "abcde"
         },
-
-
         path:  {
           type: String,
           value: ""
         },
 
-        levels: {
-          type: Object,
-          value: [
-            {"alias":"Low",
-             "text": " 0 - 2000",
-             "symbol":"C<sub>L</sub>"
-            },
-            {"alias":"Middle",
-             "text": "2000 - 6000",
-             "symbol":"C<sub>M</sub>"
-            },
-            {"alias":"High",
-             "text": "+ 6000",
-             "symbol":"C<sub>H</sub>"
-           }
-          ]
-        }
+        maintitle: "",
+        subtitle: "",
+        year: "",
+        ref: false,
+        howard: "",
+        level: "",
+        genus: "",
 
+        meta: {
+          type: Object,
+          value : {}
+        }  
       },
 
-            // event-action of file-button 
+      // event-action of file-button 
       handleFileSelect: function(evt) { console.log("this", this); 
         var that = this;
         var gui_uploadbtn  = that.$.file,
@@ -168,11 +228,11 @@
           // uploadpath = "images"
         }
         var metadata = {
-          'contentType': filetype,
-          'customMetadata':{
-            'srcApp': 'fb-quickstart',
-            'author': 'wolf'
-          }
+          'contentType': filetype
+          // 'customMetadata':{
+          //   'srcApp': 'fb-quickstart',
+          //   'author': 'wolf'
+          // }
         };
 
         // Push to child path.
@@ -191,9 +251,8 @@
           
           var metaData = uploadTask.snapshot.metadata;
 
-          console.log("Metadata:",   metaData);
-          console.log('UploadSize',  uploadTask.snapshot.totalBytes,'bytes.');
-
+          // console.log("Metadata:",   metaData);
+          // console.log('UploadSize',  uploadTask.snapshot.totalBytes,'bytes.');
 
           that.serverurl = metaData.downloadURLs[0];  console.log('File downloadUrl:', that.serverurl);
           
@@ -201,7 +260,7 @@
           if (filetype.indexOf("image") > -1) {
             that.serverimg = that.serverurl ;
           } else {
-            that.serverimg = "../images/app-icon-144.png" ;
+            that.serverimg = "../images/app-icon-144.png" ; // default placeholder
           }
 
           // save the doc-reference to database 
@@ -212,17 +271,47 @@
           
           var dbKey  = dataRef.child('clouds').push().key;
           var dbData = {
-            "url"  : metaData.fullPath,
-            "name" : metaData.name,
-            "type" : metaData.contentType,
-            "updated": metaData.updated,
-            "custom" : metaData.customMetadata  
+            "url"  :    metaData.fullPath,
+            "name" :    metaData.name,
+            "type" :    metaData.contentType,
+            "updated":  metaData.updated,
+            "custom" :  metaData.customMetadata  
           } ;
 
           // 2. 
           firebase.database().ref('clouds/' + dbKey).set(dbData); 
 
         });
+      },
+
+      observers: [
+        'updateMeta(url, maintitle)'
+      ],
+
+      updateMeta: function(url, maintitle) {
+        var m = this.meta;
+        m["url"]              = this.url;
+        m["title-main-pict"]  = this.maintitle;
+        m["type-character"]   = this.howard;
+        m["type-height"]      = this.level;
+        m["title-sub-pict"]   = this.subtitle;
+        m["type-genus"]       = this.genus;
+        // m.ref = ref;
+        console.log("actual meta:", m) ; // howard, level, maintitle, ref);
+        return m;
+      },
+
+      formSubmit : function(event) { console.log("submit");
+        var m = updateMeta() ;
+        // var form = Polymer.dom(event).localTarget.parentElement;
+        // var form = this.$.metaform;
+        var content = JSON.stringify(event.detail); console.log("content:", content, event, form) 
+        // form.submit();
+      },
+      
+      formReset : function(event) { console.log("reset");
+        // var form = Polymer.dom(event).localTarget.parentElement;
+        // form.reset();
       },
 
       ready: function() {
@@ -237,6 +326,12 @@
         }).catch(function(error) {
           console.error('Anonymous Sign In Error', error);
         });
+
+        // this.$.metaform.addEventListener('iron-form-submit', function(event) {
+        //   var content = JSON.stringify(event.detail)
+        //   // this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        //   console.log("content:", content, event); 
+        // });
       }
 
     });
