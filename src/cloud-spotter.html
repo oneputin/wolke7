@@ -104,9 +104,10 @@
       <!-- <form id="metaform" is="iron-form" method="get" action="processform"> -->
       <!-- <form id="metaform" is="iron-form" method="get" action="/"> -->
       <div id="metaform" class="flexvert hidden">
-
+        <!-- <div>URL: [[serverurl]]</div> -->
+        <paper-input value="{{serverurl}}" label="url" id="serverurl" required></paper-input>
         <paper-input value="{{maintitle}}" label="title" required></paper-input>
-        <paper-input value="{{subtitle}}" label="subtitleName"></paper-input>
+        <paper-input value="{{subtitle}}"  label="subtitleName"></paper-input>
         <!-- <paper-checkbox name="ref" checked="{{ref}}" required>Use in reference sets</paper-checkbox><br> -->
         <paper-dropdown-menu label="Calendar year">
           <paper-listbox class="dropdown-content" attr-for-selected="year" selected="{{year}}">
@@ -154,7 +155,7 @@
         </paper-dropdown-menu>
 
         <div>
-          <paper-button raised on-click="formSubmit">Submit</paper-button>
+          <paper-button id="submitbtn" raised on-click="dbDataSubmit">Submit</paper-button>
           <paper-button raised on-click="formReset">Reset</paper-button>
         </div>
         <div class="output"></div>
@@ -165,21 +166,25 @@
   <!-- Creates the element's prototype and registers it -->
   <script>
 
-    var auth       = firebase.auth();  
-    var storageRef = firebase.storage().ref();
-    var dataRef    = firebase.database().ref();  // console.log("auth,store,db:", auth, storageRef, dataRef);
-   
+    var auth       = firebase.auth(),  
+        storageRef = firebase.storage().ref(),
+        dataRef    = firebase.database().ref();  // console.log("auth,store,db:", auth, storageRef, dataRef);
+    var dbPath     = "cp"; // "clouds";
+
     Polymer({
 
       is: 'cloud-spotter',
       
       properties: {
 
-        uploadpath : "clouds", // /symbols", 
+        uploadpath : "",  
 
-        disabled : true,   // disable before signin=ok
+        disabled : true,   
 
-        serverurl: "",
+        serverurl: {
+          type: String,
+          observer: "dbDataAction"
+        },
         serverimg : "",
 
         apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
@@ -188,16 +193,19 @@
 
         route: Object,
         
-        url:  {
-          type: String,
-          value: "abcde"
-        },
+        // url:  {
+        //   type: String,
+        //   value: "abcde"
+        // },
         path:  {
           type: String,
           value: ""
         },
 
-        maintitle: "",
+        maintitle: {
+          type: String,
+          observer: "enableSubmit"
+        },
         subtitle: "",
         year: "",
         ref: false,
@@ -211,102 +219,106 @@
         }  
       },
 
+      // observers: [
+      //   'updateMeta(url, maintitle)'
+      // ],
+
       // event-action of file-button 
-      handleFileSelect: function(evt) { console.log("this", this); 
+      handleFileSelect: function(evt) { // console.log("file selected: ", this); 
         var that = this;
-        var gui_uploadbtn  = that.$.file,
-            gui_linkbox    = that.$.linkbox;
-            // gui_imgbox     = that.$.imgbox;
 
         evt.stopPropagation();
         evt.preventDefault();
 
-        var file = evt.target.files[0]; console.log("file=", file);
+        var file = evt.target.files[0]; // console.log("file=", file);
         var filetype = file.type;
 
         if (filetype.indexOf("image") > -1) {
           // uploadpath = "images"
         }
         var metadata = {
-          'contentType': filetype
-          // 'customMetadata':{
-          //   'srcApp': 'fb-quickstart',
-          //   'author': 'wolf'
-          // }
+          'contentType': filetype, 
+          'customMetadata': {
+            'srcApp': 'fb-quickstart',
+            'author': 'wolf'
+          }
         };
 
         // Push to child path.
         // var uploadTask = storageRef.child(uploadpath +'/'+ file.name).put(file, metadata);
-        var uploadRef  = firebase.storage().ref(this.uploadpath);
-        var uploadTask = uploadRef.child(file.name).put(file, metadata);
+        var uploadRef  = firebase.storage().ref(this.uploadpath);         // console.log("uploadpath", this.uploadpath); return;
+        var uploadTask = uploadRef.child(file.name).put(file, metadata);  // 
 
         // Listen for errors and completion of the upload.
         // [START oncomplete]
         uploadTask.on('state_changed', null, function(error) {
           // [START onfailure]
-          that.serverimg = "" ;
+          that.serverimg = "" ; // hide the last img !!
           console.error('Upload failed:', error);
           // [END onfailure]
         }, function() {
           
-          var metaData = uploadTask.snapshot.metadata;
+          that.meta = uploadTask.snapshot.metadata;   // console.log("Metadata:",  this.meta);
+          var bytes = uploadTask.snapshot.totalBytes; // console.log('UploadSize', bytes, 'bytes'); 
 
-          // console.log("Metadata:",   metaData);
-          // console.log('UploadSize',  uploadTask.snapshot.totalBytes,'bytes.');
+          // Trigger dbDataAction
+          that.serverurl = that.meta.downloadURLs[0];  
 
-          that.serverurl = metaData.downloadURLs[0];  console.log('File downloadUrl:', that.serverurl);
-          
-          // gui_linkbox.innerHTML = '<a href="'+that.serverurl+'" target="_blank">Click For File</a>';
           if (filetype.indexOf("image") > -1) {
             that.serverimg = that.serverurl ;
           } else {
             that.serverimg = "../images/app-icon-144.png" ; // default placeholder
-          }
-
-          // save the doc-reference to database 
-          // 1. Get new key at the target path
-          if (!dataRef.child('clouds')) { // target must exist to enable key-generator
-            firebase.database().ref('clouds').set([]);
-          }  
-          
-          var dbKey  = dataRef.child('clouds').push().key;
-          var dbData = {
-            "url"  :    metaData.fullPath,
-            "name" :    metaData.name,
-            "type" :    metaData.contentType,
-            "updated":  metaData.updated,
-            "custom" :  metaData.customMetadata  
-          } ;
-
-          // 2. 
-          firebase.database().ref('clouds/' + dbKey).set(dbData); 
+          } // console.log('CheckImage-Url:', that.serverimg);
 
         });
       },
 
-      observers: [
-        'updateMeta(url, maintitle)'
-      ],
-
-      updateMeta: function(url, maintitle) {
-        var m = this.meta;
-        m["url"]              = this.url;
-        m["title-main-pict"]  = this.maintitle;
-        m["type-character"]   = this.howard;
-        m["type-height"]      = this.level;
-        m["title-sub-pict"]   = this.subtitle;
-        m["type-genus"]       = this.genus;
-        // m.ref = ref;
-        console.log("actual meta:", m) ; // howard, level, maintitle, ref);
-        return m;
+      dbDataAction: function(newurl, oldurl) { 
+          if (!newurl) return ;   
+          this.$.metaform.classList.remove("hidden");
+          this.$.serverurl.setAttribute("disabled", true);
       },
 
-      formSubmit : function(event) { console.log("submit");
-        var m = updateMeta() ;
-        // var form = Polymer.dom(event).localTarget.parentElement;
-        // var form = this.$.metaform;
-        var content = JSON.stringify(event.detail); console.log("content:", content, event, form) 
-        // form.submit();
+      enableSubmit: function(title, oldtitle){ 
+        if (title&&!oldtitle) { console.log("enableSubmit", title);
+          // this.$.submitbtn.setAttribute("disabled", false);
+        } else if (!title) { console.log("disableSubmit", title);
+          // this.$.submitbtn.setAttribute("disabled", true);
+        } 
+      },
+
+      updateMeta: function() {
+        var meta = {}; // this.meta;
+        var dict = {
+          "url":              this.serverurl,
+          "title-main-pict":  this.maintitle,
+          "type-character":   this.howard,
+          "type-height":      this.level,
+          "title-sub-pict":   this.subtitle,
+          "type-genus":       this.genus
+        }
+        for(var key in dict) {
+          if (dict[key]) {
+            meta[key] = dict[key];  
+          }
+        }  // console.log("actual meta:", m, dict) ; // howard, level, maintitle, ref);
+        return meta;
+      },
+
+      dbDataSubmit: function(event) {
+
+        var dbData = this.updateMeta();  
+
+        // save the doc-reference to database 
+        // 1. Get new key at the target path
+        if (!dataRef.child(dbPath)) { // target-node must exist to enable key-generator
+          firebase.database().ref(dbPath).set([]);
+        }  
+        var dbKey  = dataRef.child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
+
+        firebase.database().ref(dbPath+'/'+dbKey).set(dbData); 
+
+        this.$.metaform.classList.add("hidden");
       },
       
       formReset : function(event) { console.log("reset");
@@ -318,6 +330,7 @@
 
         this.tabindex = 0;
         this.apiflag  = 0;
+        this.uploadpath = dbPath;
 
         // Sign the user in anonymously since accessing Storage requires the user to be authorized.
         auth.signInAnonymously().then(function(user) {
@@ -327,11 +340,6 @@
           console.error('Anonymous Sign In Error', error);
         });
 
-        // this.$.metaform.addEventListener('iron-form-submit', function(event) {
-        //   var content = JSON.stringify(event.detail)
-        //   // this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
-        //   console.log("content:", content, event); 
-        // });
       }
 
     });
