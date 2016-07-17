@@ -12,10 +12,7 @@
 </script>
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
-<!-- <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html"> -->
-<!-- <link rel="import" href="../bower_components/iron-image/iron-image.html"> -->
-<!-- <link rel="import" href="../bower_components/iron-data-table/iron-data-table.html"> -->
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <!-- <link rel="import" href="jsondata-ajax.html">
 <link rel="import" href="jsondata-fire.html">
@@ -40,6 +37,22 @@
         color: #555;
         text-align: center;
       }
+     
+      .flex {
+        @apply(--layout-horizontal);
+      }   
+  
+      paper-fab {
+        margin: 0px 20px;
+      }
+      paper-fab.label {
+        font-size: 20px;
+      }
+      paper-fab.blue {
+        --paper-fab-background: var(--paper-light-blue-500);
+        --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+      }
+
       h1 {
         font-size: 22px;
         margin: 16px 0;
@@ -60,34 +73,25 @@
       <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>
     </template> -->
 
-    <!-- <iron-data-table items="[[levels]]">
-      <data-table-column name="Class" width="15px">
-        <template>[[item.alias]]</template>
-      </data-table-column>
-
-      <data-table-column name="Height [m]" width="30px">
-        <template>
-          [[item.text]]
-        </template>
-      </data-table-column>
-
-      <data-table-column name="Description" width="100px">
-        <template>
-          [[item.symbol]]
-        </template>
-      </data-table-column>
-    </iron-data-table> -->
-
-      <p>Activate a cloud-image you want to analyse. It will be displayed when it is activated.</p>
+      <div class="container flex"> 
+        <div>Load the cloud-image you want to analyse. 
+        You may classify and comment it after it is activated.</div>
+      </div>  
   
-      <h6>Choose File from your device:</h6>
-      <input id="file" type="file" name="file" on-change="handleFileSelect" disabled="[[disabled]]"/>
-  
-      <h6>Download URL:</h6>
-      <span id="linkbox"></span>
+      <hr>
 
-      <img  id="imgbox" src="">
-  
+      <div class="container flex"> 
+        
+        <input id="file" type="file" name="file" on-change="handleFileSelect" disabled="[[disabled]]"/>
+    
+        <a href="[[serverurl]" target="_blank">
+          <iron-image 
+            style="width:200px; height:200px;" 
+            sizing="contain"
+            src="[[serverimg]]">          
+          </iron-image>
+        </a>  
+      </div>  
   </template>
 
   <!-- Creates the element's prototype and registers it -->
@@ -106,6 +110,9 @@
         uploadpath : "clouds", // /symbols", 
 
         disabled : true,   // disable before signin=ok
+
+        serverurl: "",
+        serverimg : "",
 
         apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
 
@@ -146,10 +153,10 @@
 
             // event-action of file-button 
       handleFileSelect: function(evt) { console.log("this", this); 
-
-        var gui_uploadbtn  = this.$.file,
-            gui_linkbox    = this.$.linkbox,
-            gui_imgbox     = this.$.imgbox;
+        var that = this;
+        var gui_uploadbtn  = that.$.file,
+            gui_linkbox    = that.$.linkbox;
+            // gui_imgbox     = that.$.imgbox;
 
         evt.stopPropagation();
         evt.preventDefault();
@@ -177,20 +184,25 @@
         // [START oncomplete]
         uploadTask.on('state_changed', null, function(error) {
           // [START onfailure]
+          that.serverimg = "" ;
           console.error('Upload failed:', error);
           // [END onfailure]
         }, function() {
+          
           var metaData = uploadTask.snapshot.metadata;
 
           console.log("Metadata:",   metaData);
           console.log('UploadSize',  uploadTask.snapshot.totalBytes,'bytes.');
 
-          var url = metaData.downloadURLs[0];  console.log('File downloadUrl:', url);
 
-          gui_linkbox.innerHTML = '<a href="'+url+'" target="_blank">Click For File</a>';
+          that.serverurl = metaData.downloadURLs[0];  console.log('File downloadUrl:', that.serverurl);
+          
+          // gui_linkbox.innerHTML = '<a href="'+that.serverurl+'" target="_blank">Click For File</a>';
           if (filetype.indexOf("image") > -1) {
-            gui_imgbox.src = url ;
-          }        
+            that.serverimg = that.serverurl ;
+          } else {
+            that.serverimg = "../images/app-icon-144.png" ;
+          }
 
           // save the doc-reference to database 
           // 1. Get new key at the target path

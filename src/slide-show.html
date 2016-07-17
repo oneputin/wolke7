@@ -70,6 +70,11 @@
 					],
 					observer: 'logImas'
 				},
+				// subtitle: {
+				// 	type: String,
+				// 	computed: 'buildsubtitle'
+				// },
+
 				entryAnimation: '',
 				exitAnimation: '',
 
@@ -78,6 +83,9 @@
 			listeners:{	 
 				'pagesId.track': 'handleTrack'
 			},
+
+			// buildsubtitle : function() {
+			// },
 
 			logImas: function(imas, oldimas) {  //console.log("log imas:", imas, oldimas);
 			},

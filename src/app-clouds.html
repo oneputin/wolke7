@@ -9,6 +9,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 
@@ -19,13 +24,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
+<link rel="import" href="../bower_components/paper-styles/color.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-
-<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
 <!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
 
@@ -43,6 +46,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-secondary-color: black;
         --color-one: var(--paper-cyan-300);
         --color-two: var(--paper-orange-500);
+      }
+
+      .flex {
+        @apply(--layout-horizontal);
+      }   
+      .flexchild {
+        @apply(--layout-flex);
+      }
+      paper-fab {
+        margin-left: 10px;
+      }
+      paper-fab.label {
+        font-size: 20px;
+      }
+      paper-fab.blue {
+        --paper-fab-background: var(--paper-light-blue-500);
+        --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
       }
 
         /*app-header {
@@ -136,10 +156,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer>
         <app-toolbar>Services</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="spotter"    href="/spotter">About</a>
-          <a name="viewer"     href="/viewer">Heigth matching</a>
+          <!-- <a name="spotter"    href="/spotter">About</a> -->
           <a name="howard"     href="/howard">Howards matching</a>
-          <a name="categories" href="/categories">Codification</a>
+          <a name="viewer"     href="/viewer">Heigth matching</a>
+          <a name="categories" href="/categories">Map coding</a>
           <!-- <a name="view1" href="/view1">View One</a> -->
         </iron-selector>
       </app-drawer>
@@ -151,19 +171,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div condensed-title>More about Cloudspotting</div>
-            <paper-icon-button icon="search"></paper-icon-button>
+            <paper-icon-button icon="search" on-tap="helpopen"></paper-icon-button>
           </app-toolbar>
           <!-- <app-toolbar class="middle"></app-toolbar> -->
-          <app-toolbar class="bottom">
+          <app-toolbar class="bottom flex">
             <!-- <div main-title>Sky spotter</div> -->
-            <div main-title>Cloudlevels</div>
+            <!-- <paper-fab class="blue" icon="add" title="add"></paper-fab> -->
+            <div class="flexchild" main-title>Cloudlevels</div>
+            <paper-icon-button icon="add" class="visible" on-tap="spotopen"></paper-icon-button>
+            <!-- <paper-fab mini class="blue" icon="add" title="add"></paper-fab> -->
           </app-toolbar>
         </app-header>
 
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-
-          <cloud-spotter    apiflag="[[apiflag]]" name="spotter"></cloud-spotter>
 
           <cloud-viewer     apiflag="[[apiflag]]" name="viewer"></cloud-viewer>
 
@@ -171,7 +192,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <cloud-categories apiflag="[[apiflag]]" name="categories"></cloud-categories>
 
-          <!-- <cloud-view1 name="view1"></cloud-view1> -->
+          <cloud-spotter    apiflag="[[apiflag]]" name="spotter"></cloud-spotter>
+
         
         </iron-pages>
 
@@ -180,9 +202,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </app-drawer-layout>
 
     <paper-dialog id="help">
-      <h2>Home page</h2>
-      <p>This services of this app are based on the data of <a herf="http://www.wolkenbilder.de">wolkenbilder.de</a>. 
-      s </p>
+      <h2>References</h2>
+      <p>The services of this app are based on contents of <a href="http://www.wolkenbilder.de">wolkenbilder.de</a>. 
+      </p>
       <div class="buttons">
         <paper-button >More Info...</paper-button>
         <paper-button dialog-dismiss>Close</paper-button>
@@ -219,6 +241,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      helpopen : function(e) { //console.log("helpbutton clicked", e);
+        var popup = this.$.help;
+        popup.open();
+      },
+
+      spotopen : function(e) { //console.log("spotbutton clicked", e);
+        this.page = 'spotter';
+        // routeData.page = 'spotter';
+      },
 
       _routePageChanged: function(page) {
         this.page = page || 'spotter';

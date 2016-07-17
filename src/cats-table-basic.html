@@ -54,14 +54,14 @@
       </paper-dialog>
       
 
-      <iron-data-table selection-enabled multi-selection items="[[categories]]">
+      <!-- <iron-data-table selection-enabled multi-selection items="[[categories]]"> -->
       <!-- <iron-data-table selection-enabled items="[[categories]]"> -->
-      <!-- <iron-data-table items="[[categories]]"> -->
+      <iron-data-table items="[[categories]]">
       
-        <data-table-column name="Sz" width="15px">
-          <template>[[item.id]]</template>
+        <data-table-column name="Abbr." width="30px">
+          <template>[[item.abbr]]</template>
         </data-table-column>
-
+        
         <data-table-column name="Samples" width="50px">
           <template>
             <paper-button on-tap="contentToTop">
@@ -75,14 +75,14 @@
           <template>[[item.name]]</template>
         </data-table-column>
         
-        <data-table-column name="Abbr." width="30px">
-          <template>[[item.abbr]]</template>
-        </data-table-column>
-        
         <data-table-column name="Symbol" width="30px">
           <template>
             <img src="[[item.symbol]]">
           </template>
+        </data-table-column>
+
+        <data-table-column name="Sz" width="15px">
+          <template>[[item.id]]</template>
         </data-table-column>
       
       </iron-data-table>
