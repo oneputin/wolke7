@@ -42,8 +42,17 @@
         },
         path:{
           type: String,
-          value: '', //'/catalog/low' 
-          observer : 'updateQuery'
+          value: '' //'/catalog/low' 
+          // observer : 'updateQuery'
+        },
+        child:{
+          type: String,
+          value: 'none', //'/catalog/low' 
+        },
+
+        childValue:{
+          type: String,
+          value: 'none', //'/catalog/low' 
         },
         data: {
           type: Object,
@@ -52,12 +61,32 @@
         }
       },
 
-      updateQuery: function(path, oldpath) { console.log("fbquery, path=", path);
-        var that = this; // ALTMODISCH 
-        firebase.database().ref(path).once('value').then(function(snapshot) { 
-          that.data = snapshot.val();
-          // this.data = snapshot.val(); console.log("fb-queried:", data);
+      observers: [
+        updateQuery(path, child, childValue)
+      ];
+
+      updateQuery: function(path, child, childValue) { console.log("fbquery: ", path, child, childValue);
+        
+        var ref  = firebase.database().ref(path); 
+        
+        var count = this.count;
+        if (!count) count=5;  
+
+        if (child && (child != 'none')) {
+          ref = ref.orderByChild(child);
+          if (childValue && (childValue != 'none')) {
+            ref = ref.equalTo(childValue);
+          } else {
+            ref = ref.limitToFirst(count)
+          }
+        }    
+
+        var that = this; // ALTMODISCH
+        
+        ref.once('value').then(function(snapshot) { 
+            that.data = snapshot.val();
         })
+
       },
 
       __dataChanged: function (newData, oldData) {

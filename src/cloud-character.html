@@ -1,0 +1,144 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="jsondata-fire.html">
+
+<link rel="import" href="slide-show.html">
+
+<dom-module id="cloud-viewer">
+
+  <!-- Defines the element's style and local DOM -->
+  <template>
+  
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      /*.card {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        margin: 24px;
+        border-radius: 5px;
+        background-color: #fff;
+        color: #757575;
+      }*/    
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
+      }
+    </style>
+
+    <paper-tabs selected="{{tabindex}}">
+      <paper-tab>Low </paper-tab>
+      <paper-tab>Middle </paper-tab>
+      <paper-tab>High</paper-tab>
+    </paper-tabs>
+
+    
+    <jsondata-fire url="[[url]]" path="[[path]]" child="[[child]]"data="{{imas}}"></jsondata-fire>
+
+    <p>Short introduction about clouds at different height-levels </p>
+
+    <iron-pages selected="[[tabindex]]">
+    
+      <div class="card">
+        <!-- <h1>Low clouds</h1> -->
+        <slide-show imas="[[imas]]"></slide-show>
+      </div>
+
+      <div class="card">
+        <!-- <h1>Middle clouds</h1> -->
+        <slide-show imas="[[imas]]"></slide-show>
+      </div>
+      
+      <div class="card">
+        <!-- <h1>High clouds</h1> -->
+        <slide-show imas="[[imas]]"></slide-show>
+      </div>
+    </iron-pages>
+
+
+
+  </template>
+
+  <!-- Creates the element's prototype and registers it -->
+  <script>
+
+    Polymer({
+
+      is: 'cloud-viewer',
+      
+      properties: {
+
+        apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
+
+        tabindex : -1,  // = index of query-path-options
+
+        route: Object,
+        
+        url:  {
+          type: String,
+          computed: 'calcUrl(apiflag)'
+        },
+
+        path:  {
+          type: String,
+          computed: 'calcPath(tabindex, apiflag)'
+        },
+
+        child:  {
+          type: String,
+          computed: 'calcChild(tabindex)'
+        },
+
+        data: {
+          type: Object,
+          value: [],
+          observe: 'logData'
+        }
+
+      },
+
+      ready: function(){
+        this.tabindex = 0;
+        this.apiflag = 1;
+      },
+
+      calcUrl: function(apiflag) {
+        var url = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
+        if (apiflag < 1) {
+          url = url + '/cp.json';                         // FB-REST-access
+          // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
+        } else {
+
+        } // console.log("db-url=",url);
+        return url;
+      },
+
+      calcPath: function(index, apiflag) { //console.log("viewcard index=", index);
+        var pathes = {0:"heapy",1:"sheet",2:"fleecy"},
+            path = pathes[index];
+        if (apiflag) {
+          path = 'cp'; // /' + path;
+        }  
+        return path;
+      },
+
+      calcChild: function(index) {
+        var items = {0:"heap",1:"sheet",2:"fleecy"};
+        return items[index];
+      },
+
+      logData: function(data, olddata) { //console.log("image index", data);
+
+      }
+
+    });
+  </script>
+
+</dom-module>
