@@ -1,69 +1,128 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-  <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="jsondata-fire.html">
 
-  <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-  <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
-  <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
-  <link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="slide-show.html">
 
-  <link rel="import" href="circles-page.html">
-  <link rel="import" href="squares-page.html">
+<dom-module id="cloud-howard">
 
-
-  <dom-module id="cloud-viewer">
-
+  <!-- Defines the element's style and local DOM -->
+  <template>
+  
     <style>
       :host {
         display: block;
         padding: 10px;
-        --color-one: var(--paper-cyan-300);
-        --color-two: var(--paper-orange-500);
-
       }
-
-      /*body {
-        overflow: hidden;
-        @apply(--layout-fullbleed);
-      }*/
-      neon-animated-pages {
-        height: 100%;
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
       }
-
     </style>
 
-    <template>
+    <paper-tabs selected="{{tabindex}}">
+      <paper-tab>Heap </paper-tab>
+      <paper-tab>Sheet</paper-tab>
+      <paper-tab>Fleecy</paper-tab>
+    </paper-tabs>
 
-      <neon-animated-pages id="pages" selected="0">
-        <circles-page on-circle-click="_onCircleClick"></circles-page> <!-- circle-click fired in circles -->
-        <squares-page on-click="_onSquaresClick"></squares-page>
-      </neon-animated-pages>
+    <jsondata-fire app="[[fbappkey]]" path="[[path]]" itemname="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></jsondata-fire>
 
-    </template>
+    <p>Short introduction about cloud-character-catagories as defined by Howard.</p>
 
-    <script>
+    <!-- <h1>View [[itemvalue]] clouds</h1> -->
+    <slide-show imas="[[imas]]"></slide-show>
 
-      Polymer({
+  </template>
 
-        is: 'cloud-howard',
-        
-        properties: {
-          start: ""
-        },   
+  <!-- Creates the element's prototype and registers it -->
+  <script>
 
-        ready: function() { console.log("howard is ready!"); 
+    Polymer({
 
-        },
-
-        _onCircleClick : function(event) {
-          this.$.pages.selected = 1;
-        },
-
-        _onSquaresClick : function(event) {
-          this.$.pages.selected = 0;
-        }
-      })
+      is: 'cloud-howard',
       
-    </script>
+      properties: {
+        fbappkey : "",
 
-  </dom-module>
-</html>
+        tabindex : -1,  // = index of query-path-options
+
+        route: Object,
+        
+
+        path:  {
+          type: String,
+          value: ""
+        },
+
+        item: "", 
+        
+        itemvalue: {
+          type: String,
+          computed: 'calcValue(tabindex)'
+        },
+
+        data: {
+          type: Object,
+          value: [] //,
+        },
+
+        imas: {
+          type: Object,
+          computed: 'createSlides(data)'
+        }
+      },
+
+      observers : [
+        // 'calcTarget(fbappkey, path)'
+      ], 
+
+      ready: function(){
+        this.tabindex = 0;    // triggers view of FIRST Query-set
+        this.item  = "type-character";
+        this.itemvalue = 'none';
+        // this.item  = "type-year";
+        // this.itemvalue = 2002;
+      },
+
+      calcTarget: function(fbappkey, path) {
+        // console.log("Start Howard with", fbappkey, path);  
+        // if (!path) path = 'cp';  
+        // this.path = path;
+      },
+
+      calcValue: function(index) {
+        var items = {0:"heap",1:"sheet",2:"fleecy"};
+            value = items[index];
+        return value;
+      },
+
+      createSlides: function(data, olddata) { 
+        if (!data) return;
+        if (!Array.isArray(data)) {
+          data =  Object.keys(data).map(function(k){return data[k]});
+        }  // console.log("Howard: dataArray", data); 
+
+        // Prepare a standard-array (url, item) for "slide-show"
+        var ima , title, nn = data.length, imas = [];
+        data.forEach(function(item,index){  // console.log(index, item);
+          title = "("+ (index+1) +"/" + nn +") " + item["title-main-pict"] ;
+          if (item["title-sub-pict"]) title = title+" / "+item["title-sub-pict"] ;
+          ima = {
+            url: item.url,
+            title: title
+          }
+          imas.push(ima)
+        }); console.log("slideArray-length=", imas.length);
+        return imas; 
+      }
+
+    });
+  </script>
+
+</dom-module>

@@ -17,6 +17,7 @@
 
   <!-- Defines the element's style and local DOM -->
   <template>
+
     <style>
       :host {
         display: block;
@@ -66,63 +67,50 @@
       <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
     </template>
 
-    <p>Short introduction about cloud-classification and clouds on synoptic maps.
+    <p>Short introduction about cloud-classification and cloud-symbols on legacy synoptic maps.
     </p>
 
-    <iron-pages selected="{{tabindex}}">
-      
-      <div class="card">
-          <!-- <p>Placeholder Basic cloud categories</p> -->
-          <cats-table-basic data="[[categories]]"></cats-table-basic>
-      </div>
-      
-      <div class="card">
-          <!-- <p>Placeholder Low clouds categories</p> -->
-          <cats-table-level data="[[categories]]"></cats-table-level>
-      </div>
-      
-      <div class="card">
-        <!-- Placeholder Middle clouds categories -->
-          <cats-table-level data="[[categories]]"></cats-table-level>
-      </div>
-
-      <div class="card">
-        <!-- Placeholder High clouds categories -->
-          <cats-table-level data="[[categories]]"></cats-table-level>
-      </div>
-      
-    </iron-pages>
-
+    <div class="card">
+        <!-- <p>Placeholder Basic cloud categories</p> -->
+        <cats-table-basic data="[[categories]]"></cats-table-basic>
+    </div>
+   
 
   </template>
 
   <!-- Creates the element's prototype and registers it -->
   <script>
+
     Polymer({
 
       is: 'cloud-categories',
 
       properties: {
-        route: Object,
         
         apiflag : -1, 
         tabindex : -1,
 
         url:  {
           type: String,
-          computed: 'calcUrl()'
+          computed: 'calcUrl(apiflag)'
         },
 
         path:  {
           type: String,
           computed: 'calcPath(tabindex, apiflag)'
-        }
+        } 
 
+        // categories: {
+        //   type: Object,
+          
+        //   value: []
+        // }  
       },
 
-      ready: function() {
+      ready: function() { 
         this.tabindex = 0;
-        this.apiflag = 1;  
+        this.apiflag  = 1;  
+        console.log("category-page 'ready'", this.categories);
       },
 
       calcUrl: function() {
@@ -131,11 +119,17 @@
         return url + 'categories.json';
       },
 
-      calcPath: function(index, apiflag) { // console.log("catcard index=", index);
-        var pathes = {0:"basic",1:"low",2:"middle",3:"high"},
-            path = pathes[index] + "/data";
-        if (apiflag) path = 'categories/' + path;
-       return path;
+      calcPath: function(index, apiflag) { 
+        var pathes = {0:"basic",1:"low",2:"middle",3:"high"};
+
+        var path = pathes[index];
+        
+        if (apiflag) path = 'categories/' + path; 
+        
+        path = path+"/data"; 
+
+        console.log("category-query-path, cardindex="+index, path, firebase);
+        return path;
       }
       
     });

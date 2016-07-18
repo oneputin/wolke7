@@ -34,7 +34,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="my-icons.html">
 
-<dom-module id="app-clouds">
+<dom-module id="app-shell">
 
   <template>
 
@@ -135,12 +135,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <firebase-app
-      api-key     = "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk"
-      auth-domain = "wolke7-fd941.firebaseapp.com"
-      database-url= "https://wolke7-fd941.firebaseio.com">
-    </firebase-app>
-
     <app-location route="{{route}}"></app-location>
 
     <app-route
@@ -157,9 +151,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Services</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <!-- <a name="spotter"    href="/spotter">About</a> -->
-          <a name="howard"     href="/howard">Howards matching</a>
-          <a name="viewer"     href="/viewer">Heigth matching</a>
-          <a name="categories" href="/categories">Map coding</a>
+          <a name="howard"     href="/howard">Howard's classes</a>
+          <a name="viewer"     href="/viewer">Cloud heigth levels</a>
+          <a name="categories" href="/categories">Legacy cloud symbols</a>
         </iron-selector>
       </app-drawer>
 
@@ -185,13 +179,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
 
-          <cloud-viewer     apiflag="[[apiflag]]" name="viewer"></cloud-viewer>
+          <cloud-viewer     name="viewer" fbappkey="wolke7" apiflag="[[apiflag]]"></cloud-viewer>
 
-          <cloud-howard     apiflag="[[apiflag]]" name="howard"></cloud-howard>
+          <cloud-howard     name="howard" fbappkey="wolke7" path="cp"></cloud-howard>
 
-          <cloud-categories apiflag="[[apiflag]]" name="categories"></cloud-categories>
+          <cloud-categories name="categories"></cloud-categories>
 
-          <cloud-spotter    apiflag="[[apiflag]]" name="spotter"></cloud-spotter>
+          <cloud-spotter    name="spotter"></cloud-spotter>
 
         
         </iron-pages>
@@ -224,7 +218,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
 
-      is: 'app-clouds',
+      is: 'app-shell',
 
       properties: {
         apiflag : 0,

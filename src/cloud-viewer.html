@@ -18,14 +18,14 @@
         display: block;
         padding: 10px;
       }
-      /*.card {
+      .card {
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
         padding: 16px;
         margin: 24px;
         border-radius: 5px;
         background-color: #fff;
         color: #757575;
-      }*/    
+      }    
       h1 {
         font-size: 22px;
         margin: 16px 0;
@@ -42,33 +42,17 @@
     
     <!-- Alternative query-methods -->
     <template is="dom-if" if="{{apiflag}}">
-      <jsondata-fire url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-fire>
+      <jsondata-fire app="[[fbappkey]]" path="[[path]]" pathmode="true" data="{{data}}"></jsondata-fire>
     </template>
+
     <template is="dom-if" if="{{!apiflag}}">
-      <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>
+      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-ajax>
     </template>
+
 
     <p>Short introduction about clouds at different height-levels </p>
 
-    <iron-pages selected="[[tabindex]]">
-    
-      <div class="card">
-        <!-- <h1>Low clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
-
-      <div class="card">
-        <!-- <h1>Middle clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
-      
-      <div class="card">
-        <!-- <h1>High clouds</h1> -->
-        <slide-show imas="[[imas]]"></slide-show>
-      </div>
-    </iron-pages>
-
-
+    <slide-show imas="[[imas]]"></slide-show>
 
   </template>
 
@@ -81,17 +65,15 @@
       
       properties: {
 
-        apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
+        fbappkey: "",
 
+        apiflag  : -1,  // src-modes : 'file', 'rest', 'api'(to fb-db) 
         tabindex : -1,  // = index of query-path-options
 
-        route: Object,
-        
-        url:  {
+        url:  { // for REST-Queries only 
           type: String,
           computed: 'calcUrl(apiflag)'
         },
-
 
         path:  {
           type: String,
@@ -100,25 +82,29 @@
 
         data: {
           type: Object,
-          value: [],
-          observe: 'logData'
+          value: [] //,
+        },
+        imas: {
+          type: Object,
+          computed: 'createSlides(data)'
         }
-
       },
 
       ready: function(){
         this.tabindex = 0;
         this.apiflag = 1;
+        // console.log("viewer-page 'ready'", this.data);
       },
 
       calcUrl: function(apiflag) {
-        var url = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
-        if (apiflag < 1) {
-          url = url + '/catalog.json';                    // FB-REST-access
-          // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
-        } else {
+        var url ; 
+        // = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
+        // if (apiflag < 1) {
+        //   url = url + '/catalog.json';                    // FB-REST-access
+        //   // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
+        // } else {
 
-        } // console.log("db-url=",url);
+        // } // console.log("db-url=",url);
         return url;
       },
 
@@ -131,8 +117,16 @@
         return path;
       },
 
-      logData: function(data, olddata) { //console.log("image index", data);
-
+      createSlides: function(data, olddata) { // console.log("createSlides", data);
+        var ima ,imas = [];
+        data.forEach(function(item,index){  // console.log(index, item);
+          ima = {
+            url: item.url,
+            title: item.abbr+" ("+item.name+")"
+          }
+          imas.push(ima)
+        }); 
+        return imas; 
       }
 
     });
