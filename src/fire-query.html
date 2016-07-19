@@ -1,0 +1,133 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+
+<script src="app-config.js"></script>
+
+<dom-module id="fire-query">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <!-- <h5>query-log: firebase [[url]]/[[path]]</h5> -->
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'fire-query',
+      properties: {
+
+        app: {  
+          type: String,
+          observer: 'initFB'
+        },
+
+        path:{
+          type: String,
+          observer : 'applyPathQuery'
+        },
+
+        item: {         // query(order)Item
+          type: String  //, value: '_path_' 
+        },
+        
+        itemvalue:{     // queryValue (of orderItem)
+          type: String  
+        },
+
+        operator: {      // queryOperator(relating queryItem and queryValue)
+          type: String
+        },
+
+        // count: 10,       // number of returned objects(records)
+
+        data: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      observers: [
+        'applyItemQuery(path, item, itemvalue)'
+      ],
+
+      ready: function() { // console.log("firequery-ready");
+      },
+
+      initFB: function(name, oldname) { //console.log("initFB:start");
+        if (!fbConfig) return;
+        if (!fbApp) { 
+          var keys = Object.keys(fbConfig);
+          if(!name) name = keys[0]; 
+          var config = fbConfig[name]; //console.log("initFB:config",config);
+          if (!config) return; 
+          // var fba = firebase.initializeApp(config, name); 
+          fbApp = firebase.initializeApp(config); // console.log("fba created:" + fbApp.name, fbApp.options);
+        }  
+      },
+
+      applyPathQuery: function(path, oldpath) { 
+        
+        if (this.item=="_path_") {  console.log("applyPathQuery, path=", path); 
+          if (!fbApp) this.initFB();
+
+          var that = this; // ALTMODISCH (use bind() instead?)
+          firebase.database().ref(path).once('value').then(function(snapshot) { 
+            // console.log("snapped pathmode", snapshot.val());
+            that.data = snapshot.val();
+          })
+        }
+      },
+
+      applyItemQuery: function(path, item, value) { 
+        
+        console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
+
+        if (!fbApp) this.initFB();
+        var that = this; // ALTMODISCH (use bind() instead?)
+
+        // if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
+        //   firebase.database().ref(path).once('value').then(function(snapshot) { 
+        //     that.data = snapshot.val();
+        //   })
+        //   return; 
+        // }
+
+        var ref  = firebase.database().ref(path).orderByChild(item);
+
+        if (value && (value != 'none')) {
+          var op = this.operator;
+          if (!op) {
+            ref = ref.equalTo(value);
+          } else { console.log("use of operator '"+op+"' not implemented!"); 
+
+          } // console.log("applyItemQuery prepared: ", ref); 
+        } 
+
+        // OPTIONAL 
+        var count = this.count; 
+        if (count > 0) { 
+          ref = ref.limitToFirst(count)
+          console.log("apply count to ref: ",count, ref);
+        } 
+
+        // APPLY the query 
+        ref.once('value')
+        .then(function(snapshot) { // console.log("query snapshot", snapshot.val());
+            that.data = snapshot.val();
+        })
+        .catch( function (errorObject) {
+          console.log("The read failed: " + errorObject.code);  
+        });
+      }
+
+    });
+  </script>
+</dom-module>

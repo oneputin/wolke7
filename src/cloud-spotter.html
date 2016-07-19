@@ -23,7 +23,7 @@
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
 <!-- <link rel="import" href="jsondata-ajax.html">
-<link rel="import" href="jsondata-fire.html">
+<link rel="import" href="fire-query.html">
  -->
 <dom-module id="cloud-spotter">
 
@@ -75,7 +75,7 @@
     <!-- Alternative query-methods -->
 
     <!-- <template is="dom-if" if="{{apiflag}}">
-      <jsondata-fire url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-fire>
+      <fire-query url="[[url]]" path="[[path]]" data="{{imas}}"></fire-query>
     </template>
     <template is="dom-if" if="{{!apiflag}}">
       <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>

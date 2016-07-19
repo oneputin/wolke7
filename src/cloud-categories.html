@@ -6,7 +6,7 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="jsondata-ajax.html">
-<link rel="import" href="jsondata-fire.html">
+<link rel="import" href="fire-query.html">
 
 <link rel="import" href="cats-table-basic.html">
 <link rel="import" href="cats-table-level.html">
@@ -61,8 +61,9 @@
     </paper-tabs>
 
     <template is="dom-if" if="{{apiflag}}">
-      <jsondata-fire url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-fire>
+      <fire-query path="[[path]]" item="_path_" data="{{categories}}"></fire-query>
     </template>
+
     <template is="dom-if" if="{{!apiflag}}">
       <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
     </template>
@@ -98,13 +99,12 @@
         path:  {
           type: String,
           computed: 'calcPath(tabindex, apiflag)'
-        } 
+        },
 
-        // categories: {
-        //   type: Object,
-          
-        //   value: []
-        // }  
+        categories: {
+          type: Object,          
+          value: []
+        }  
       },
 
       ready: function() { 
@@ -120,6 +120,7 @@
       },
 
       calcPath: function(index, apiflag) { 
+        
         var pathes = {0:"basic",1:"low",2:"middle",3:"high"};
 
         var path = pathes[index];
@@ -128,7 +129,7 @@
         
         path = path+"/data"; 
 
-        console.log("category-query-path, cardindex="+index, path, firebase);
+        // console.log("category-query-path, cardindex="+index, path, firebase);
         return path;
       }
       

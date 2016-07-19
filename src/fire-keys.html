@@ -1,0 +1,122 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="fire-query.html">
+
+<link rel="import" href="slide-show.html">
+
+<dom-module id="fire-keys">
+
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
+      }
+    </style>
+
+    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
+
+    <p>list of all database items:</p>
+
+    <!-- Selector of available keys -->
+    <!-- <slide-show imas="[[imas]]"></slide-show> -->
+  </template>
+
+  <!-- Creates the element's prototype and registers it -->
+  <script>
+
+    Polymer({
+
+      is: 'fire-keys',
+      
+      properties: {
+
+        fbappkey:  {
+          type: String
+        },
+
+        path:  {
+          type: String
+        },
+
+        item: {
+          type: String,
+          value: "_path_"
+        }, 
+        
+        itemvalue: {
+          type: String
+        },
+
+        filter: {
+          type: String // , value: "type"
+        },
+
+        data: {
+          type: Object,
+          value: []
+        },
+
+        keys: {
+          type: Object,
+          notify: true,
+          computed: 'filterKeys(data)'
+        }, 
+
+        key: {
+          type: String,
+          notify:true
+        }
+
+      },
+
+      observers : [
+        // 'calcTarget(fbappkey, path)'
+      ], 
+
+      ready: function(){
+        // this.item  = "type-year";
+        // this.itemvalue = 2002;
+      },
+
+      filterKeys: function(data, olddata) { 
+        if (!data) return;
+        if (!Array.isArray(data)) {
+          data =  Object.keys(data).map(function(k){return data[k]});
+        } // console.log(data);
+
+        // Collect all keys used in data-objects(items)
+        var keys=[], itemkeys, nn=data.length;
+        data.forEach(function(item,index){  // console.log(index, item);
+          itemkeys = Object.keys(item);
+          keys = keys.concat(itemkeys).filter(function(v,i,self){
+              return self.indexOf(v) === i;
+          });
+        }); console.log("keys(n="+keys.length+")"); // , keys);
+        
+        if (keys.length && this.filter) { 
+          var  fkeys=[], filter = this.filter; console.log("filter", filter);
+          keys.forEach(function(item,index){  
+            var n = item.indexOf(filter); // console.log(index, item, n);
+            if ( n < 0) return; // console.log(index, item, n);
+            fkeys.push(item); 
+          }); // console.log("fkeys(n="+fkeys.length+")", fkeys);
+          keys = fkeys; 
+        } console.log("fkeys(n="+keys.length+")");
+        return keys; 
+      }
+
+    });
+  </script>
+
+</dom-module>

@@ -4,7 +4,7 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="jsondata-ajax.html">
-<link rel="import" href="jsondata-fire.html">
+<link rel="import" href="fire-query.html">
 
 <link rel="import" href="slide-show.html">
 
@@ -42,7 +42,7 @@
     
     <!-- Alternative query-methods -->
     <template is="dom-if" if="{{apiflag}}">
-      <jsondata-fire app="[[fbappkey]]" path="[[path]]" pathmode="true" data="{{data}}"></jsondata-fire>
+      <fire-query app="[[fbappkey]]" path="[[path]]" item="_path_" data="{{data}}"></fire-query>
     </template>
 
     <template is="dom-if" if="{{!apiflag}}">

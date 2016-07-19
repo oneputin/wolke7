@@ -4,9 +4,10 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="jsondata-ajax.html">
-<link rel="import" href="jsondata-fire.html">
+<link rel="import" href="fire-query.html">
 
 <link rel="import" href="slide-show.html">
+<link rel="import" href="fire-keys.html">
 
 <dom-module id="cloud-howard">
 
@@ -31,9 +32,10 @@
       <paper-tab>Fleecy</paper-tab>
     </paper-tabs>
 
-    <jsondata-fire app="[[fbappkey]]" path="[[path]]" itemname="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></jsondata-fire>
+    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
 
     <p>Short introduction about cloud-character-catagories as defined by Howard.</p>
+    <fire-keys path="[[path]]" filter="type" keys="{{items}}"></fire-keys>
 
     <!-- <h1>View [[itemvalue]] clouds</h1> -->
     <slide-show imas="[[imas]]"></slide-show>
@@ -48,16 +50,18 @@
       is: 'cloud-howard',
       
       properties: {
+        
         fbappkey : "",
 
         tabindex : -1,  // = index of query-path-options
 
-        route: Object,
-        
-
         path:  {
-          type: String,
-          value: ""
+          type: String
+        },
+
+        items:{
+          type: Array,
+          observer: 'showItems'
         },
 
         item: "", 
@@ -69,7 +73,7 @@
 
         data: {
           type: Object,
-          value: [] //,
+          value: [] 
         },
 
         imas: {
@@ -84,16 +88,14 @@
 
       ready: function(){
         this.tabindex = 0;    // triggers view of FIRST Query-set
-        this.item  = "type-character";
-        this.itemvalue = 'none';
+        this.item     = "type-character";
+        // this.itemvalue = 'none';
         // this.item  = "type-year";
         // this.itemvalue = 2002;
       },
 
-      calcTarget: function(fbappkey, path) {
-        // console.log("Start Howard with", fbappkey, path);  
-        // if (!path) path = 'cp';  
-        // this.path = path;
+      showItems: function(n,o) {
+        console.log("query items:", n);
       },
 
       calcValue: function(index) {
@@ -109,13 +111,15 @@
         }  // console.log("Howard: dataArray", data); 
 
         // Prepare a standard-array (url, item) for "slide-show"
-        var ima , title, nn = data.length, imas = [];
+        var ima , title, index, nn = data.length, imas = [];
         data.forEach(function(item,index){  // console.log(index, item);
-          title = "("+ (index+1) +"/" + nn +") " + item["title-main-pict"] ;
+          index = "("+ (index+1) +"/" + nn +") ";
+          title = item["title-main-pict"] ;
           if (item["title-sub-pict"]) title = title+" / "+item["title-sub-pict"] ;
           ima = {
             url: item.url,
-            title: title
+            title: title,
+            index: index
           }
           imas.push(ima)
         }); console.log("slideArray-length=", imas.length);

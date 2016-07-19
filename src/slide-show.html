@@ -18,6 +18,16 @@
 		neon-animatable {
 			height: 375px;		
 		}
+		.flex-horizontal {
+		    @apply(--layout-horizontal);
+		}
+		.flex-child {
+		    @apply(--layout-flex);
+		}
+		.small {
+			/*color: red;*/
+			font-size:10px;
+		}
 
 	</style>
 
@@ -41,7 +51,10 @@
 
 				<template is='dom-repeat' items='{{imas}}' as='img'>
 			        <neon-animatable>
-						<p>[[img.title]]</p>
+						<div class="flex-horizontal">
+							<div class="flex-child">[[img.title]]</div>
+							<span class="small">[[img.index]]</span>
+						</div>
 						<img src='{{img.url}}' alt='{{img.alias}}' class='pic'/>
 			        </neon-animatable>
 			    </template>
