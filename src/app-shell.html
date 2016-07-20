@@ -30,9 +30,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
+<!-- <link rel="import" href="../bower_components/paper-styles/color.html"> -->
+<!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
+
+
+
 <!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
 
-<link rel="import" href="my-icons.html">
+<!-- <link rel="import" href="my-icons.html"> -->
+<link rel="import" href="cloud-alias.html">
 
 <dom-module id="app-shell">
 
@@ -134,6 +140,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <cloud-alias alias="{{alias}}"></cloud-alias>  
+
     <app-location route="{{route}}"></app-location>
 
     <app-route
@@ -162,14 +170,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div condensed-title>More about Cloudspotting</div>
-            <paper-icon-button icon="search" on-tap="helpopen"></paper-icon-button>
+            <paper-icon-button icon="info" on-tap="helpopen"></paper-icon-button>
           </app-toolbar>
           <!-- <app-toolbar class="middle"></app-toolbar> -->
           <app-toolbar class="bottom flex">
             <!-- <div main-title>Sky spotter</div> -->
             <!-- <paper-fab class="blue" icon="add" title="add"></paper-fab> -->
             <div class="flexchild" main-title>Water onAir</div>
-            <paper-icon-button icon="add" class="visible" on-tap="spotopen"></paper-icon-button>
+            <paper-icon-button icon="note-add" class="visible" style="color: red;" on-tap="spotopen"></paper-icon-button>
             <!-- <paper-fab mini class="blue" icon="add" title="add"></paper-fab> -->
           </app-toolbar>
         </app-header>
@@ -243,7 +251,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _routePageChanged: function(page) {
-        this.page = page || 'spotter';
+        this.page = page || 'viewer';
       },
 
       _pageChanged: function(page) {
