@@ -83,7 +83,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         top: 0;
         left: 0;
         width: 100%;
-        /*height: 440px;*/
 
         color: #fff;
         background-color: var(--app-primary-color);
@@ -150,10 +149,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer>
         <app-toolbar>Services</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <!-- <a name="spotter"    href="/spotter">About</a> -->
-          <a name="howard"     href="/howard">Howard's classes</a>
-          <a name="viewer"     href="/viewer">Cloud heigth levels</a>
-          <a name="categories" href="/categories">Legacy cloud symbols</a>
+          <a name="viewer"     href="/viewer">Cloud viewer</a>
+          <a name="howard"     href="/howard">Quickviewer(Howard)</a>
+          <a name="categories" href="/categories">Cloud symbols(legacy)</a>
         </iron-selector>
       </app-drawer>
 
@@ -170,7 +168,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar class="bottom flex">
             <!-- <div main-title>Sky spotter</div> -->
             <!-- <paper-fab class="blue" icon="add" title="add"></paper-fab> -->
-            <div class="flexchild" main-title>Cloudlevels</div>
+            <div class="flexchild" main-title>Water onAir</div>
             <paper-icon-button icon="add" class="visible" on-tap="spotopen"></paper-icon-button>
             <!-- <paper-fab mini class="blue" icon="add" title="add"></paper-fab> -->
           </app-toolbar>
@@ -179,14 +177,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
 
-          <cloud-viewer     name="viewer" fbappkey="wolke7" apiflag="[[apiflag]]"></cloud-viewer>
+          <cloud-viewer     name="viewer" fbappkey="wolke7" path="cp" slideindex="{{spotindex}}" ></cloud-viewer>
 
           <cloud-howard     name="howard" fbappkey="wolke7" path="cp"></cloud-howard>
 
           <cloud-categories name="categories"></cloud-categories>
 
-          <cloud-spotter    name="spotter"></cloud-spotter>
-
+          <cloud-spotter    name="spotter" path="cp" spotindex="{{spotindex}}"></cloud-spotter><!-- not routed from list -->
         
         </iron-pages>
 
@@ -227,7 +224,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
-        },
+        }
 
       },
 

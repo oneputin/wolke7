@@ -34,6 +34,11 @@
           observer : 'applyPathQuery'
         },
 
+        key: {
+          type: String,
+          value: ""
+        },  
+
         item: {         // query(order)Item
           type: String  //, value: '_path_' 
         },
@@ -47,15 +52,19 @@
         },
 
         // count: 10,       // number of returned objects(records)
-
         data: {
           type: Object,
           notify: true
+        },
+
+        setdata: {
+          type: Object
         }
       },
 
       observers: [
-        'applyItemQuery(path, item, itemvalue)'
+        'applyItemQuery(path, item, itemvalue)',
+        'applyPathSave(setdata, path, key)'
       ],
 
       ready: function() { // console.log("firequery-ready");
@@ -75,7 +84,7 @@
 
       applyPathQuery: function(path, oldpath) { 
         
-        if (this.item=="_path_") {  console.log("applyPathQuery, path=", path); 
+        if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
           if (!fbApp) this.initFB();
 
           var that = this; // ALTMODISCH (use bind() instead?)
@@ -88,7 +97,7 @@
 
       applyItemQuery: function(path, item, value) { 
         
-        console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
+        // console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
 
         if (!fbApp) this.initFB();
         var that = this; // ALTMODISCH (use bind() instead?)
@@ -102,7 +111,7 @@
 
         var ref  = firebase.database().ref(path).orderByChild(item);
 
-        if (value && (value != 'none')) {
+        if (value && (value != '_all_') ) {
           var op = this.operator;
           if (!op) {
             ref = ref.equalTo(value);
@@ -126,7 +135,27 @@
         .catch( function (errorObject) {
           console.log("The read failed: " + errorObject.code);  
         });
-      }
+      },
+
+      applyPathSave: function(dbData, dbPath, dbKey) { 
+        // save the doc-reference to database
+        if (!dbData || dbData===null) return; 
+        if (!Object.keys(dbData).length) return; // console.log("triggered save at path:", dbPath, dbData);
+        
+        // 1. Get unique key at the target path
+        if (!firebase.database().ref().child(dbPath)) { // target-node must exist to enable key-generator
+          firebase.database().ref(dbPath).set([]);
+        }  
+        if (!dbKey) dbKey = firebase.database().ref().child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
+
+        // 2. 
+        var that = this;
+        firebase.database().ref(dbPath+'/'+dbKey).set(dbData);  
+        firebase.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { 
+            // console.log("data saved with key "+dbKey, snapshot.val());
+            that.lastpath = dbPath+'/'+dbKey;
+          })
+      }  
 
     });
   </script>

@@ -1,0 +1,402 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<!-- <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html"> -->
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+
+<!-- <link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html"> -->
+<!-- <link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html"> -->
+
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="fire-values.html">
+<link rel="import" href="cloud-alias.html">
+
+<dom-module id="cloud-form">  
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+     
+      .flex-horizontal {
+        @apply(--layout-horizontal);
+      }   
+
+      .flex-vertical {
+        @apply(--layout-vertical);
+      }   
+      .flex {
+        @apply(--layout-flex);
+      }
+
+      div.hidden {
+        display: none;
+      }
+      
+      label {
+        font-weight: bold;
+      }
+      paper-fab {
+        margin: 0px 20px;
+      }
+      paper-fab.label {
+        font-size: 20px;
+      }
+      paper-fab.blue {
+        --paper-fab-background: var(--paper-light-blue-500);
+        --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+      }
+
+      h1 {
+        font-size: 22px;
+        margin: 16px 0;
+        color: #212121;
+      }
+      iron-data-table {
+         @apply(--layout-horizontal);
+      }  
+      
+      #more {
+        margin-top: 30px;
+      }    
+
+    </style>
+
+    <div id="metaform" class="flex-vertical hidden">
+
+      <cloud-alias alias="{{alias}}"></cloud-alias>  
+
+      <!-- 3 inputs -->
+      <paper-input value="{{url}}" label="url" id="url" required></paper-input>
+      <paper-input value="{{title-main-pict}}" id="title-main-pict" label="title" required></paper-input>
+
+      <div class="container flex-horizontal">    
+
+        <div>
+          <fire-values path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
+          <paper-dropdown-menu label="Calendar year">
+            <paper-listbox id="type-year" class="dropdown-content" attr-for-selected="value" selected="{{type-year}}">
+              <paper-item value="">  </paper-item>
+              <template is="dom-repeat" items="{{years}}">
+                 <paper-item value="[[item]]">[[item]]</paper-item>
+              </template>        
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <paper-input value="{{title-sub-pict}}" id="title-sub-pict" label="subtitle" class="flex"></paper-input>
+        <paper-toggle-button checked on-change="toggleElements">clouds</paper-toggle-button>
+      </div>
+
+      <!-- 2 radio-groups : howard, level -->
+      <!-- <div>  
+        <div class="container flex-horizontal">  
+
+          <fire-values path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
+
+          <label id="label11">Howard</label>
+          <paper-radio-group id="type-character" aria-labelledby="label11" selected="{{type-character}}" multi="false" allowEmptySelection>
+              <template is="dom-repeat" items="{{classes}}">
+                 <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
+              </template>        
+          </paper-radio-group>
+        </div>  
+        
+        <div>
+          <fire-values path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
+          <label id="label21">Level</label>
+          <paper-radio-group id="type-height" aria-labelledby="label21" selected="{{type-height}}" multi="false" allowEmptySelection>
+              <template is="dom-repeat" items="{{heights}}">
+                 <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
+              </template>        
+          </paper-radio-group>
+        </div>
+      </div> -->
+
+      <div id="more" class="container flex-horizontal">  
+        <div>
+          <fire-values path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
+          <label id="label21"></label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
+          <paper-menu id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
+              <template is="dom-repeat" items="{{heights}}">
+                 <paper-item value="[[item]]">[[getAlias("type-height",item)]]</paper-item>
+              </template>        
+          </paper-menu>
+        </div>
+        <div class="flex"></div>
+        <div>  
+          <fire-values path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
+
+          <label id="label11"></label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
+          <paper-menu id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
+              <template is="dom-repeat" items="{{classes}}">
+                 <paper-item value="[[item]]">[[item]]</paper-item>
+              </template>        
+          </paper-menu>
+        </div>  
+        <div>&nbsp;&nbsp;</div>
+        <div >          
+          <fire-values path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
+          <paper-dropdown-menu label="Main type (genus)">
+            <paper-listbox id="type-genus" class="dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
+              <paper-item value="">  </paper-item>
+              <template is="dom-repeat" items="{{genuss}}">
+                 <paper-item value="[[item]]">{{getAlias("type-genus",item)}}</paper-item>
+              </template>        
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </div>
+
+      <hr>
+      <!--  2 Ctrl buttons -->
+      <div>
+        <!-- <paper-button id="submitbtn" raised on-click="submitterOpen">Submit</paper-button> -->
+        <!-- <paper-button id="submitbtn" raised on-click="submitter.open()">Submit</paper-button> -->
+        <paper-button id="submitbtn" raised on-click="formSubmit">Submit</paper-button>
+        <paper-button raised on-click="resetForm">Reset</paper-button>
+      </div>
+
+      <!-- does not become visible !! -->
+      <paper-dialog id="submitter" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+        <h2>Confirmation</h2>
+        <p>
+          <paper-button  raised on-click="">check data</paper-button>
+          <paper-button  raised on-click="formSubmit">Save data</paper-button>
+        </p>
+      </paper-dialog>
+    
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'cloud-form',
+      
+      properties: {
+
+        alias: {  // object with several alias-name-objects (fi. genus-longnames) 
+          type: Object
+        }, 
+
+        disabled : true,   
+
+        spotindex: {
+          type: String,
+          observer: 'setupForm'
+        },
+
+        path:  {
+          type: String,
+          value: ""
+        },
+
+        rec: {
+          type: Object,
+          value: {
+            "url": "",
+            "title-main-pict":"",
+            "title-sub-pict": "",
+            "type-year":      "",
+            "type-character": "", //cloud specific
+            "type-genus":     "",
+            "type-height":    ""
+          }
+        }, 
+
+        recmore: {
+          type: Object,
+          value: {  
+            "type-character": "", //cloud specific
+            "type-genus":     "",
+            "type-height":    ""
+          }
+        },
+
+        indata: {
+          type: Object,
+          // value: function(){return {};}, 
+          value: {}, 
+          observer: "inCtrl"
+        },  
+        
+        outdata: {
+          type: Object,
+          notify: true
+        }  
+
+      },
+
+      observers: [
+        // "debugRec(rec)" // , rec.url, rec.title-main-pict, rec.title-sub-pict, rec.type-genus)"
+      ],
+
+      getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
+        if (!this.alias) return abbr; 
+        var alias = this.alias[type]; 
+        if (!alias) return abbr; 
+        if (alias[abbr]) { // console.log("alias for type/abbr",type,abbr,alias[abbr]);  
+          return alias[abbr];  
+        }
+        return abbr; 
+      },
+
+      submitterOpen: function() { // starts submit with confirmation 
+        this.$.submitter.open();
+      },
+
+      toggleElements: function(e,b) { // 
+         if (e.target.checked) {
+            this.$.more.classList.remove("hidden");
+         }  else  { // console.log('unchecked');
+            // Hide a part of the form and reset its input-elements to "null"  
+            this.$.more.classList.add("hidden");
+            this.resetForm("recmore");
+         }
+      },
+
+      setupForm: function(key, oldkey) {
+        console.log("setup spotForm for", key); 
+      },
+
+      inCtrl : function(indata,inold) {
+          var ik = Object.keys(indata);
+          if (!ik.length) return; console.log("updating form with input data", indata);
+
+          // 1. 
+          this.resetForm(); 
+
+          // 2. Transfer 
+          for (var prop in this.rec) { // extract required form-data from indata (if existing there)  
+            // if (indata[prop]) this.rec[prop] = indata[prop]; 
+            if (indata[prop]) this[prop] = indata[prop]; 
+          } // console.log("form refreshed from indata", this.rec);
+
+          // 3. Manage disable-status
+          if (indata.disable) {
+            var that = this;
+            indata.disable.forEach(function(item,index){
+              Polymer.dom(that.root).querySelector("#"+item).setAttribute("disabled", true);
+              // this.$.(item).setAttribute("disabled", true);
+            })
+          } 
+          this.indata = {};
+          this.$.metaform.classList.remove("hidden");
+
+      },
+
+      // outCtrl: function(outdata,outold) { console.log("outCtrl", outdata); 
+          // Open/Close the form
+          // if (outdata.flag === "set")  {
+          //   this.$.metaform.classList.add("hidden");
+          // } else {
+          //   this.$.metaform.classList.remove("hidden");
+          // } 
+      // },
+
+      debugRec : function(p1, p2, p3,p4) { console.log(p1,p2,p3,p4); 
+
+      },
+
+      enableSubmit: function(rec, oldrec){  
+        if (rec.url && rec["title-main-pict"]) { console.log("enableSubmit", rec);
+          // this.$.submitbtn.setAttribute("disabled", false);
+        } else if (!title) { console.log("disableSubmit", title);
+          // this.$.submitbtn.setAttribute("disabled", true);
+        } 
+      },
+
+      /*updateMeta: function(flag) { // not required any more
+        var meta = {}; // this.meta;
+        var dict = {
+          "url":              this.imgurl,
+          "title-main-pict":  this.maintitle,
+          "title-sub-pict":   this.subtitle,
+          "type-character":   this.howard,
+          "type-height":      this.level,
+          "type-genus":       this.genus,
+          "type-year":        this.year,
+          "flag":             flag
+        }
+        for(var key in dict) {
+          if (dict[key]) {
+            meta[key] = dict[key];  
+          }
+        }  // console.log("actual meta:", m, dict) ; // howard, level, maintitle, ref);
+        return meta;
+      },*/
+
+      dataObject: function(name, set) {
+        // 
+        var obj;
+        if (name) obj = this[name];
+        else name = "anonym";
+        if (!obj) obj = {};
+   
+        for (var prop in this.rec) { // console.log(prop, this[prop]);
+          if   (set && (obj[prop]!==null)) {  
+            // form-props aus object übernehmen 
+            
+            this[prop] = obj[prop];  
+
+          } else if (this[prop])  { 
+            // object aus form-props aktualisieren
+            
+            obj[prop]  = this[prop];
+          }  
+        } // console.log("dataObject ["+name+"] finished: ", obj)       
+        return obj;
+      } ,
+
+      formSubmit: function(event) {
+
+        var data = this.dataObject(); 
+        this.outdata = data;  console.log("confirm data:",data);
+
+        // Option: HIDE the form 
+        // this.$.metaform.classList.add("hidden");
+          
+      },
+
+      resetForm : function(rec) {  // console.log("before reset-1",rec, this.outdata); // return; 
+
+          if (!rec || rec.target) rec = "rec"; // console.log("before reset-2. ",rec, this[rec]); // return; 
+          
+          var el; 
+          for (var prop in this[rec]) {  // console.log("reset form for:"+prop, "->"+this.rec[prop]);
+            // A. resetting the content of properteis in "FORM"-page 
+            if (this[prop]) this[prop] = ""; 
+            this.rec[prop] = ""; 
+            this.outdata[prop] = ""; 
+            el = Polymer.dom(this.root).querySelector("#"+prop); 
+            // HARD-RESET of iron-selection on elements with item-lists (menus, button-group, ...) 
+            // this to avoid backward binding to FORM-properties !!
+            if (el && el.items) { 
+              el.items.forEach(function(it,i){
+                it.classList.remove("iron-selected"); // *** 
+              }); // console.log("el2:" + prop, el.items);
+            }  
+          } 
+      },
+
+      ready: function() {
+        if (this.indata && this.indata.url) this.rec.url = this.indata.url;
+
+      }
+
+    });
+  </script>
+
+</dom-module>

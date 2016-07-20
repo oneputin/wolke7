@@ -5,7 +5,7 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
-<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="ajax-query.html">
 <link rel="import" href="fire-query.html">
 
 <link rel="import" href="cats-table-basic.html">
@@ -65,7 +65,7 @@
     </template>
 
     <template is="dom-if" if="{{!apiflag}}">
-      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{categories}}"></jsondata-ajax>
+      <ajax-query url="[[url]]" path="[[path]]" data="{{categories}}"></ajax-query>
     </template>
 
     <p>Short introduction about cloud-classification and cloud-symbols on legacy synoptic maps.
@@ -110,7 +110,7 @@
       ready: function() { 
         this.tabindex = 0;
         this.apiflag  = 1;  
-        console.log("category-page 'ready'", this.categories);
+        // console.log("category-page 'ready'", this.categories);
       },
 
       calcUrl: function() {

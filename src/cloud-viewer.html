@@ -1,12 +1,17 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <link rel="import" href="../bower_components/paper-slider/paper-slider.html"> -->
-<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
 <link rel="import" href="fire-query.html">
 
 <link rel="import" href="slide-show.html">
+<link rel="import" href="fire-keys.html">
+<link rel="import" href="fire-values.html">
 
 <dom-module id="cloud-viewer">
 
@@ -18,41 +23,69 @@
         display: block;
         padding: 10px;
       }
-      .card {
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-        padding: 16px;
-        margin: 24px;
-        border-radius: 5px;
-        background-color: #fff;
-        color: #757575;
-      }    
       h1 {
         font-size: 22px;
         margin: 16px 0;
         color: #212121;
       }
+  
+      .flex-horizontal {
+          @apply(--layout-horizontal);
+      }
+      .flex-child {
+          @apply(--layout-flex);
+      }   
+      .main-fab {
+          --paper-fab-background: var(--paper-light-blue-500);
+          position: fixed;    /*relative to screen*/
+          /*position: absolute; relative to parent element*/
+          right: 16px;    
+          /*top: 200px;*/
+          bottom: 50px;
+          z-index: 1000;
+      }   
     </style>
 
-    <paper-tabs selected="{{tabindex}}">
-      <paper-tab>Low </paper-tab>
-      <paper-tab>Middle </paper-tab>
-      <paper-tab>High</paper-tab>
-    </paper-tabs>
+    <div class="flex-horizontal">
+      
+      <cloud-alias alias="{{alias}}"></cloud-alias>  
 
+      <div>
+
+        <fire-keys   path="[[path]]" filter="type" keys="{{queryitems}}"></fire-keys>
+        
+        <paper-dropdown-menu label="Classifications">
+          <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{queryitem}}">
+            <template is="dom-repeat" items="{{queryitems}}">
+               <paper-item value="[[item]]">[[getAlias("type", item)]]</paper-item>
+            </template>        
+          </paper-listbox>
+        </paper-dropdown-menu>
+      
+      </div>
+
+      <div class="flex-child"></div>
+      <div>
+        
+        <fire-values path="[[path]]" item="[[queryitem]]" values="{{queryvalues}}"></fire-values> <!-- filter="type" --> 
+        
+        <paper-dropdown-menu label="Classes">
+          <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{queryvalue}}">
+            <template is="dom-repeat" items="{{queryvalues}}">
+               <paper-item value="[[item]]">[[getAlias(queryitem, item)]]</paper-item>
+            </template>        
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+    </div>
+    <paper-fab icon="add" class="main-fab" level="3" on-tap="spotView"></paper-fab>
+
+    <hr/>
+    <!-- query cloud-images -->
+
+    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>
     
-    <!-- Alternative query-methods -->
-    <template is="dom-if" if="{{apiflag}}">
-      <fire-query app="[[fbappkey]]" path="[[path]]" item="_path_" data="{{data}}"></fire-query>
-    </template>
-
-    <template is="dom-if" if="{{!apiflag}}">
-      <jsondata-ajax url="[[url]]" path="[[path]]" data="{{imas}}"></jsondata-ajax>
-    </template>
-
-
-    <p>Short introduction about clouds at different height-levels </p>
-
-    <slide-show imas="[[imas]]"></slide-show>
+    <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show>
 
   </template>
 
@@ -64,68 +97,122 @@
       is: 'cloud-viewer',
       
       properties: {
+        
+        fbappkey : "",
 
-        fbappkey: "",
-
-        apiflag  : -1,  // src-modes : 'file', 'rest', 'api'(to fb-db) 
-        tabindex : -1,  // = index of query-path-options
-
-        url:  { // for REST-Queries only 
-          type: String,
-          computed: 'calcUrl(apiflag)'
-        },
+        alias: {  // object with several alias-name-objects (fi. genus-longnames) 
+          type: Object
+        }, 
 
         path:  {
-          type: String,
-          computed: 'calcPath(tabindex, apiflag)'
+          type: String
+        },
+
+        queryitems:{
+          type: Array,
+          observer: 'useQueryItems'
+        },
+        queryitem: {
+          type: String
+        },
+
+        queryvalues:{
+          type: Array,
+          observer: 'useQueryValues'
+        },
+        queryvalue: {
+          type: String
+        },
+
+        item: {
+          type: String
+        },
+        itemvalue: {
+          type: String
         },
 
         data: {
           type: Object,
-          value: [] //,
+          value: [] 
         },
+
         imas: {
           type: Object,
           computed: 'createSlides(data)'
+        }, 
+
+        slideindex : {
+          type: Number,
+          value: 0
         }
       },
 
+      observers : [
+        // 'calcTarget(fbappkey, path)'
+      ], 
+
       ready: function(){
-        this.tabindex = 0;
-        this.apiflag = 1;
-        // console.log("viewer-page 'ready'", this.data);
+        this.tabindex = 0;    // triggers view of FIRST Query-set
+        this.item     = "type-character";
+        // this.itemvalue = 'none';
+        // this.item  = "type-year";
+        // this.itemvalue = 2002;
       },
 
-      calcUrl: function(apiflag) {
-        var url ; 
-        // = 'https://wolke7-fd941.firebaseio.com';  // FB-interface
-        // if (apiflag < 1) {
-        //   url = url + '/catalog.json';                    // FB-REST-access
-        //   // url = 'http://iimaps.de/data/clouds/?name=catalog.json'; // RESERVE: phpIF to files
-        // } else {
-
-        // } // console.log("db-url=",url);
-        return url;
+      getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
+        if (!this.alias) return abbr; 
+        var alias = this.alias[type]; 
+        if (!alias) return abbr; 
+        if (alias[abbr]) { // console.log("alias for type/abbr",type,abbr,alias[abbr]);  
+          return alias[abbr];  
+        }
+        return abbr; 
       },
 
-      calcPath: function(index, apiflag) { //console.log("viewcard index=", index);
-        var pathes = {0:"low",1:"middle",2:"high"},
-            path = pathes[index];
-        if (apiflag) {
-          path = 'catalog/' + path;
-        }  
-        return path;
+      spotView: function(){  
+        var i = this.slideindex, 
+            ima = this.imas[i];  
+        var path = this.path+"/"+ima.fbkey; // console.log("spot on element: " + i, path); 
+        firebase.database().ref(path).once('value').then(function(snapshot) { 
+            console.log("spotted obj", snapshot.val());
+            // open editor 
+            // that.data = snapshot.val();
+        })        
+        // this.page = 'spotter';    
       },
 
-      createSlides: function(data, olddata) { // console.log("createSlides", data);
-        var ima ,imas = [];
+      useQueryItems: function(n,o) { //console.log("use query items:", n);
+        this.queryitem = n[0];
+      },
+
+      useQueryValues: function(n,o) { // console.log("use query values:", n);
+        this.queryvalue = n[0];
+      },
+
+      createSlides: function(data, olddata) { 
+        if (!data) return; // console.log("data", data);
+        if (!Array.isArray(data)) {
+          data =  Object.keys(data).map(function(k){
+            var obj = data[k];
+            obj.key = k;
+            return obj;
+          });
+        }  // console.log("Howard: dataArray", data); 
+
+        // Prepare a standard-array (url, item) for "slide-show"
+        var ima , title, index, nn = data.length, imas = [];
         data.forEach(function(item,index){  // console.log(index, item);
+          index = "("+ (index+1) +"/" + nn +") ";
+          title = item["title-main-pict"] ;
+          if (item["title-sub-pict"]) title = title+" / "+item["title-sub-pict"] ;
           ima = {
-            url: item.url,
-            title: item.abbr+" ("+item.name+")"
+            fbkey:  item.key,
+            url:    item.url,
+            title:  title,
+            index:  index
           }
           imas.push(ima)
-        }); 
+        }); // console.log("slideArray-length=", imas.length);
         return imas; 
       }
 

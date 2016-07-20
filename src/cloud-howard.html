@@ -3,11 +3,12 @@
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
-<link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="ajax-query.html">
 <link rel="import" href="fire-query.html">
 
 <link rel="import" href="slide-show.html">
 <link rel="import" href="fire-keys.html">
+<link rel="import" href="fire-values.html">
 
 <dom-module id="cloud-howard">
 
@@ -34,10 +35,8 @@
 
     <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
 
-    <p>Short introduction about cloud-character-catagories as defined by Howard.</p>
-    <fire-keys path="[[path]]" filter="type" keys="{{items}}"></fire-keys>
+    <p>Short introduction about cloud-characters as defined by Howard.</p>
 
-    <!-- <h1>View [[itemvalue]] clouds</h1> -->
     <slide-show imas="[[imas]]"></slide-show>
 
   </template>
@@ -61,7 +60,12 @@
 
         items:{
           type: Array,
-          observer: 'showItems'
+          observer: 'useItems'
+        },
+
+        values:{
+          type: Array,
+          observer: 'useValues'
         },
 
         item: "", 
@@ -94,8 +98,11 @@
         // this.itemvalue = 2002;
       },
 
-      showItems: function(n,o) {
-        console.log("query items:", n);
+      useItems: function(n,o) { console.log("query items:", n);
+
+      },
+      useValues: function(n,o) {  console.log("query values:", n);
+
       },
 
       calcValue: function(index) {
@@ -122,7 +129,7 @@
             index: index
           }
           imas.push(ima)
-        }); console.log("slideArray-length=", imas.length);
+        }); // console.log("slideArray-length=", imas.length);
         return imas; 
       }
 

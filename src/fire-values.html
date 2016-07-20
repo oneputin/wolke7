@@ -8,20 +8,20 @@
 
 <link rel="import" href="slide-show.html">
 
-<dom-module id="fire-keys">
+<dom-module id="fire-values">
 
   <!-- Defines the element's style and local DOM -->
   <template>
     <style>
       :host {
         display: block;
-        /*padding: 10px;*/
       }
     </style>
 
-    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
+    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="_all_" data="{{data}}"></fire-query>
 
-    <!-- <div>database items</div> -->
+    <!-- <div>query values</div> -->
+
   </template>
 
   <!-- Creates the element's prototype and registers it -->
@@ -29,7 +29,7 @@
 
     Polymer({
 
-      is: 'fire-keys',
+      is: 'fire-values',
       
       properties: {
 
@@ -42,14 +42,9 @@
         },
 
         item: {
-          type: String,
-          value: "_path_"
+          type: String
         }, 
         
-        itemvalue: {
-          type: String
-        },
-
         filter: {
           type: String // , value: "type"
         },
@@ -59,16 +54,11 @@
           value: []
         },
 
-        keys: {
+        values: {
           type: Object,
           notify: true,
-          computed: 'filterKeys(data)'
-        }, 
-
-        key: {
-          type: String,
-          notify:true
-        }
+          computed: 'filterValues(data)'
+        } 
 
       },
 
@@ -81,31 +71,32 @@
         // this.itemvalue = 2002;
       },
 
-      filterKeys: function(data, olddata) { 
+      filterValues: function(data, olddata) { 
         if (!data) return;
         if (!Array.isArray(data)) {
           data =  Object.keys(data).map(function(k){return data[k]});
         } // console.log(data);
 
-        // Collect all keys used in data-objects(items)
-        var keys=[], itemkeys, nn=data.length;
+        // Collect all values used in data-objects (z.B. img-metadata)
+        var queryname = this.item, values=[], nn=data.length;
         data.forEach(function(item,index){  // console.log(index, item);
-          itemkeys = Object.keys(item);
-          keys = keys.concat(itemkeys).filter(function(v,i,self){
+          if (!item[queryname] || item[queryname] === null || item[queryname] === undefined) return; 
+          // values.push(item[queryname]);
+          values = values.concat(item[queryname]).filter(function(v,i,self){
               return self.indexOf(v) === i;
           });
-        }); // console.log("keys(n="+keys.length+")"); // , keys);
+        }); // console.log("values(n="+values.length+")", values);
         
-        if (keys.length && this.filter) { 
-          var  fkeys=[], filter = this.filter; // console.log("filter", filter);
-          keys.forEach(function(item,index){  
+        if (values.length && this.filter) { 
+          var  arr=[], filter = this.filter; console.log("filter", filter);
+          values.forEach(function(item,index){  
             var n = item.indexOf(filter); // console.log(index, item, n);
             if ( n < 0) return; // console.log(index, item, n);
-            fkeys.push(item); 
+            arr.push(item); 
           }); // console.log("fkeys(n="+fkeys.length+")", fkeys);
-          keys = fkeys; 
-        } // console.log("fkeys(n="+keys.length+")");
-        return keys; 
+          values = arr; 
+        } // console.log("values(n="+values.length+")");
+        return values; 
       }
 
     });

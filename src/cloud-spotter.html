@@ -1,30 +1,22 @@
-<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
-<script>
-
-  // Initialize Firebase
-  var config = {
-    apiKey:        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
-    authDomain:    "wolke7-fd941.firebaseapp.com",
-    databaseURL:   "https://wolke7-fd941.firebaseio.com",
-    storageBucket: "wolke7-fd941.appspot.com",
-  };
-  firebase.initializeApp(config);
-</script>
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
 <link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
 <!-- <link rel="import" href="../bower_components/paper-menu/paper-menu.html"> -->
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
-<!-- <link rel="import" href="jsondata-ajax.html">
+<link rel="import" href="fire-store.html">
+<link rel="import" href="cloud-form.html">
 <link rel="import" href="fire-query.html">
- -->
+
 <dom-module id="cloud-spotter">
 
   <!-- Defines the element's style and local DOM -->
@@ -35,14 +27,24 @@
         padding: 10px;
       }
      
-      .flex {
+      .viewsize {
+        width:500px; 
+        height:500px;
+      }
+      .ctrlsize {
+        width:400px; 
+        height:400px;
+      }
+      .flex-horizontal {
         @apply(--layout-horizontal);
       }   
 
-      .flexvert {
+      .flex-vertical {
         @apply(--layout-vertical);
       }   
-
+      .flex {
+        @apply(--layout-flex);
+      }
       div.hidden {
         display: none;
       }
@@ -72,274 +74,124 @@
 
     </style>
     
-    <!-- Alternative query-methods -->
-
-    <!-- <template is="dom-if" if="{{apiflag}}">
-      <fire-query url="[[url]]" path="[[path]]" data="{{imas}}"></fire-query>
-    </template>
-    <template is="dom-if" if="{{!apiflag}}">
-      <jsondata-ajax url="[[url]]"    path="[[path]]" data="{{imas}}"></jsondata-ajax>
-    </template> -->
-
-      <div class="container flex"> 
-        <div>Load the cloud-image you want to analyse. 
-        You may classify and comment it after it is activated.</div>
+      <div class="container flex-horizontal"> 
+        <div>Load the cloud-image you want to analyse.</div> 
+        <div>You may classify and comment it after it is activated.</div>
       </div>  
-  
       <hr>
-
-      <div class="container flex"> 
-        
+      <div class="container flex-horizontal"> 
         <input id="file" type="file" name="file" on-change="handleFileSelect" disabled="[[disabled]]"/>
-    
-        <a href="[[serverurl]" target="_blank">
-          <iron-image 
-            style="width:200px; height:200px;" 
-            sizing="contain"
-            src="[[serverimg]]">          
-          </iron-image>
-        </a>  
+        <iron-image 
+          class="ctrlsize"
+          sizing="contain"
+          src="[[imgurl]]"          
+          on-tap="downloadImg">
+        </iron-image>
       </div>  
+      
+      <fire-store path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
 
-      <!-- <form id="metaform" is="iron-form" method="get" action="processform"> -->
-      <!-- <form id="metaform" is="iron-form" method="get" action="/"> -->
-      <div id="metaform" class="flexvert hidden">
-        <!-- <div>URL: [[serverurl]]</div> -->
-        <paper-input value="{{serverurl}}" label="url" id="serverurl" required></paper-input>
-        <paper-input value="{{maintitle}}" label="title" required></paper-input>
-        <paper-input value="{{subtitle}}"  label="subtitleName"></paper-input>
-        <!-- <paper-checkbox name="ref" checked="{{ref}}" required>Use in reference sets</paper-checkbox><br> -->
-        <paper-dropdown-menu label="Calendar year">
-          <paper-listbox class="dropdown-content" attr-for-selected="year" selected="{{year}}">
-            <paper-item year="2002">2002</paper-item>
-            <paper-item year="2003">2003</paper-item>
-            <paper-item year="2004">2004</paper-item>
-            <paper-item year="2005">2005</paper-item>
-            <paper-item year="2006">2006</paper-item>
-            <paper-item year="2007">2007</paper-item>
-            <paper-item year="2008">2008</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        
-        <div>  
-          <label id="label11">Howard</label>
-          <paper-radio-group aria-labelledby="label11" required attrForSelected="name" selected="{{howard}}">
-            <paper-radio-button name="heap">Heapy</paper-radio-button>
-            <paper-radio-button name="sheet">Sheety</paper-radio-button>
-            <paper-radio-button name="fleece">Fleecy</paper-radio-button>
-          </paper-radio-group>
-        </div>  
-        
-        <div>
-          <label id="label21">Level</label>
-          <paper-radio-group aria-labelledby="label21" attrForSelected="name" selected="{{level}}">
-            <paper-radio-button name="low">low</paper-radio-button>
-            <paper-radio-button name="middle">middle</paper-radio-button>
-            <paper-radio-button name="high">high</paper-radio-button>
-          </paper-radio-group>
-        </div>
-          
-        <paper-dropdown-menu label="Main types (genus)" name="genus" required >
-          <paper-listbox id="catmenu" class="dropdown-content" attr-for-selected="abbr" selected="{{genus}}">
-            <paper-item abbr="ci">Cirrus</paper-item>
-            <paper-item abbr="cc">Cirrocumulus</paper-item>
-            <paper-item abbr="cs">Cirrostratus</paper-item>
-            <paper-item abbr="ac">Altocumulus</paper-item>
-            <paper-item abbr="as">Altostratus</paper-item>
-            <paper-item abbr="ns">Nimbostratus</paper-item>
-            <paper-item abbr="cu">Cumulus</paper-item>
-            <paper-item abbr="cb">Cumulonimbus</paper-item>
-            <paper-item abbr="sc">Stratocumulus</paper-item>
-            <paper-item abbr="st">Stratus</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
+      <cloud-form path="[[path]]" file="[[file]]" indata="[[storagedata]]" outdata="{{clouddata}}"></cloud-form>
 
-        <div>
-          <paper-button id="submitbtn" raised on-click="dbDataSubmit">Submit</paper-button>
-          <paper-button raised on-click="formReset">Reset</paper-button>
-        </div>
-        <div class="output"></div>
-      </div>
+      <fire-query path="[[path]]" setdata="[[clouddata]]" ></fire-query> <!-- key="[[cloudkey]]" -->
 
   </template>
 
   <!-- Creates the element's prototype and registers it -->
   <script>
 
-    var auth       = firebase.auth(),  
-        storageRef = firebase.storage().ref(),
-        dataRef    = firebase.database().ref();  // console.log("auth,store,db:", auth, storageRef, dataRef);
-    var dbPath     = "cp"; // "clouds";
-
-    Polymer({
+      Polymer({
 
       is: 'cloud-spotter',
       
       properties: {
 
-        uploadpath : "",  
-
-        disabled : true,   
-
-        serverurl: {
+        path: {
           type: String,
-          observer: "dbDataAction"
         },
-        serverimg : "",
+          
+        disabled : false,   
 
-        apiflag : -1,      // src-modes : 'file', 'rest', 'api'(to fb-db) 
+        queryurl: {     // triggers query 
+          type: String,
+          notify: true
+        },
 
-        tabindex : -1,  // = index of query-path-options
-
-        route: Object,
-        
-        // url:  {
-        //   type: String,
-        //   value: "abcde"
-        // },
         path:  {
-          type: String,
-          value: ""
+          type: String
         },
-
-        maintitle: {
-          type: String,
-          observer: "enableSubmit"
-        },
-        subtitle: "",
-        year: "",
-        ref: false,
-        howard: "",
-        level: "",
-        genus: "",
-
-        meta: {
+        
+        storagemeta: {
           type: Object,
-          value : {}
-        }  
-      },
+          value : {},
+          observer: "storageResponse"
+        },
 
-      // observers: [
-      //   'updateMeta(url, maintitle)'
-      // ],
+        formindata: {
+          type: Object,
+          value : {},
+          notify: true  
+        },
+
+        clouddata: {
+          type: Object,
+          value : {},
+          notify: true  
+        },
+
+        storageurl : {   // updates the ctrl-image if changing  
+          type: String, 
+          notify: true
+        }, 
+
+        imgurl : {   // updates the ctrl-image if changing  
+          type: String, 
+          notify: true
+        }
+
+      },
 
       // event-action of file-button 
       handleFileSelect: function(evt) { // console.log("file selected: ", this); 
-        var that = this;
-
         evt.stopPropagation();
         evt.preventDefault();
 
-        var file = evt.target.files[0]; // console.log("file=", file);
-        var filetype = file.type;
+        var file  = evt.target.files[0]; // console.log("file=", file);
+        this.file = file; // file becomes a property of spotter
+      },  
+ 
+      storageResponse : function(meta, oldmeta) { 
+        var filetype = meta.contentType,
+            urls     = meta.downloadURLs; 
+        if (!urls || !urls.length) return;  // console.log("storageResponse", meta);
 
-        if (filetype.indexOf("image") > -1) {
-          // uploadpath = "images"
-        }
-        var metadata = {
-          'contentType': filetype, 
-          'customMetadata': {
-            'srcApp': 'fb-quickstart',
-            'author': 'wolf'
-          }
-        };
-
-        // Push to child path.
-        // var uploadTask = storageRef.child(uploadpath +'/'+ file.name).put(file, metadata);
-        var uploadRef  = firebase.storage().ref(this.uploadpath);         // console.log("uploadpath", this.uploadpath); return;
-        var uploadTask = uploadRef.child(file.name).put(file, metadata);  // 
-
-        // Listen for errors and completion of the upload.
-        // [START oncomplete]
-        uploadTask.on('state_changed', null, function(error) {
-          // [START onfailure]
-          that.serverimg = "" ; // hide the last img !!
-          console.error('Upload failed:', error);
-          // [END onfailure]
-        }, function() {
-          
-          that.meta = uploadTask.snapshot.metadata;   // console.log("Metadata:",  this.meta);
-          var bytes = uploadTask.snapshot.totalBytes; // console.log('UploadSize', bytes, 'bytes'); 
-
-          // Trigger dbDataAction
-          that.serverurl = that.meta.downloadURLs[0];  
-
-          if (filetype.indexOf("image") > -1) {
-            that.serverimg = that.serverurl ;
-          } else {
-            that.serverimg = "../images/app-icon-144.png" ; // default placeholder
-          } // console.log('CheckImage-Url:', that.serverimg);
-
-        });
-      },
-
-      dbDataAction: function(newurl, oldurl) { 
-          if (!newurl) return ;   
-          this.$.metaform.classList.remove("hidden");
-          this.$.serverurl.setAttribute("disabled", true);
-      },
-
-      enableSubmit: function(title, oldtitle){ 
-        if (title&&!oldtitle) { console.log("enableSubmit", title);
-          // this.$.submitbtn.setAttribute("disabled", false);
-        } else if (!title) { console.log("disableSubmit", title);
-          // this.$.submitbtn.setAttribute("disabled", true);
+        this.storageurl = urls[0]; 
+        if (filetype.indexOf("image") > -1) { 
+          this.imgurl = urls[0] ;  // console.log("apply downloadurl:", filetype, urls[0]); // return;
+        } else {
+          this.imgurl = "../images/app-icon-144.png" ; // default placeholder
         } 
-      },
 
-      updateMeta: function() {
-        var meta = {}; // this.meta;
-        var dict = {
-          "url":              this.serverurl,
-          "title-main-pict":  this.maintitle,
-          "type-character":   this.howard,
-          "type-height":      this.level,
-          "title-sub-pict":   this.subtitle,
-          "type-genus":       this.genus
-        }
-        for(var key in dict) {
-          if (dict[key]) {
-            meta[key] = dict[key];  
-          }
-        }  // console.log("actual meta:", m, dict) ; // howard, level, maintitle, ref);
-        return meta;
-      },
+        // prepare the formular-input extract some cloud-data from storagemeta
+        if (this.storageurl) {
+          var clmeta = {"url": this.storageurl};
+          clmeta["title-main-pict"] = meta.name+"/"+meta.updated+"/"+meta.size;
+          clmeta["disable"] = ["url"]; 
+          // clmeta["type"] = meta.contentType;
+          // clmeta["date"] = meta.updated;
+          // clmeta["size"] = meta.size;
 
-      dbDataSubmit: function(event) {
-
-        var dbData = this.updateMeta();  
-
-        // save the doc-reference to database 
-        // 1. Get new key at the target path
-        if (!dataRef.child(dbPath)) { // target-node must exist to enable key-generator
-          firebase.database().ref(dbPath).set([]);
+          this.storagedata = clmeta;   // ****  
         }  
-        var dbKey  = dataRef.child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
-
-        firebase.database().ref(dbPath+'/'+dbKey).set(dbData); 
-
-        this.$.metaform.classList.add("hidden");
       },
-      
-      formReset : function(event) { console.log("reset");
-        // var form = Polymer.dom(event).localTarget.parentElement;
-        // form.reset();
+
+      downloadImg() {
+        console.log("Want to download", this, this.storageurl +" ?"); 
       },
 
       ready: function() {
 
-        this.tabindex = 0;
-        this.apiflag  = 0;
-        this.uploadpath = dbPath;
-
-        // Sign the user in anonymously since accessing Storage requires the user to be authorized.
-        auth.signInAnonymously().then(function(user) {
-          console.log('Anonymous Sign In Success', user);   
-          this.disabled = false; // enable uploadbutton after signIn
-        }).catch(function(error) {
-          console.error('Anonymous Sign In Error', error);
-        });
-
+        this.uploadpath = this.path;
       }
 
     });

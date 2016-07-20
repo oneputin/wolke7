@@ -1,0 +1,20 @@
+{
+	"type-genus":{
+		"ci":"Cirrus",
+		"cc":"Cirrocumulus",
+		"cs":"Cirrostratus",
+		"ac":"Altocumulus",
+		"as":"Altostratus",
+		"ns":"Nimbostratus",
+		"sc":"Stratucumulus",
+		"st":"Stratus",
+		"cu":"Cumulus",
+		"cb":"Cumulonimbus"
+	},
+	"type":{
+		"type-genus":"Basis Ordnung",
+		"type-year":"Kalenderjahr",
+		"type-character":"Howard-class",
+		"type-height":"Höhenstufen"
+	}
+}

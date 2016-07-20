@@ -45,7 +45,7 @@
 	    	<!-- class="flex"  -->
 		    <neon-animated-pages 
 		    	id="pagesId" 
-		    	selected="[[selected]]" 
+		    	selected="{{selected}}" 
 		    	entry-animation="[[entryAnimation]]" 
 		    	exit-animation="[[exitAnimation]]">
 
@@ -55,7 +55,7 @@
 							<div class="flex-child">[[img.title]]</div>
 							<span class="small">[[img.index]]</span>
 						</div>
-						<img src='{{img.url}}' alt='{{img.alias}}' class='pic'/>
+						<img src='{{img.url}}' alt='{{img.alias}}' class='pic' on-tap="tapAction"/>
 			        </neon-animatable>
 			    </template>
 
@@ -74,33 +74,31 @@
 
 				selected:{
 					type: Number,
-					value: 0
+					value: 0,
+					notify: true
 				},
 
 				imas : {
 					type: Array,
 					value : [ 
 					],
-					observer: 'logImas'
+					observer: 'initSlider'
 				},
-				// subtitle: {
-				// 	type: String,
-				// 	computed: 'buildsubtitle'
-				// },
 
 				entryAnimation: '',
 				exitAnimation: '',
-
 			},
 			
 			listeners:{	 
 				'pagesId.track': 'handleTrack'
 			},
 
-			// buildsubtitle : function() {
-			// },
+			tapAction: function(e, t) { console.log("image tap action", this.selected);
+		        // this.page = 'spotter';
+			}, 	
 
-			logImas: function(imas, oldimas) {  //console.log("log imas:", imas, oldimas);
+			initSlider: function(imas, oldimas) {  // console.log("init slider:", imas);
+				this.$.pagesId.selectIndex(0); // this.selected = 0;
 			},
 
 			handleTrack: function(e) {  
