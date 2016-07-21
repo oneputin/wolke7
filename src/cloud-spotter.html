@@ -1,20 +1,18 @@
 <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
-<!-- <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html"> -->
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<!-- <link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html"> -->
-<!-- <link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html"> -->
-<!-- <link rel="import" href="../bower_components/paper-menu/paper-menu.html"> -->
+
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-
 <link rel="import" href="../bower_components/paper-styles/color.html">
+
 <!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
 <link rel="import" href="my-icons.html">
 
@@ -37,13 +35,17 @@
         height:500px;
       }
       .ctrlsize {
-        width:400px; 
-        height:400px;
+        width:64px; 
+        height:64px;
       }
       .flex-horizontal {
         @apply(--layout-horizontal);
       }   
-
+      .flex-end-align {
+          @apply(--layout-horizontal);
+          @apply(--layout-end);
+          height: 80px;
+        }
       .flex-vertical {
         @apply(--layout-vertical);
       }   
@@ -76,29 +78,37 @@
       iron-data-table {
          @apply(--layout-horizontal);
       }      
-
+      paper-spinner-lite.thick {
+        --paper-spinner-stroke-width: 6px;
+        margin-right: 10px;
+      }
+      .weak{
+        color: grey;
+      }
+      .mm {
+        margin:10px;
+      }
     </style>
     
       <div class="container flex-horizontal"> 
         <div>Load the cloud-image you want to analyse.</div> 
-        <div>You may classify and comment it after it is activated.</div>
+        <div>Subsequently you may classify and comment it in the form.</div>
       </div>  
       <hr>
-      <div class="container flex-horizontal"> 
-        <input id="file" type="file" name="file" on-change="handleFileSelect" disabled="[[disabled]]"/>
-        <iron-image 
-          class="ctrlsize"
-          sizing="contain"
-          src="[[imgurl]]"          
-          on-tap="downloadImg">
-        </iron-image>
+      <div class="container flex-end-align"> 
+        <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
+        <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
+        <div class="weak mm">[[status]]</div>
       </div>  
       
-      <fire-store path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
+      <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
 
-      <cloud-form path="[[path]]" file="[[file]]" indata="[[storagedata]]" outdata="{{clouddata}}"></cloud-form>
+      <!-- B. storagemeta is being translated into format of firedbspot 
+          to refresh form  -->
 
-      <fire-query path="[[path]]" setdata="[[clouddata]]" ></fire-query> <!-- key="[[cloudkey]]" -->
+      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[firedbspot]]" outdata="{{clouddata}}" ></cloud-form>
+
+      <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" ></fire-query> <!-- key="[[cloudkey]]" -->
 
   </template>
 
@@ -111,10 +121,14 @@
       
       properties: {
 
+        fbapp: {
+          type: String,
+        },
+
         path: {
           type: String,
         },
-          
+        
         disabled : false,   
 
         queryurl: {     // triggers query 
@@ -130,6 +144,10 @@
           type: Object,
           value : {},
           observer: "storageResponse"
+        },
+
+        firedbspot: {
+          type: Object
         },
 
         formindata: {
@@ -152,20 +170,57 @@
         imgurl : {   // updates the ctrl-image if changing  
           type: String, 
           notify: true
-        }
+        } ,
 
+        file: {
+          type: Object,
+          notify: true  
+        }
+      },
+
+      observers: [
+        '_spotChanged(firedbspot.url)'
+        // '_fileUploaded(file.name, )'
+      ],
+
+      ready: function(){
+        // this.fbapp="wolke7";
+      },
+
+      _spotChanged: function(url) {
+        // console.log("spot-url (spotter):", url)
       },
 
       // event-action of file-button 
-      handleFileSelect: function(evt) { // console.log("file selected: ", this); 
+      handleFileSelect: function(evt) { 
         evt.stopPropagation();
         evt.preventDefault();
-
-        var file  = evt.target.files[0]; // console.log("file=", file);
-        this.file = file; // file becomes a property of spotter
+        var el = evt.target,
+            files = el.files;
+        if (!files) { 
+          el = Polymer.dom(el.root).querySelector('input');
+          files = el.files; // console.log("Polymer-input", files); // return; 
+        }
+        if (files && files.length) {
+          var file  = files[0]; // console.log("input-file-check:", file);
+          this.file = file; // the file-object becomes a property of spotter
+          this.status = this.fileStatus(file); console.log("finished fileselect: ", this.status); 
+        }
+        el = this.$.spinner;
+        el.active = true;
       },  
- 
+
+      fileStatus: function(file) {
+        var d = file.lastModifiedDate;
+            status = d.getFullYear()+"/"+d.getMonth()+"/"+d.getDate();
+        return status;
+      },  
+
       storageResponse : function(meta, oldmeta) { 
+        // A. 
+        var el = this.$.spinner;
+        el.active = false;
+
         var filetype = meta.contentType,
             urls     = meta.downloadURLs; 
         if (!urls || !urls.length) return;  // console.log("storageResponse", meta);
@@ -177,7 +232,7 @@
           this.imgurl = "../images/app-icon-144.png" ; // default placeholder
         } 
 
-        // prepare the formular-input extract some cloud-data from storagemeta
+        // B. prepare the formular-input extracting some firedb-data from storagemeta
         if (this.storageurl) {
           var clmeta = {"url": this.storageurl};
           clmeta["title-main-pict"] = meta.name+"/"+meta.updated+"/"+meta.size;
@@ -186,8 +241,12 @@
           // clmeta["date"] = meta.updated;
           // clmeta["size"] = meta.size;
 
-          this.storagedata = clmeta;   // ****  
+          this.firedbspot = clmeta;   // ****  
         }  
+      },
+
+      debugSpot: function(spot, oldspot) { console.log("debugSpot", spot)
+
       },
 
       downloadImg() {

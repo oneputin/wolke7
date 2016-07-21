@@ -19,7 +19,7 @@
       }
     </style>
 
-    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
+    <fire-query app="[[app]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
 
     <!-- <div>database items</div> -->
   </template>
@@ -33,7 +33,7 @@
       
       properties: {
 
-        fbappkey:  {
+        app:  {
           type: String
         },
 
@@ -73,7 +73,7 @@
       },
 
       observers : [
-        // 'calcTarget(fbappkey, path)'
+        // 'calcTarget(app, path)'
       ], 
 
       ready: function(){

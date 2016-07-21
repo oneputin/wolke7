@@ -1,19 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-
 <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
-<script src="app-config.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  // var config = {
-  //   apiKey:        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
-  //   authDomain:    "wolke7-fd941.firebaseapp.com",
-  //   databaseURL:   "https://wolke7-fd941.firebaseio.com",
-  //   storageBucket: "wolke7-fd941.appspot.com",
-  // };
-  // firebase.initializeApp(config);
-</script>
+<link rel="import" href="fire-app.html">
 
 <dom-module id="fire-store">
 
@@ -25,36 +13,45 @@
       }
     </style>
 
-    <!-- <h5>query-log: firebase [[url]]/[[path]]</h5> -->
+    <fire-app app="[[app]]" fb="{{fb}}" authmode="{{authmode}}" user="{{user}}"></fire-app>
 
   </template>
 
   <script>
-
-    // var auth       = firebase.auth(),  
-    //     storageRef = firebase.storage().ref(),
-    //     dataRef    = firebase.database().ref();  // console.log("auth,store,db:", auth, storageRef, dataRef);
-    // var dbPath     = "cp"; // "clouds";
 
     Polymer({
       is: 'fire-store',
       properties: {
 
         app: {  
-          type: String,
-          observer: 'initFB'
+          type: String
+        },
+
+        fb: {
+          type: Object, 
+          notify: true
+          // observer: 'getAuth'
+        },
+
+        authmode:{
+          type: String 
+        },
+
+        user: {     // authorized user required for fb storage actions 
+          type: Object ,
+          observer: 'objectLog'
         },
 
         path:{
-          type: String //,bserver : 'applyPathQuery'
+          type: String 
         },
 
         srcfile: {     // triggers upload
-          type: Object, 
-          observer: 'applyStorageUpload'
+          type: Object,
+          observe: 'objectLog' 
         },
 
-        srcmeta: {     // triggers upload
+        srcmeta: {     // optional addon to upload
           type: Object 
         },
 
@@ -69,45 +66,29 @@
       },
 
       observers: [
-        'applyStorageQuery(path, queryurl)'// , localurl)'
+        'applyStorageQuery(fb, path, queryurl)', //, user)',
+        'applyStorageUpload(fb, srcfile, path)'  //, user)'
       ],
 
       ready: function() { // console.log("firequery-ready");
-        this.initFB(); 
-    
-        var auth = firebase.auth();
-        // Sign the user in anonymously since accessing Storage requires the user to be authorized.
-        auth.signInAnonymously().then(function(user) {
-          console.log('Anonymous Sign In Success', user);   
-          this.disabled = false; // enable uploadbutton after signIn
-        }).catch(function(error) {
-          console.error('Anonymous Sign In Error', error);
-        });
+        if (!this.authmode ||(this.authmode==undefined)) { 
+          this.authmode="anonym"; 
+        }
       },
+      objectLog: function(obj, objold){ console.log(obj, this);
 
-      initFB: function(name, oldname) { //console.log("initFB:start");
-        if (!fbConfig) return;
-        if (!fbApp) { 
-          var keys = Object.keys(fbConfig);
-          if(!name) name = keys[0]; 
-          var config = fbConfig[name]; //console.log("initFB:config",config);
-          if (!config) return; 
-          // var fba = firebase.initializeApp(config, name); 
-          fbApp = firebase.initializeApp(config); // console.log("fba created:" + fbApp.name, fbApp.options);
-        }  
       },
-
-      applyStorageUpload: function(file) {
-        if (!file) return; 
+      applyStorageUpload: function(fb, file, uploadpath, user) { console.log("start upload", user, uploadpath, fb, file);
         
         var metadata = { // storage-object meta !!
           'contentType': file.type
         }   
-        if (this.srcmeta) {
+        if (this.srcmeta) { // created independently
           metadata["customMetadata"] = this.srcmeta;
-        } console.log("uploadmeta of " + file.name, metadata);
+        } console.log("uploadmeta of [" + file.name+"]", metadata);
 
-        var uploadRef  = firebase.storage().ref(this.uploadpath);        
+        var uploadRef  = fb.storage().ref(uploadpath);        
+       
         var uploadTask = uploadRef.child(file.name).put(file, metadata);  // 
 
         // Listen for errors and completion of the upload.
@@ -128,60 +109,19 @@
         });
       },
 
-      applyStorageQuery: function(path, queryurl) {  console.log("start query"); return; 
+      applyStorageQuery: function(fb, path, queryurl) {  console.log("BREAK at start storage query"); return; 
         
         if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
-          if (!fbApp) this.initFB();
+          if (!cloudFB) this.initFB();
 
           var that = this; // ALTMODISCH (use bind() instead?)
-          firebase.database().ref(path).once('value').then(function(snapshot) { 
+          
+          fb.database().ref(path).once('value').then(function(snapshot) { 
             // console.log("snapped pathmode", snapshot.val());
             that.data = snapshot.val();
           })
         }
-      },
-
-      // applyItemQuery: function(path, item, value) { 
-        
-      //   // console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
-
-      //   if (!fbApp) this.initFB();
-      //   var that = this; // ALTMODISCH (use bind() instead?)
-
-      //   // if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
-      //   //   firebase.database().ref(path).once('value').then(function(snapshot) { 
-      //   //     that.data = snapshot.val();
-      //   //   })
-      //   //   return; 
-      //   // }
-
-      //   var ref  = firebase.database().ref(path).orderByChild(item);
-
-      //   if (value && (value != '_all_') ) {
-      //     var op = this.operator;
-      //     if (!op) {
-      //       ref = ref.equalTo(value);
-      //     } else { console.log("use of operator '"+op+"' not implemented!"); 
-
-      //     } // console.log("applyItemQuery prepared: ", ref); 
-      //   } 
-
-      //   // OPTIONAL 
-      //   var count = this.count; 
-      //   if (count > 0) { 
-      //     ref = ref.limitToFirst(count)
-      //     console.log("apply count to ref: ",count, ref);
-      //   } 
-
-      //   // APPLY the query 
-      //   ref.once('value')
-      //   .then(function(snapshot) { // console.log("query snapshot", snapshot.val());
-      //       that.data = snapshot.val();
-      //   })
-      //   .catch( function (errorObject) {
-      //     console.log("The read failed: " + errorObject.code);  
-      //   });
-      // }
+      }
 
     });
   </script>

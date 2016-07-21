@@ -33,7 +33,7 @@
       <paper-tab>Fleecy</paper-tab>
     </paper-tabs>
 
-    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
+    <fire-query app="[[fbapp]]" path="[[path]]" item="[[item]]" itemvalue="[[itemvalue]]" data="{{data}}"></fire-query>
 
     <p>Short introduction about cloud-characters as defined by Howard.</p>
 
@@ -50,7 +50,7 @@
       
       properties: {
         
-        fbappkey : "",
+        fbapp : "",
 
         tabindex : -1,  // = index of query-path-options
 
@@ -87,7 +87,7 @@
       },
 
       observers : [
-        // 'calcTarget(fbappkey, path)'
+        // 'calcTarget(fbapp, path)'
       ], 
 
       ready: function(){

@@ -29,7 +29,6 @@
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.1.4",
     "iron-icons": "PolymerElements/iron-icons#^1.1.3",
     "paper-fab": "PolymerElements/paper-fab#^1.2.0",
-    "iron-form": "PolymerElements/iron-form#^1.1.1",
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.2.0",
     "paper-radio-button": "PolymerElements/paper-radio-button#^1.2.1",
     "paper-checkbox": "PolymerElements/paper-checkbox#^1.3.0",
@@ -38,7 +37,9 @@
     "paper-menu": "PolymerElements/paper-menu#^1.2.2",
     "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#^1.1.2",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.3"
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.3",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.0",
+    "paper-progress": "PolymerElements/paper-progress#^1.0.9"
   },
   "devDependencies": {}
 }

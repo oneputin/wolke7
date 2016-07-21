@@ -1,0 +1,127 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+
+<script>
+
+  var fbConfig = {
+      "wolke7": {  
+        "apiKey":        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
+        "authDomain":    "wolke7-fd941.firebaseapp.com",
+        "databaseURL":   "https://wolke7-fd941.firebaseio.com",
+        "storageBucket": "wolke7-fd941.appspot.com"
+      },
+      "wolke9" :{
+      }
+  };
+</script>
+
+<dom-module id="fire-app">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <!-- <h5>query-log: firebase [[url]]/[[path]]</h5> -->
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'fire-app',
+      properties: {
+
+        app: {  
+          type: String,
+          observer: 'fbInit'
+        },
+
+        fb: {
+          type: Object,
+          notify: true
+        }, 
+
+        running: {
+          type: Object,
+          value:[]
+        },
+
+        authmode: {
+          type:String
+        },  // "anonym",
+
+        user: {
+           type: Object
+        } 
+
+      },
+
+      observers: [
+        'getAuth(fb, authmode)'
+      ],
+
+      ready: function() { // console.log("firequery-ready");
+
+      },
+
+      fbInit : function(name, oldname) { 
+        if (!fbConfig) { console.log("missing fb-configuration");
+          this.fb = null;
+          return;
+        }
+          
+        var keys = Object.keys(fbConfig);
+        if(!name) name = keys[0]; 
+
+        var config = fbConfig[name]; //console.log("initFB:config",config);
+        if (!config) {
+          this.fb = null;
+          return; 
+        }
+
+        if (this.running[name]) {
+          this.fb = this.running[name];
+        } else { 
+          this.fb = firebase.initializeApp(config, name);  // console.log("new FB initialized: " + this.fb.name, this.fb.options);
+          this.running[name] = this.fb;
+        } 
+      },
+
+      getAuth: function(fb, authmode) {
+        
+        var auth = fb.auth(); console.log("is-auth:", auth); 
+        if (auth.currentuser) {
+          this.user = auth.currentuser;
+          return; 
+        }
+          
+        if (authmode=="anonym") { 
+          // Sign the user in anonymously since accessing Storage requires the user to be authorized.
+          auth.signInAnonymously().then(function(user) {
+            console.log('Anonymous Sign In Success', user);   
+            this.user = user; // enable uploadbutton after signIn
+          }).catch(function(error) {
+            console.error('Anonymous Sign In Error', error);
+            this.user = null;
+          });
+        }  
+
+        if (authmode=="email") { 
+          auth.signInWithEmailAndPassword(email, password).then(function(user){
+          })
+        }  
+
+        if (authmode=="popup") {
+          auth.signInWithPopup().then(function(user){
+          })
+        }  
+
+      }
+
+    });
+  </script>
+</dom-module>

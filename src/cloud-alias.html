@@ -13,7 +13,7 @@
       }
     </style>
 
-    <fire-query path="[[aliaspath]]" item="_path_" data="{{alias}}"></fire-query>  
+    <fire-query app="{{fbapp}}" path="[[aliaspath]]" item="_path_" data="{{alias}}"></fire-query>  
 
   </template>
 
@@ -25,7 +25,10 @@
       is: 'cloud-alias',
       
       properties: {
-
+        fbapp: {
+          type: String
+        },
+        
         alias: {  // object with several alias-name-objects (fi. genus-longnames) 
           type: Object,
           observer: 'checkAlias',
@@ -43,7 +46,7 @@
       },
 
       checkAlias: function(alias, oldali) { 
-        console.log("alias objects available", alias);
+        // console.log("alias objects available", alias);
       },
 
       getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);

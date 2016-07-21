@@ -60,11 +60,11 @@
       <paper-tab link><a href="#high"   class="link" tabindex="-1">High </a></paper-tab>
     </paper-tabs>
 
-    <template is="dom-if" if="{{apiflag}}">
-      <fire-query path="[[path]]" item="_path_" data="{{categories}}"></fire-query>
+    <template is="dom-if" if="{{fbapp}}">
+      <fire-query app="[[fbapp]]" path="[[path]]" item="_path_" data="{{categories}}"></fire-query>
     </template>
 
-    <template is="dom-if" if="{{!apiflag}}">
+    <template is="dom-if" if="{{!fbapp}}">
       <ajax-query url="[[url]]" path="[[path]]" data="{{categories}}"></ajax-query>
     </template>
 
@@ -72,11 +72,10 @@
     </p>
 
     <div class="card">
-        <!-- <p>Placeholder Basic cloud categories</p> -->
+        <!-- <p>Placeholder for presentation of categories</p> -->
         <cats-table-basic data="[[categories]]"></cats-table-basic>
     </div>
    
-
   </template>
 
   <!-- Creates the element's prototype and registers it -->
@@ -88,17 +87,20 @@
 
       properties: {
         
-        apiflag : -1, 
+        fbapp : {
+          type: String
+        }, 
+         
         tabindex : -1,
 
         url:  {
           type: String,
-          computed: 'calcUrl(apiflag)'
+          computed: 'calcUrl(fbapp)'
         },
 
         path:  {
           type: String,
-          computed: 'calcPath(tabindex, apiflag)'
+          computed: 'calcPath(tabindex, fbapp)'
         },
 
         categories: {
@@ -109,7 +111,7 @@
 
       ready: function() { 
         this.tabindex = 0;
-        this.apiflag  = 1;  
+        // this.fbapp  = 1;  
         // console.log("category-page 'ready'", this.categories);
       },
 
@@ -119,13 +121,13 @@
         return url + 'categories.json';
       },
 
-      calcPath: function(index, apiflag) { 
+      calcPath: function(index, fbapp) { 
         
         var pathes = {0:"basic",1:"low",2:"middle",3:"high"};
 
         var path = pathes[index];
         
-        if (apiflag) path = 'categories/' + path; 
+        if (fbapp) path = 'categories/' + path; 
         
         path = path+"/data"; 
 

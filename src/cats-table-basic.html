@@ -38,10 +38,10 @@
     <template is="dom-if" if="{{countclasses(categories)}}">
       <!-- Template of MODAL popup window to be "very top" of app in  -->
       <paper-dialog 
-          id="fullpop" 
-          modal
-          entry-animation="scale-up-animation"
-          exit-animation="fade-out-animation"><!--  modal> -->
+        id='{{popupid}}' 
+        modal
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation"><!--  modal> -->
         <div class="buttons">
           <paper-button dialog-confirm autofocus>Close</paper-button>
         </div>
@@ -53,7 +53,6 @@
         </paper-dialog-scrollable>
       </paper-dialog>
       
-
       <!-- <iron-data-table selection-enabled multi-selection items="[[categories]]"> -->
       <!-- <iron-data-table selection-enabled items="[[categories]]"> -->
       <iron-data-table items="[[categories]]">
@@ -101,6 +100,10 @@
       properties: {
         
         data: Object,  
+        popupid : {
+          type: String,
+          value: function(){return "imgpopup";}
+        },
 
         categories: {
           computed: 'getclasses(data)',
@@ -132,8 +135,7 @@
       },
 
       contentToTop: function(e) { // console.log("contentToTop:", this, "class=" + this.thumbclass)
-        // click event action from content within a paper-button 
-        // if (!this.thumbclass) return; 
+        // On click-event action from content (image) within a paper-button 
 
         // A. detect src of click-content
         var epath = Polymer.dom(e).path; // console.log("event-path-log:", epath)
@@ -151,10 +153,10 @@
         this.fullsrc = fullsrc; 
 
         var body = document.querySelector('body'),
-            popup = body.querySelector('#fullpop');
+            popup = body.querySelector('#'+this.popupid);
 
         if (!popup) {
-            popup = Polymer.dom(this.root).querySelector('#fullpop');
+            popup = Polymer.dom(this.root).querySelector('#'+this.popupid);
             body.appendChild(popup);
         }
 

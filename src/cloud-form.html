@@ -1,16 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <!-- <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html"> -->
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 
-<!-- <link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html"> -->
-<!-- <link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html"> -->
-
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -22,10 +20,12 @@
 <dom-module id="cloud-form">  
 
   <template>
+
     <style>
       :host {
         display: block;
         padding: 10px;
+        background-color: white;
       }
      
       .flex-horizontal {
@@ -70,20 +70,37 @@
         margin-top: 30px;
       }    
 
+      .thumb {
+        height: 64px;
+        width: 64px;
+      }
     </style>
 
-    <div id="metaform" class="flex-vertical hidden">
+    <cloud-alias fbapp="[[fbapp]]" alias="{{cloudalias}}" trigger></cloud-alias>  
 
-      <cloud-alias alias="{{alias}}"></cloud-alias>  
+    <div id="metaform" class="container flex-vertical"> <!-- hidden -->
 
       <!-- 3 inputs -->
-      <paper-input value="{{url}}" label="url" id="url" required></paper-input>
+      <div class="container flex-horizontal"> 
+
+        <paper-input value="{{url}}" label="url" id="url" class="flex" required></paper-input>
+
+        <paper-button on-tap="contentToTop">
+          <iron-image 
+            class ="thumb"
+            sizing="cover"
+            src   ="[[url]]">
+          </iron-image>
+        </paper-button>
+
+      </div>  
+
       <paper-input value="{{title-main-pict}}" id="title-main-pict" label="title" required></paper-input>
 
       <div class="container flex-horizontal">    
 
         <div>
-          <fire-values path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
           <paper-dropdown-menu label="Calendar year">
             <paper-listbox id="type-year" class="dropdown-content" attr-for-selected="value" selected="{{type-year}}">
               <paper-item value="">  </paper-item>
@@ -97,35 +114,10 @@
         <paper-toggle-button checked on-change="toggleElements">clouds</paper-toggle-button>
       </div>
 
-      <!-- 2 radio-groups : howard, level -->
-      <!-- <div>  
-        <div class="container flex-horizontal">  
-
-          <fire-values path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
-
-          <label id="label11">Howard</label>
-          <paper-radio-group id="type-character" aria-labelledby="label11" selected="{{type-character}}" multi="false" allowEmptySelection>
-              <template is="dom-repeat" items="{{classes}}">
-                 <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
-              </template>        
-          </paper-radio-group>
-        </div>  
-        
-        <div>
-          <fire-values path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
-          <label id="label21">Level</label>
-          <paper-radio-group id="type-height" aria-labelledby="label21" selected="{{type-height}}" multi="false" allowEmptySelection>
-              <template is="dom-repeat" items="{{heights}}">
-                 <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
-              </template>        
-          </paper-radio-group>
-        </div>
-      </div> -->
-
       <div id="more" class="container flex-horizontal">  
         <div>
-          <fire-values path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
-          <label id="label21"></label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
+          <label id="label21">Height</label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
           <paper-menu id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
               <template is="dom-repeat" items="{{heights}}">
                  <paper-item value="[[item]]">[[getAlias("type-height",item)]]</paper-item>
@@ -133,10 +125,12 @@
           </paper-menu>
         </div>
         <div class="flex"></div>
+        
         <div>  
-          <fire-values path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
+        
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
 
-          <label id="label11"></label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
+          <label id="label11">Class</label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
           <paper-menu id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
               <template is="dom-repeat" items="{{classes}}">
                  <paper-item value="[[item]]">[[item]]</paper-item>
@@ -145,7 +139,7 @@
         </div>  
         <div>&nbsp;&nbsp;</div>
         <div >          
-          <fire-values path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
           <paper-dropdown-menu label="Main type (genus)">
             <paper-listbox id="type-genus" class="dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
               <paper-item value="">  </paper-item>
@@ -174,6 +168,22 @@
           <paper-button  raised on-click="formSubmit">Save data</paper-button>
         </p>
       </paper-dialog>
+
+      <paper-dialog 
+        id="{{popupid}}" 
+        modal
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation"><!--  modal> -->
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
+        <h2 id="metatext"></h2>
+        <paper-dialog-scrollable>
+          <iron-image id="fullimage" src="[[fullsrc]]">
+          </iron-image>
+          <!-- <p id="metatext"></p> -->
+        </paper-dialog-scrollable>
+      </paper-dialog>
     
     </div>
 
@@ -187,12 +197,19 @@
       
       properties: {
 
-        alias: {  // object with several alias-name-objects (fi. genus-longnames) 
+        fbapp: {
+          type: String
+        },
+
+        cloudalias: {  // object with several alias-name-objects (fi. genus-longnames) 
           type: Object
         }, 
 
-        disabled : true,   
-
+        popupid : {
+          type: String,
+          value: function(){return "imgpopup";}
+        },
+          
         spotindex: {
           type: String,
           observer: 'setupForm'
@@ -228,7 +245,7 @@
         indata: {
           type: Object,
           // value: function(){return {};}, 
-          value: {}, 
+          // value: {}, 
           observer: "inCtrl"
         },  
         
@@ -243,9 +260,9 @@
         // "debugRec(rec)" // , rec.url, rec.title-main-pict, rec.title-sub-pict, rec.type-genus)"
       ],
 
-      getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
-        if (!this.alias) return abbr; 
-        var alias = this.alias[type]; 
+      getAlias: function(type, abbr) { // applied directly in generated HTML. console.log(type, abbr);
+        if (!this.cloudalias) return abbr; 
+        var alias = this.cloudalias[type]; 
         if (!alias) return abbr; 
         if (alias[abbr]) { // console.log("alias for type/abbr",type,abbr,alias[abbr]);  
           return alias[abbr];  
@@ -253,7 +270,7 @@
         return abbr; 
       },
 
-      submitterOpen: function() { // starts submit with confirmation 
+      submitterOpen: function() { // OPTION: starts submit with confirmation 
         this.$.submitter.open();
       },
 
@@ -273,18 +290,19 @@
 
       inCtrl : function(indata,inold) {
           var ik = Object.keys(indata);
-          if (!ik.length) return; console.log("updating form with input data", indata);
+          if (!ik.length) return; // console.log("updating form with input data", indata);
 
           // 1. 
           this.resetForm(); 
 
-          // 2. Transfer 
+          // 2. Transfer ...
           for (var prop in this.rec) { // extract required form-data from indata (if existing there)  
             // if (indata[prop]) this.rec[prop] = indata[prop]; 
             if (indata[prop]) this[prop] = indata[prop]; 
           } // console.log("form refreshed from indata", this.rec);
 
           // 3. Manage disable-status
+         
           if (indata.disable) {
             var that = this;
             indata.disable.forEach(function(item,index){
@@ -318,26 +336,6 @@
         } 
       },
 
-      /*updateMeta: function(flag) { // not required any more
-        var meta = {}; // this.meta;
-        var dict = {
-          "url":              this.imgurl,
-          "title-main-pict":  this.maintitle,
-          "title-sub-pict":   this.subtitle,
-          "type-character":   this.howard,
-          "type-height":      this.level,
-          "type-genus":       this.genus,
-          "type-year":        this.year,
-          "flag":             flag
-        }
-        for(var key in dict) {
-          if (dict[key]) {
-            meta[key] = dict[key];  
-          }
-        }  // console.log("actual meta:", m, dict) ; // howard, level, maintitle, ref);
-        return meta;
-      },*/
-
       dataObject: function(name, set) {
         // 
         var obj;
@@ -363,7 +361,7 @@
       formSubmit: function(event) {
 
         var data = this.dataObject(); 
-        this.outdata = data;  console.log("confirm data:",data);
+        this.outdata = data;  console.log("optionbally confirm data:",data);
 
         // Option: HIDE the form 
         // this.$.metaform.classList.add("hidden");
@@ -379,7 +377,8 @@
             // A. resetting the content of properteis in "FORM"-page 
             if (this[prop]) this[prop] = ""; 
             this.rec[prop] = ""; 
-            this.outdata[prop] = ""; 
+            if (this.outdata) this.outdata[prop] = ""; 
+            
             el = Polymer.dom(this.root).querySelector("#"+prop); 
             // HARD-RESET of iron-selection on elements with item-lists (menus, button-group, ...) 
             // this to avoid backward binding to FORM-properties !!
@@ -394,7 +393,41 @@
       ready: function() {
         if (this.indata && this.indata.url) this.rec.url = this.indata.url;
 
+      },
+
+      contentToTop: function(e) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
+        // On click-event action from content (image) within a paper-button 
+
+        // A. detect src of click-content
+        var epath = Polymer.dom(e).path; // console.log("event-path-log:", epath)
+        var fullsrc;
+        for (let el of epath) { // console.log("typ="+typeof el, el);
+            if (el.className === "thumb") {
+                fullsrc = el.src;
+                break;
+            }
+        } 
+        if (!fullsrc) return ; 
+
+        // B. Fill content of popup
+        this.fullsrc = fullsrc; 
+
+        var body = document.querySelector('body'),
+            popup = body.querySelector('#'+this.popupid);
+
+        if (!popup) { // console.log("mode popup, id=", this.popupid);
+            popup = Polymer.dom(this.root).querySelector('#'+this.popupid);
+            body.appendChild(popup);
+        }
+
+        // Option : add metatext 
+        var metaContainer = popup.querySelector('#metatext');
+        if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
+
+        popup.open();
       }
+
+
 
     });
   </script>

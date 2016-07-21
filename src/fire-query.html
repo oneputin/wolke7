@@ -1,8 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-
 <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
 
-<script src="app-config.js"></script>
+<link rel="import" href="fire-app.html">
 
 <dom-module id="fire-query">
 
@@ -13,6 +12,8 @@
         display: block;
       }
     </style>
+    
+    <fire-app app="[[app]]" fb="{{fb}}" ></fire-app>
 
     <!-- <h5>query-log: firebase [[url]]/[[path]]</h5> -->
 
@@ -25,13 +26,15 @@
       properties: {
 
         app: {  
-          type: String,
-          observer: 'initFB'
+          type: String
+        },
+
+        fb: {
+          type: Object
         },
 
         path:{
-          type: String,
-          observer : 'applyPathQuery'
+          type: String
         },
 
         key: {
@@ -51,7 +54,7 @@
           type: String
         },
 
-        // count: 10,       // number of returned objects(records)
+        // count: 10,    // number of returned objects(records)
         data: {
           type: Object,
           notify: true
@@ -63,53 +66,33 @@
       },
 
       observers: [
-        'applyItemQuery(path, item, itemvalue)',
-        'applyPathSave(setdata, path, key)'
+        'applyPathQuery(fb, path)',
+        'applyItemQuery(fb, path, item, itemvalue)',
+        'applyPathSave(fb, setdata, path, key)'
       ],
 
       ready: function() { // console.log("firequery-ready");
+
       },
 
-      initFB: function(name, oldname) { //console.log("initFB:start");
-        if (!fbConfig) return;
-        if (!fbApp) { 
-          var keys = Object.keys(fbConfig);
-          if(!name) name = keys[0]; 
-          var config = fbConfig[name]; //console.log("initFB:config",config);
-          if (!config) return; 
-          // var fba = firebase.initializeApp(config, name); 
-          fbApp = firebase.initializeApp(config); // console.log("fba created:" + fbApp.name, fbApp.options);
-        }  
-      },
-
-      applyPathQuery: function(path, oldpath) { 
+      applyPathQuery: function(fb, path) { 
         
         if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
-          if (!fbApp) this.initFB();
 
           var that = this; // ALTMODISCH (use bind() instead?)
-          firebase.database().ref(path).once('value').then(function(snapshot) { 
+          fb.database().ref(path).once('value').then(function(snapshot) { 
             // console.log("snapped pathmode", snapshot.val());
             that.data = snapshot.val();
           })
         }
       },
 
-      applyItemQuery: function(path, item, value) { 
-        
+      applyItemQuery: function(fb, path, item, value) { 
         // console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
 
-        if (!fbApp) this.initFB();
         var that = this; // ALTMODISCH (use bind() instead?)
 
-        // if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
-        //   firebase.database().ref(path).once('value').then(function(snapshot) { 
-        //     that.data = snapshot.val();
-        //   })
-        //   return; 
-        // }
-
-        var ref  = firebase.database().ref(path).orderByChild(item);
+        var ref  = fb.database().ref(path).orderByChild(item);
 
         if (value && (value != '_all_') ) {
           var op = this.operator;
@@ -129,32 +112,36 @@
 
         // APPLY the query 
         ref.once('value')
-        .then(function(snapshot) { // console.log("query snapshot", snapshot.val());
-            that.data = snapshot.val();
-        })
-        .catch( function (errorObject) {
-          console.log("The read failed: " + errorObject.code);  
-        });
+            .then(function(snapshot) { // console.log("query snapshot", snapshot.val());
+              that.data = snapshot.val();
+            })
+            .catch( function (errorObject) {
+              console.log("The read failed: " + errorObject.code);  
+            });
       },
 
-      applyPathSave: function(dbData, dbPath, dbKey) { 
+      applyPathSave: function(fb, dbData, dbPath, dbKey) { 
         // save the doc-reference to database
-        if (!dbData || dbData===null) return; 
-        if (!Object.keys(dbData).length) return; // console.log("triggered save at path:", dbPath, dbData);
+        if (!dbData || (dbData===null) || !Object.keys(dbData).length) {
+          console.log("missing data to submit")
+          return; 
+        } //console.log("triggered save at path:", dbPath, dbData);
         
         // 1. Get unique key at the target path
-        if (!firebase.database().ref().child(dbPath)) { // target-node must exist to enable key-generator
-          firebase.database().ref(dbPath).set([]);
+        if (!fb.database().ref().child(dbPath)) { // target-node must exist to enable key-generator
+          fb.database().ref(dbPath).set([]);
         }  
-        if (!dbKey) dbKey = firebase.database().ref().child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
+        if (!dbKey) dbKey = fb.database().ref().child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
 
         // 2. 
         var that = this;
-        firebase.database().ref(dbPath+'/'+dbKey).set(dbData);  
-        firebase.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { 
-            // console.log("data saved with key "+dbKey, snapshot.val());
+
+        fb.database().ref(dbPath+'/'+dbKey).set(dbData);  // console.log("save at:", dbPath+'/'+dbKey);
+        
+        fb.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { 
+            console.log("data saved with key "+dbKey, snapshot.val());
             that.lastpath = dbPath+'/'+dbKey;
-          })
+        })
       }  
 
     });

@@ -15,6 +15,7 @@
 
 <!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
 <link rel="import" href="my-icons.html">
+<!-- <link rel="import" href="cloud-alias.html"> -->
 
 <dom-module id="cloud-viewer">
 
@@ -41,21 +42,44 @@
       .main-fab {
           --paper-fab-background: var(--paper-light-blue-500);
           position: fixed;    /*relative to screen*/
-          /*position: absolute; relative to parent element*/
+          /*position: absolute; /*relative to parent element*/
           right: 16px;    
-          /*top: 200px;*/
-          bottom: 50px;
+          top: 50%;
+          /*bottom: 50%;*/
           z-index: 1000;
       }   
+  
+      paper-dialog {
+        position: fixed;
+        top: 100px;
+        right: 50px;
+        width: 400px;
+        height: 400px;
+        z-index: 1001;
+        overflow: auto;
+      }
+
     </style>
+
+    <cloud-alias app="{{app}}" alias="{{cloudalias}}"></cloud-alias>  
+
+    <div>Cloud-DB browser</div>
+
+      <paper-dialog 
+        id="spot-pop" 
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation"><!--  modal> -->
+        <h2 id="spottitle">{{spottitle}}</h2>
+        <p  id="spotobj"><pre>{{spotobj}}</pre></p>
+      </paper-dialog>
+      
 
     <div class="flex-horizontal">
       
-      <cloud-alias alias="{{alias}}"></cloud-alias>  
-
+      <!-- <cloud-alias alias="{{cloudalias}}"></cloud-alias>   -->
       <div>
 
-        <fire-keys   path="[[path]]" filter="type" keys="{{queryitems}}"></fire-keys>
+        <fire-keys app="[[fbapp]]" path="[[path]]" filter="type" keys="{{queryitems}}"></fire-keys>
         
         <paper-dropdown-menu label="Classifications">
           <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{queryitem}}">
@@ -71,7 +95,7 @@
       
       <div>
         
-        <fire-values path="[[path]]" item="[[queryitem]]" values="{{queryvalues}}"></fire-values> <!-- filter="type" --> 
+        <fire-values app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" values="{{queryvalues}}"></fire-values> <!-- filter="type" --> 
         
         <paper-dropdown-menu label="Classes">
           <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{queryvalue}}">
@@ -83,15 +107,15 @@
       </div>
     </div>
 
-    <paper-fab icon="create" class="main-fab" level="3" on-tap="spotView"></paper-fab>
-    <!-- <paper-fab label="😻" class="label main-fab" level="3" on-tap="spotView"></paper-fab> -->
-
+    <paper-fab icon="create" class="main-fab" level="3" on-tap="spotViewTrigger"></paper-fab>
+    <fire-query app="[[fbapp]]" path="[[spotpath]]" item="_path_" data="{{firedbspot}}"></fire-query>
+    
     <hr/>
     <!-- query cloud-images -->
 
-    <fire-query app="[[fbappkey]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>
+    <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>
     
-    <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show>
+    <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show> <!-- [[imas]] are calculated from {{data}} -->
 
   </template>
 
@@ -104,9 +128,11 @@
       
       properties: {
         
-        fbappkey : "",
+        fbapp:  {
+          type: String
+        },
 
-        alias: {  // object with several alias-name-objects (fi. genus-longnames) 
+        cloudalias: {  // object with several alias-name-objects (fi. genus-longnames) 
           type: Object
         }, 
 
@@ -150,11 +176,21 @@
         slideindex : {
           type: Number,
           value: 0
+        },
+
+        spotpath: {
+          type: String
+        },
+
+        firedbspot: { // used to exchange with other pages (fi. spotter)
+          type: Object,
+          // value: {},
+          notify: true 
         }
       },
 
       observers : [
-        // 'calcTarget(fbappkey, path)'
+        'spotViewAction(firedbspot, spotpath)'
       ], 
 
       ready: function(){
@@ -166,8 +202,9 @@
       },
 
       getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
-        if (!this.alias) return abbr; 
-        var alias = this.alias[type]; 
+        // replace abbr with fulltext from cloud-alias-object
+        if (!this.cloudalias) return abbr; 
+        var alias = this.cloudalias[type]; 
         if (!alias) return abbr; 
         if (alias[abbr]) { // console.log("alias for type/abbr",type,abbr,alias[abbr]);  
           return alias[abbr];  
@@ -175,15 +212,23 @@
         return abbr; 
       },
 
-      spotView: function(){  
-        var i = this.slideindex, 
+      spotViewTrigger: function() {  
+        var i   = this.slideindex, 
             ima = this.imas[i];  
-        var path = this.path+"/"+ima.fbkey; // console.log("spot on element: " + i, path); 
-        firebase.database().ref(path).once('value').then(function(snapshot) { 
-            console.log("spotted obj", snapshot.val());
-            // open editor 
-            // that.data = snapshot.val();
-        })        
+        if (!ima) return;
+        this.spotpath = this.path+"/"+ima.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
+      }, 
+
+      spotViewAction: function (spot, spotpath) {  // console.log(spotpath, spot);
+        // A. remote transfer to spot-form 
+
+        // B. local check in popup 
+        this.spotobj   = JSON.stringify(spot, null, 2); 
+        this.spottitle = spotpath; 
+
+        var popup = Polymer.dom(this.root).querySelector('#spot-pop');
+        popup.open();
+
         // this.page = 'spotter';    
       },
 
