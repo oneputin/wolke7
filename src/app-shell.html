@@ -11,7 +11,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
 <link rel="import" href="../bower_components/app-route/app-location.html">
@@ -31,13 +30,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
 <!-- <link rel="import" href="../bower_components/paper-styles/color.html"> -->
-<!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
-
-
-
 <!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
 
-<!-- <link rel="import" href="my-icons.html"> -->
+<!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
+<link rel="import" href="my-icons.html">
 <link rel="import" href="cloud-alias.html">
 
 <dom-module id="app-shell">
@@ -140,6 +136,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <!-- create  -->
     <cloud-alias alias="{{alias}}"></cloud-alias>  
 
     <app-location route="{{route}}"></app-location>
@@ -154,10 +151,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-drawer-layout fullbleed>
 
       <!-- Drawer content -->
-      <app-drawer>
+      <app-drawer id="navdrawer">
         <app-toolbar>Services</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="viewer"     href="/viewer">Cloud viewer</a>
+        <iron-selector selected="[[page]]" on-iron-select="closeDrawer" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="viewer"     href="/viewer" >Cloud browser</a> <!-- on-tap="closeDrawer" -->
           <a name="howard"     href="/howard">Quickviewer(Howard)</a>
           <a name="categories" href="/categories">Cloud symbols(legacy)</a>
         </iron-selector>
@@ -169,16 +166,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals resize-title blend-background effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div condensed-title>More about Cloudspotting</div>
-            <paper-icon-button icon="info" on-tap="helpopen"></paper-icon-button>
-          </app-toolbar>
-          <!-- <app-toolbar class="middle"></app-toolbar> -->
-          <app-toolbar class="bottom flex">
-            <!-- <div main-title>Sky spotter</div> -->
-            <!-- <paper-fab class="blue" icon="add" title="add"></paper-fab> -->
-            <div class="flexchild" main-title>Water onAir</div>
-            <paper-icon-button icon="note-add" class="visible" style="color: red;" on-tap="spotopen"></paper-icon-button>
-            <!-- <paper-fab mini class="blue" icon="add" title="add"></paper-fab> -->
+            <div main-title class="flexchild" >Water onAir</div>
+            <paper-icon-button icon="add-circle" class="visible" style="color: red;" on-tap="spotopen"></paper-icon-button>
+            <paper-icon-button icon="info" style="color: blue;" on-tap="helpopen"></paper-icon-button>
           </app-toolbar>
         </app-header>
 
@@ -239,6 +229,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      closeDrawer: function() {
+        var dr = this.$.navdrawer;  
+        if (dr.parentNode.narrow) dr.close();
+      },
 
       helpopen : function(e) { //console.log("helpbutton clicked", e);
         var popup = this.$.help;
