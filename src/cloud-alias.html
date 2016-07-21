@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<link rel="import" href="ajax-query.html">
+<!-- <link rel="import" href="ajax-query.html"> -->
 <link rel="import" href="fire-query.html">
 
 <dom-module id="cloud-alias">
@@ -25,6 +25,7 @@
       is: 'cloud-alias',
       
       properties: {
+        
         fbapp: {
           type: String
         },
@@ -38,8 +39,11 @@
         aliaspath: {
           type: String,
           value: function(){return "clouds/alias";},
-        }
+        },
 
+        formpage:{
+          type:String
+        }
       },
 
       ready: function(){
@@ -47,17 +51,17 @@
 
       checkAlias: function(alias, oldali) { 
         // console.log("alias objects available", alias);
-      },
-
-      getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
-        if (!this.alias) return abbr; 
-        var alias = this.alias[type]; 
-        if (!alias) return abbr; 
-
-        console.log("alias for type="+type, alias);
-        if (alias[abbr]) return alias[abbr];  
-        return abbr; 
       }
+
+      // getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
+      //   if (!this.alias) return abbr; 
+      //   var alias = this.alias[type]; 
+      //   if (!alias) return abbr; 
+
+      //   console.log("alias for type="+type, alias);
+      //   if (alias[abbr]) return alias[abbr];  
+      //   return abbr; 
+      // }
 
     });
   </script>

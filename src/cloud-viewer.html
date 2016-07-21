@@ -61,7 +61,7 @@
 
     </style>
 
-    <cloud-alias app="{{app}}" alias="{{cloudalias}}"></cloud-alias>  
+    <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>  
 
     <div>Cloud-DB browser</div>
 
@@ -201,8 +201,7 @@
         // this.itemvalue = 2002;
       },
 
-      getAlias: function(type, abbr) { // return abbr; console.log(type, abbr);
-        // replace abbr with fulltext from cloud-alias-object
+      getAlias: function(type, abbr) { // applied directly in generated HTML. console.log(type, abbr);
         if (!this.cloudalias) return abbr; 
         var alias = this.cloudalias[type]; 
         if (!alias) return abbr; 

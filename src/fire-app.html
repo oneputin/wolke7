@@ -47,7 +47,7 @@
 
         running: {
           type: Object,
-          value:[]
+          value:{}
         },
 
         authmode: {
@@ -65,7 +65,7 @@
       ],
 
       ready: function() { // console.log("firequery-ready");
-
+        this.fbInit();
       },
 
       fbInit : function(name, oldname) { 
