@@ -16,6 +16,7 @@
 
 <link rel="import" href="fire-values.html">
 <link rel="import" href="cloud-alias.html">
+<link rel="import" href="tools.html">
 
 <dom-module id="cloud-form">  
 
@@ -74,6 +75,9 @@
         height: 64px;
         width: 64px;
       }
+      #yearmenu {
+        width: 120px;
+      }
     </style>
 
     <cloud-alias fbapp="[[fbapp]]" alias="{{cloudalias}}" trigger></cloud-alias>  
@@ -85,7 +89,7 @@
 
         <paper-input value="{{url}}" label="url" id="url" class="flex" required></paper-input>
 
-        <paper-button on-tap="contentToTop">
+        <paper-button on-tap="thumbView">
           <iron-image 
             class ="thumb"
             sizing="cover"
@@ -101,7 +105,7 @@
 
         <div>
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
-          <paper-dropdown-menu label="Calendar year">
+          <paper-dropdown-menu id="yearmenu" label="Calendar year">
             <paper-listbox id="type-year" class="dropdown-content" attr-for-selected="value" selected="{{type-year}}">
               <paper-item value="">  </paper-item>
               <template is="dom-repeat" items="{{years}}">
@@ -170,18 +174,18 @@
       </paper-dialog>
 
       <paper-dialog 
-        id="{{popupid}}" 
+        id="imgpopup" 
         modal
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation"><!--  modal> -->
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Close</paper-button>
-        </div>
-        <h2 id="metatext"></h2>
         <paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button dialog-confirm autofocus>Close</paper-button>
+          </div>
+          <h2></h2>
           <iron-image id="fullimage" src="[[fullsrc]]">
           </iron-image>
-          <!-- <p id="metatext"></p> -->
+          <p></p>
         </paper-dialog-scrollable>
       </paper-dialog>
     
@@ -205,11 +209,6 @@
           type: Object
         }, 
 
-        popupid : {
-          type: String,
-          value: function(){return "imgpopup";}
-        },
-          
         spotindex: {
           type: String,
           observer: 'setupForm'
@@ -399,42 +398,9 @@
 
       },
 
-      contentToTop: function(e) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
-        // On click-event action from content (image) within a paper-button 
-
-        // A. detect src of click-content
-        var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
-        // for (var el of epath) { // NOT accepeted by polymer build
-        // for (i = 0, len = epath.length; i < len; i++) { 
-        var fullsrc, el, i=0, len=epath.length;
-        for (; i < len; i++) { 
-            el = epath[i];
-            if (el.className === "thumb") {
-                fullsrc = el.src;
-                break;
-            }
-        } 
-        if (!fullsrc) return ; 
-
-        // B. Fill content of popup
-        this.fullsrc = fullsrc; 
-
-        var body = document.querySelector('body'),
-            popup = body.querySelector('#'+this.popupid);
-
-        if (!popup) { // console.log("mode popup, id=", this.popupid);
-            popup = Polymer.dom(this.root).querySelector('#'+this.popupid);
-            body.appendChild(popup);
-        }
-
-        // Option : add metatext 
-        var metaContainer = popup.querySelector('#metatext');
-        if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
-
-        popup.open();
+      thumbView: function(e){
+        topfunction(e, this, "imgpopup");
       }
-
-
 
     });
   </script>

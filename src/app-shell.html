@@ -56,6 +56,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .flexchild {
         @apply(--layout-flex);
       }
+
+      .flex-vertical {
+        @apply(--layout-vertical);
+        height: 220px;
+        margin: 20px;
+        background-color:white;
+      }
+
       paper-fab {
         margin-left: 10px;
       }
@@ -130,8 +138,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       [main-title] {
         margin-left: 64px;
-        font-size:   32px;
-        font-weight: 300;
+        font-size:   24px;
+        font-weight: 200;
       }
 
       [condensed-title] {
@@ -212,8 +220,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fbtrigger="{{fbtrigger}}"> 
           </cloud-spotter><!-- not routed from nav-list -->
 
-          <div name="starter">
-            This is the startpage 
+          <div name="starter" class="container flex-vertical">
+            <div>This is a functional and technological testground for intended transfer 
+            of some content of this <a href="http://www.wolkenbilder.de" target="_blank">historical site</a>
+            </div>
+            <div class="flexchild">Test the services from the navigaton menu in the left sidebar.</div>
+            <div>(Performance problems may arise with legacy browsers.)</div>
           </div>
         
         </iron-pages>

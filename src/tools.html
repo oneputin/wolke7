@@ -1,0 +1,47 @@
+<script>
+
+  var topfunction =  function(e, that, popupid) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
+    // On click-event action from content (image) within a paper-button 
+
+    // A. Transfer popup to top of document to overlap all 
+
+    var body = document.querySelector('body'),
+        popup = body.querySelector('#'+popupid);
+
+    if (!popup) { // console.log("mode popup, id=", that.popupid);
+        popup = Polymer.dom(that.root).querySelector('#'+popupid);
+        body.appendChild(popup);
+    }
+
+    // B. DETECT if click in x.thumb image element
+
+	  if (e) {
+
+	    var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
+	
+	    // for (var el of epath) { // NOT accepeted by polymer build
+	    // for (i = 0, len = epath.length; i < len; i++) { 
+	    var fullsrc, el, i=0, len=epath.length;
+	    for (; i < len; i++) { 
+	        el = epath[i];
+	        if (el.className === "thumb") {
+	            fullsrc = el.src;
+	            break;
+	        }
+	    } 
+	    if (fullsrc) { 
+		    // C. Fill img-content into popup
+
+		    that.fullsrc = fullsrc; // property des parent-elements 
+
+		    var metaContainer = popup.querySelector('p');
+		    if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
+		}
+	  }
+
+	// 4. Open popup
+    popup.open();
+  }
+
+</script>
+

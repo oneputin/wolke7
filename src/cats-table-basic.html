@@ -7,6 +7,9 @@
 <link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="tools.html">
+
 <dom-module id="cats-table-basic">
 
   <template>
@@ -38,21 +41,22 @@
     <template is="dom-if" if="{{countclasses(categories)}}">
       <!-- Template of MODAL popup window to be "very top" of app in  -->
       <paper-dialog 
-        id='{{popupid}}' 
+        id ='imgpopup' 
         modal
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation"><!--  modal> -->
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Close</paper-button>
-        </div>
-        <h2 id="metatext"></h2>
         <paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button dialog-confirm autofocus>Close</paper-button>
+          </div>
+          <!-- <h2></h2> -->
           <iron-image id="fullimage" src="[[fullsrc]]">
           </iron-image>
-          <!-- <p id="metatext"></p> -->
+          <p></p>
         </paper-dialog-scrollable>
       </paper-dialog>
       
+      <!-- table equiped with different functionality sets -->
       <!-- <iron-data-table selection-enabled multi-selection items="[[categories]]"> -->
       <!-- <iron-data-table selection-enabled items="[[categories]]"> -->
       <iron-data-table items="[[categories]]">
@@ -65,7 +69,7 @@
         
         <data-table-column name="Samples" width="50px">
           <template>
-            <paper-button on-tap="contentToTop">
+            <paper-button on-tap="thumbView">
               <iron-image class="thumb" src="[[item.sample]]" sizing="cover"> <!-- sizing="cover" to see full image -->
               </iron-image>
             </paper-button>
@@ -88,7 +92,6 @@
 
     </template>
 
-
   </template>
 
   <script>
@@ -100,10 +103,6 @@
       properties: {
         
         data: Object,  
-        popupid : {
-          type: String,
-          value: function(){return "imgpopup";}
-        },
 
         categories: {
           computed: 'getclasses(data)',
@@ -134,39 +133,8 @@
         return len;
       },
 
-      contentToTop: function(e) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
-        // On click-event action from content (image) within a paper-button 
-
-        // A. detect src of click-content
-        var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
-        // for (var el of epath) { // NOT accepeted by polymer build
-        // for (i = 0, len = epath.length; i < len; i++) { 
-        var fullsrc, el, i=0, len=epath.length;
-        for (; i < len; i++) { 
-            el = epath[i];
-            if (el.className === "thumb") {
-                fullsrc = el.src;
-                break;
-            }
-        } 
-        if (!fullsrc) return ; 
-
-        // B. Fill content of popup
-        this.fullsrc = fullsrc; 
-
-        var body = document.querySelector('body'),
-            popup = body.querySelector('#'+this.popupid);
-
-        if (!popup) { // console.log("mode popup, id=", this.popupid);
-            popup = Polymer.dom(this.root).querySelector('#'+this.popupid);
-            body.appendChild(popup);
-        }
-
-        // Option : add metatext 
-        var metaContainer = popup.querySelector('#metatext');
-        if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
-
-        popup.open();
+      thumbView: function(e){
+        topfunction(e, this, "imgpopup");
       }
 
     });
