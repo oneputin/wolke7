@@ -41,6 +41,9 @@
       .flex-horizontal {
         @apply(--layout-horizontal);
       }   
+      .flex-horizontal > div{
+        margin: 0 10px; 
+      }   
       .flex-end-align {
           @apply(--layout-horizontal);
           @apply(--layout-end);
@@ -88,11 +91,14 @@
       .mm {
         margin:10px;
       }
+      #top {
+        background-color: white;
+      }
     </style>
     
-      <div class="container flex-horizontal"> 
-        <div>Load the cloud-image you want to analyse.</div> 
-        <div>Subsequently you may classify and comment it in the form.</div>
+      <div id="top" class="container flex-horizontal"> 
+        <div>Option: Load a cloud-image you want to analyse and/or upload.</div> 
+        <div>Classify and comment an image (new or selected from database) in the form below.</div>
       </div>  
       <hr>
       <div class="container flex-end-align"> 
@@ -103,12 +109,12 @@
       
       <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
 
-      <!-- B. storagemeta is being translated into format of firedbspot 
+      <!-- B. storagemeta is being translated into format of fbspot 
           to refresh form  -->
 
-      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[firedbspot]]" outdata="{{clouddata}}" ></cloud-form>
+      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
 
-      <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" ></fire-query> <!-- key="[[cloudkey]]" -->
+      <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
 
   </template>
 
@@ -146,14 +152,15 @@
           observer: "storageResponse"
         },
 
-        firedbspot: {
+        fbspot: {
           type: Object
         },
+        
+        fbtrigger: 1,
 
-        formindata: {
+        formdata: {
           type: Object,
-          value : {},
-          notify: true  
+          observer: 'checkFormSubmit'  
         },
 
         clouddata: {
@@ -179,12 +186,27 @@
       },
 
       observers: [
-        '_spotChanged(firedbspot.url)'
+        '_spotChanged(fbspot.url)'
         // '_fileUploaded(file.name, )'
       ],
 
       ready: function(){
         // this.fbapp="wolke7";
+      },
+
+      checkFormSubmit: function(data, dataold) { 
+        // prepare submit of x.clouddata and x.fbkey
+        var key, fbkey="" ;
+        if (this.fbspot) key = this.fbspot.fbkey;
+        if (key) fbkey = key;
+        else     key = "new";  
+        // console.log("checkFormSubmit for key="+key, data);
+
+        if (confirm("Submit last edits with key "+key+"?")) {
+          this.clouddata = data;
+          this.fbkey  = fbkey;
+          // this.fbspot = undefined;
+        } 
       },
 
       _spotChanged: function(url) {
@@ -241,20 +263,11 @@
           // clmeta["date"] = meta.updated;
           // clmeta["size"] = meta.size;
 
-          this.firedbspot = clmeta;   // ****  
+          this.fbspot = clmeta;   // ****  
         }  
       },
 
-      debugSpot: function(spot, oldspot) { console.log("debugSpot", spot)
-
-      },
-
-      downloadImg() {
-        console.log("Want to download", this, this.storageurl +" ?"); 
-      },
-
       ready: function() {
-
         this.uploadpath = this.path;
       }
 

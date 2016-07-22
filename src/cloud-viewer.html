@@ -63,17 +63,17 @@
 
     <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>  
 
-    <div>Cloud-DB browser</div>
+    <div>Select a subset using the menues below.</div>
 
       <paper-dialog 
-        id="spot-pop" 
+        id="spotpop" 
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation"><!--  modal> -->
-        <h2 id="spottitle">{{spottitle}}</h2>
+        <h2 id="spottitle">Spotted: key={{spottitle}}</h2>
         <p  id="spotobj"><pre>{{spotobj}}</pre></p>
       </paper-dialog>
-      
 
+    <!-- SELECT menues for slide-sets -->
     <div class="flex-horizontal">
       
       <!-- <cloud-alias alias="{{cloudalias}}"></cloud-alias>   -->
@@ -92,7 +92,7 @@
       </div>
 
       <div class="flex-child"></div>
-      
+
       <div>
         
         <fire-values app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" values="{{queryvalues}}"></fire-values> <!-- filter="type" --> 
@@ -107,15 +107,18 @@
       </div>
     </div>
 
-    <paper-fab icon="create" class="main-fab" level="3" on-tap="spotViewTrigger"></paper-fab>
-    <fire-query app="[[fbapp]]" path="[[spotpath]]" item="_path_" data="{{firedbspot}}"></fire-query>
+    <hr>
     
-    <hr/>
-    <!-- query cloud-images -->
+    <!-- slider-refresh after MAIN FB-QUERY on change of any of [[queryitem]], [[queryvalue]] 
+    and refresh of slide-show (query-outpt {{data}} is translated to [[imas]] to trigger the slider) -->
 
-    <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>
-    
+    <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>  <!-- trigger="[[fbtrigger]]" -->
     <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show> <!-- [[imas]] are calculated from {{data}} -->
+
+    <!-- FAB and its fbquery on-tap -->
+
+    <paper-fab icon="create" class="main-fab" level="3" on-tap="spotQueryTrigger"></paper-fab>
+    <fire-query app="[[fbapp]]" path="[[spotpath]]" item="_path_" data="{{fbspot}}"></fire-query>
 
   </template>
 
@@ -152,6 +155,7 @@
           type: Array,
           observer: 'useQueryValues'
         },
+
         queryvalue: {
           type: String
         },
@@ -159,38 +163,53 @@
         item: {
           type: String
         },
+        
         itemvalue: {
           type: String
         },
-
-        data: {
+        
+        data: {       // raw query-result
           type: Object,
           value: [] 
         },
 
-        imas: {
+        imas: {       // reformatted query-result
           type: Object,
           computed: 'createSlides(data)'
         }, 
 
         slideindex : {
           type: Number,
-          value: 0
+          value: 0,
+          observer: 'indexChanged'
+        },
+
+        spotkey: {
+          type: String
         },
 
         spotpath: {
           type: String
         },
 
-        firedbspot: { // used to exchange with other pages (fi. spotter)
+        spotoggle: {
+          type: Number
+        },
+
+        fbtrigger: {    // synchronize actual db-query 
+          type: Number,
+          value: 1,
+          observer: 'trackTrigger'
+        },
+
+        fbspot: {       // synchronizes with cloud-form (over app-shell, cloud-spotter) 
           type: Object,
-          // value: {},
           notify: true 
         }
       },
 
       observers : [
-        'spotViewAction(firedbspot, spotpath)'
+        'spotQueryAction(fbspot, spotkey, spotoggle)'
       ], 
 
       ready: function(){
@@ -199,6 +218,14 @@
         // this.itemvalue = 'none';
         // this.item  = "type-year";
         // this.itemvalue = 2002;
+      },
+
+      trackTrigger: function(n,o) {
+        // console.log("trackTrigger",n);
+      },
+
+      indexChanged: function(n,o) { // 
+        this.fbspot = undefined;
       },
 
       getAlias: function(type, abbr) { // applied directly in generated HTML. console.log(type, abbr);
@@ -211,36 +238,51 @@
         return abbr; 
       },
 
-      spotViewTrigger: function() {  
+
+      spotQueryTrigger: function() {  // related to index of slideview
         var i   = this.slideindex, 
-            ima = this.imas[i];  
+            ima = this.imas[i];  // console.log("spotTrigger:", ima);
         if (!ima) return;
-        this.spotpath = this.path+"/"+ima.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
+        this.spotkey   = ima.fbkey; // was added during slidshow-preparation
+        this.spotpath  = this.path+"/"+ima.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
+        this.spotoggle = 1; 
       }, 
 
-      spotViewAction: function (spot, spotpath) {  // console.log(spotpath, spot);
-        // A. remote transfer to spot-form 
+      spotQueryAction: function (spot, spotkey, toggle) {  // console.log("spotAction-In", spotkey, toggle, spot);
+        if (!spot.url || !spotkey || !toggle) return; 
+        this.spotoggle = undefined; // prevents spotquery until next triggerAction
+
+        // A. Extend spot for unique identification in other  
+        spot.fbkey = spotkey;
 
         // B. local check in popup 
         this.spotobj   = JSON.stringify(spot, null, 2); 
-        this.spottitle = spotpath; 
+        this.spottitle = spotkey; 
 
-        var popup = Polymer.dom(this.root).querySelector('#spot-pop');
-        popup.open();
+        // var popup = Polymer.dom(this.root).querySelector('#spot-pop');
+        var spotpup = this.$.spotpop; // console.log("spotAction", spotkey, spot, spotpup);
+        if (spotpup) { // console.log("spotAction", spotkey, spotpup);
+          spotpup.open();
+        }
 
         // this.page = 'spotter';    
       },
 
-      useQueryItems: function(n,o) { //console.log("use query items:", n);
-        this.queryitem = n[0];
+      // Initialisierung of elelemnt-selection if sets are updated 
+      useQueryItems: function(n,o) { 
+        this.queryitem = n[0];   //console.log("first query class:", n[0]);
       },
 
-      useQueryValues: function(n,o) { // console.log("use query values:", n);
-        this.queryvalue = n[0];
+      useQueryValues: function(n,o) { 
+        this.queryvalue = n[0];  //console.log("first class-value:", n[0]);
       },
 
-      createSlides: function(data, olddata) { 
-        if (!data) return; // console.log("data", data);
+      createSlides: function(data) { // console.log("createSlides data", data);
+        this.fbspot = {};  // reset last spot
+        if (!data) return;  
+
+        // this.fbtrigger = 0;
+
         if (!Array.isArray(data)) {
           data =  Object.keys(data).map(function(k){
             var obj = data[k];

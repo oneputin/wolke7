@@ -178,7 +178,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title class="flexchild">Water onAir</div>
-            <paper-icon-button id="editbutton" icon="build" class="hidden" style="color: red;" on-tap="spotopen"></paper-icon-button>
+            <paper-icon-button id="editbutton" icon="add-circle" class="hidden" style="color: red;" on-tap="spotopen"></paper-icon-button>
             <paper-icon-button icon="info" style="color: #03a9f4;" on-tap="helpopen"></paper-icon-button>
           </app-toolbar>
         </app-header>
@@ -189,7 +189,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             name ="viewer" 
             fbapp="[[fbapp]]" 
             path ="cp" 
-            firedbspot="{{firedbspot}}"> 
+            fbspot="{{fbspot}}"
+            fbtrigger="{{fbtrigger}}"> 
           </cloud-viewer>
 
           <cloud-howard     
@@ -207,7 +208,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             name ="spotter" 
             fbapp="[[fbapp]]" 
             path ="cp" 
-            firedbspot="{{firedbspot}}"> 
+            fbspot="{{fbspot}}" 
+            fbtrigger="{{fbtrigger}}"> 
           </cloud-spotter><!-- not routed from nav-list -->
 
           <div name="starter">
@@ -258,16 +260,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_pageChanged'
         },
 
-        firedbspot: {
+        fbspot: {
           type: Object,
           value: {},
           notify:true
-        } 
+        },
+
+        fbtrigger : 1 
+      
       },
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_spotChanged(firedbspot.url)'
+        '_spotChanged(fbspot.url)'
       ],
 
       ready: function() {
@@ -289,8 +294,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.spotter.click(); // simulates navigation-click
       },
 
-      _spotChanged: function(url) {
-        // console.log("spot-url (shell):", url)
+      _spotChanged: function(url) { 
+        if (!url) this.$.editbutton.icon="add-circle";
+        else {  //console.log("spot-url (shell):", url)
+           this.$.editbutton.icon="build"; 
+        } 
       },
 
       _routePageChanged: function(page) { // console.log("routed page", page, this.route);

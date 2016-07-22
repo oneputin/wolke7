@@ -134,20 +134,22 @@
         return len;
       },
 
-      contentToTop: function(e) { // console.log("contentToTop:", this, "class=" + this.thumbclass)
+      contentToTop: function(e) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
         // On click-event action from content (image) within a paper-button 
 
         // A. detect src of click-content
-        var epath = Polymer.dom(e).path; // console.log("event-path-log:", epath)
-        var fullsrc;
-        for (let el of epath) { // console.log("typ="+typeof el, el);
-            // if (el.className === this.thumbclass) {
+        var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
+        // for (var el of epath) { // NOT accepeted by polymer build
+        // for (i = 0, len = epath.length; i < len; i++) { 
+        var fullsrc, el, i=0, len=epath.length;
+        for (; i < len; i++) { 
+            el = epath[i];
             if (el.className === "thumb") {
                 fullsrc = el.src;
                 break;
             }
         } 
-        if (!fullsrc) return ;  // console.log("thumb-src=", fullsrc); // return; 
+        if (!fullsrc) return ; 
 
         // B. Fill content of popup
         this.fullsrc = fullsrc; 
@@ -155,12 +157,12 @@
         var body = document.querySelector('body'),
             popup = body.querySelector('#'+this.popupid);
 
-        if (!popup) {
+        if (!popup) { // console.log("mode popup, id=", this.popupid);
             popup = Polymer.dom(this.root).querySelector('#'+this.popupid);
             body.appendChild(popup);
         }
 
-        // Option : add metatext
+        // Option : add metatext 
         var metaContainer = popup.querySelector('#metatext');
         if (metaContainer)  metaContainer.innerText = fullsrc; // for ctrl only 
 

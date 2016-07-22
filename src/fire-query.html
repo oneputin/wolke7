@@ -38,8 +38,7 @@
         },
 
         key: {
-          type: String,
-          value: ""
+          type: String
         },  
 
         item: {         // query(order)Item
@@ -50,11 +49,12 @@
           type: String  
         },
 
+        trigger: 1,      // optionally used for requeries 
+
         operator: {      // queryOperator(relating queryItem and queryValue)
           type: String
         },
 
-        // count: 10,    // number of returned objects(records)
         data: {
           type: Object,
           notify: true
@@ -66,8 +66,8 @@
       },
 
       observers: [
-        'applyPathQuery(fb, path)',
-        'applyItemQuery(fb, path, item, itemvalue)',
+        'applyPathQuery(fb, path)',//, trigger)',
+        'applyItemQuery(fb, path, item, itemvalue)', // trigger)',
         'applyPathSave(fb, setdata, path, key)'
       ],
 
@@ -75,8 +75,8 @@
 
       },
 
-      applyPathQuery: function(fb, path) { 
-        
+      applyPathQuery: function(fb, path, trigger) { 
+        // if (!trigger) return;       // fi 0
         if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
 
           var that = this; // ALTMODISCH (use bind() instead?)
@@ -87,10 +87,10 @@
         }
       },
 
-      applyItemQuery: function(fb, path, item, value) { 
-        // console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
+      applyItemQuery: function(fb, path, item, value) {  //console.log("applyItemQuery: ", "path="+path,"var="+ item,"val="+ value); 
+        //, trigger) {
+        // if (!trigger) return;       // fi 0
 
-        var that = this; // ALTMODISCH (use bind() instead?)
 
         var ref  = fb.database().ref(path).orderByChild(item);
 
@@ -110,9 +110,11 @@
           console.log("apply count to ref: ",count, ref);
         } 
 
+        var that = this; // ALTMODISCH (use bind() instead?)
+
         // APPLY the query 
         ref.once('value')
-            .then(function(snapshot) { // console.log("query snapshot", snapshot.val());
+            .then(function(snapshot) {  // console.log("snapshot-value", snapshot.val());
               that.data = snapshot.val();
             })
             .catch( function (errorObject) {
@@ -121,16 +123,18 @@
       },
 
       applyPathSave: function(fb, dbData, dbPath, dbKey) { 
+
         // save the doc-reference to database
         if (!dbData || (dbData===null) || !Object.keys(dbData).length) {
           console.log("missing data to submit")
           return; 
-        } //console.log("triggered save at path:", dbPath, dbData);
+        } // console.log("triggered save at path:", dbPath, dbData);
         
-        // 1. Get unique key at the target path
         if (!fb.database().ref().child(dbPath)) { // target-node must exist to enable key-generator
           fb.database().ref(dbPath).set([]);
         }  
+
+        // 1. Get unique key at the target path
         if (!dbKey) dbKey = fb.database().ref().child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
 
         // 2. 
@@ -142,6 +146,10 @@
             console.log("data saved with key "+dbKey, snapshot.val());
             that.lastpath = dbPath+'/'+dbKey;
         })
+
+        // 3.  reset !! to avoid save with altered data !!
+        
+        this.key = undefined; 
       }  
 
     });

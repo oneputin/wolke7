@@ -18,7 +18,7 @@
       }
     </style>
 
-    <fire-query app="[[app]]" path="[[path]]" item="[[item]]" itemvalue="_all_" data="{{data}}"></fire-query>
+    <fire-query app="[[app]]" path="[[path]]" item="[[item]]" itemvalue="_all_" data="{{data}}" trigger="{{trigger}}"></fire-query>
 
     <!-- <div>query values</div> -->
 
@@ -48,6 +48,8 @@
         filter: {
           type: String // , value: "type"
         },
+        
+        trigger: 1,
 
         data: {
           type: Object,

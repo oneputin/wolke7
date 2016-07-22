@@ -289,8 +289,8 @@
       },
 
       inCtrl : function(indata,inold) {
-          var ik = Object.keys(indata);
-          if (!ik.length) return; // console.log("updating form with input data", indata);
+          if (!indata || !Object.keys(indata).length) return; 
+          // var ik = Object.keys(indata); if (!ik.length) return; // console.log("updating form with input data", indata);
 
           // 1. 
           this.resetForm(); 
@@ -360,9 +360,13 @@
 
       formSubmit: function(event) {
 
-        var data = this.dataObject(); 
-        this.outdata = data;  console.log("optionbally confirm data:",data);
-
+        var data = this.dataObject(); //console.log("submitting data to "+this.fbpath+"//"+this.fbkey, data);
+        
+        // console.log("optionally confirm data in custom element:",data);
+        // if (confirm("Submit last edits!")) {
+          this.outdata = data;  
+        // }
+        
         // Option: HIDE the form 
         // this.$.metaform.classList.add("hidden");
           
@@ -399,9 +403,12 @@
         // On click-event action from content (image) within a paper-button 
 
         // A. detect src of click-content
-        var epath = Polymer.dom(e).path; // console.log("event-path-log:", epath)
-        var fullsrc;
-        for (let el of epath) { // console.log("typ="+typeof el, el);
+        var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
+        // for (var el of epath) { // NOT accepeted by polymer build
+        // for (i = 0, len = epath.length; i < len; i++) { 
+        var fullsrc, el, i=0, len=epath.length;
+        for (; i < len; i++) { 
+            el = epath[i];
             if (el.className === "thumb") {
                 fullsrc = el.src;
                 break;
