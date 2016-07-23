@@ -41,7 +41,7 @@
     <template is="dom-if" if="{{countclasses(categories)}}">
       <!-- Template of MODAL popup window to be "very top" of app in  -->
       <paper-dialog 
-        id ='imgpopup' 
+        id ='symbolimg' 
         modal
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation"><!--  modal> -->
@@ -134,7 +134,7 @@
       },
 
       thumbView: function(e){
-        topfunction(e, this, "imgpopup");
+        topfunction(e, this, "symbolimg");
       }
 
     });
