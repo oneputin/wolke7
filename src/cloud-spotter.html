@@ -19,6 +19,7 @@
 <link rel="import" href="fire-store.html">
 <link rel="import" href="cloud-form.html">
 <link rel="import" href="fire-query.html">
+<link rel="import" href="fire-login.html">
 
 <dom-module id="cloud-spotter">
 
@@ -105,7 +106,9 @@
       }   
       
     </style>
-    
+
+      <fire-login></fire-login>
+          
       <paper-fab icon="insert-photo" class="main-fab" level="3" on-tap="addopen"></paper-fab>
 
       <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
