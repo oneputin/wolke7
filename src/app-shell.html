@@ -31,8 +31,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <!-- <link rel="import" href="../bower_components/paper-styles/color.html"> -->
 <!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
-
 <!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
+
 <link rel="import" href="my-icons.html">
 <link rel="import" href="cloud-alias.html">
 
@@ -171,13 +171,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="navdrawer">
         <app-toolbar class="drawer">Services</app-toolbar>
         <iron-selector selected="[[page]]" on-iron-select="closeDrawer" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="viewer"     href="/viewer">Browse CDB</a>
-          <a name="howard"     href="/howard">Query CDB (sample)</a>
-          <a name="categories" href="/categories">Map symbols</a>
+          <a name="viewer"     href="/viewer">Browser of imagegroups</a>
+          <a name="howard"     href="/howard">Sample of imagegroups</a>
+          <a name="categories" href="/categories">Cloud symbols on maps</a>
           <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">Cloud spotter</span></a>
           <a name="starter" id="starter" href="/starter"><span class="hidden">App starter</span></a>
         </iron-selector>
-        <p>( some additional information )</p>
+        <p> ( some additional information ) </p>
       </app-drawer>
 
       <!-- Main content -->

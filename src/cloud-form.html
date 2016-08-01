@@ -44,8 +44,10 @@
         display: none;
       }
       
-      label {
-        font-weight: bold;
+      .formlabel {
+        /*font-weight: bold;*/
+        font-size: 12px;
+        color: grey;
       }
       paper-fab {
         margin: 0px 20px;
@@ -67,10 +69,6 @@
          @apply(--layout-horizontal);
       }  
       
-      #more {
-        margin-top: 30px;
-      }    
-
       .thumb {
         height: 64px;
         width: 64px;
@@ -78,6 +76,18 @@
       #yearmenu {
         width: 120px;
       }
+      .flex-equal-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+
+      paper-menu.blue {
+        --paper-menu-background-color: var(--google-grey-300);
+      }
+      .margin1 {
+        margin: 10px 0px;
+      }
+
     </style>
 
     <cloud-alias fbapp="[[fbapp]]" alias="{{cloudalias}}" trigger></cloud-alias>  
@@ -101,8 +111,59 @@
 
       <paper-input value="{{title-main-pict}}" id="title-main-pict" label="title" required></paper-input>
 
-      <div class="container flex-horizontal">    
+      <paper-input value="{{title-sub-pict}}" id="title-sub-pict" label="subtitle" class="flex"></paper-input>
+        <!-- <paper-toggle-button checked on-change="toggleElements">clouds</paper-toggle-button> -->
 
+      <div class="container margin1 flex-equal-justified"><!--  around-justified flex-horizontal"> -->  
+        <div class="formlabel"> more attributes: </div>
+        <paper-toggle-button id="cloudatts" on-change="toggleElements">clouds</paper-toggle-button>
+        
+        <paper-toggle-button id="imageatts" on-change="toggleElements">image</paper-toggle-button>
+      </div>
+
+      <div id="moreclouds" class="container flex-equal-justified hidden">  
+
+        <div>
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
+          <label class="formlabel" id="label21">Cloud bottom</label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
+          <paper-menu class="blue" id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
+              <template is="dom-repeat" items="{{heights}}">
+                 <paper-item value="[[item]]">[[getAlias("type-height",item)]]</paper-item>
+              </template>        
+          </paper-menu>
+        </div>
+
+        <!-- <div class="flex"></div> -->
+        
+        <div>  
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
+          <label class="formlabel" id="label11">Cloud class</label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
+          <paper-menu class="blue" id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
+              <template is="dom-repeat" items="{{classes}}">
+                 <paper-item value="[[item]]">[[item]]</paper-item>
+              </template>        
+          </paper-menu>
+        </div>  
+
+        <!-- <div>&nbsp;&nbsp;</div> -->
+
+        <div >          
+          <fire-values app="{{fbapp}}" path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
+          <paper-dropdown-menu label="Main cloud type">
+            <paper-listbox id="type-genus" class="dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
+              <paper-item value="">  </paper-item>
+              <template is="dom-repeat" items="{{genuss}}">
+                 <paper-item value="[[item]]">{{getAlias("type-genus",item)}}</paper-item>
+              </template>        
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div  id="moreimage" class="container flex-horizontal hidden">    
         <div>
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
           <paper-dropdown-menu id="yearmenu" label="Calendar year">
@@ -114,54 +175,15 @@
             </paper-listbox>
           </paper-dropdown-menu>
         </div>
-        <paper-input value="{{title-sub-pict}}" id="title-sub-pict" label="subtitle" class="flex"></paper-input>
-        <paper-toggle-button checked on-change="toggleElements">clouds</paper-toggle-button>
       </div>
 
-      <div id="more" class="container flex-horizontal">  
-        <div>
-          <fire-values app="{{fbapp}}" path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
-          <label id="label21">Height</label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
-          <paper-menu id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
-              <template is="dom-repeat" items="{{heights}}">
-                 <paper-item value="[[item]]">[[getAlias("type-height",item)]]</paper-item>
-              </template>        
-          </paper-menu>
-        </div>
-        <div class="flex"></div>
-        
-        <div>  
-        
-          <fire-values app="{{fbapp}}" path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
-
-          <label id="label11">Class</label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
-          <paper-menu id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
-              <template is="dom-repeat" items="{{classes}}">
-                 <paper-item value="[[item]]">[[item]]</paper-item>
-              </template>        
-          </paper-menu>
-        </div>  
-        <div>&nbsp;&nbsp;</div>
-        <div >          
-          <fire-values app="{{fbapp}}" path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
-          <paper-dropdown-menu label="Main type (genus)">
-            <paper-listbox id="type-genus" class="dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
-              <paper-item value="">  </paper-item>
-              <template is="dom-repeat" items="{{genuss}}">
-                 <paper-item value="[[item]]">{{getAlias("type-genus",item)}}</paper-item>
-              </template>        
-            </paper-listbox>
-          </paper-dropdown-menu>
-        </div>
-      </div>
-
-      <hr>
       <!--  2 Ctrl buttons -->
-      <div>
+      <div class="container flex-horizontal">
         <!-- <paper-button id="submitbtn" raised on-click="submitterOpen">Submit</paper-button> -->
         <!-- <paper-button id="submitbtn" raised on-click="submitter.open()">Submit</paper-button> -->
         <paper-button id="submitbtn" raised on-click="formSubmit">Submit</paper-button>
-        <paper-button raised on-click="resetForm">Reset</paper-button>
+        <paper-button raised on-click="resetForm" >Reset</paper-button>
+        <div class="flex"></div>
       </div>
 
       <!-- does not become visible !! -->
@@ -232,7 +254,7 @@
           }
         }, 
 
-        recmore: {
+        cloudatts: {
           type: Object,
           value: {  
             "type-character": "", //cloud specific
@@ -240,6 +262,14 @@
             "type-height":    ""
           }
         },
+
+        imageatts: {
+          type: Object,
+          value: {  
+            "type-year": "" //cloud specific
+          }
+        },
+
 
         indata: {
           type: Object,
@@ -273,14 +303,21 @@
         this.$.submitter.open();
       },
 
-      toggleElements: function(e,b) { // 
-         if (e.target.checked) {
-            this.$.more.classList.remove("hidden");
-         }  else  { // console.log('unchecked');
-            // Hide a part of the form and reset its input-elements to "null"  
-            this.$.more.classList.add("hidden");
-            this.resetForm("recmore");
-         }
+      // Toggle parts of the form and reset its input-elements to "null" if hidden  
+      toggleElements: function(e,b) { 
+        var t = e.target,
+            tt = {
+              "cloudatts": "moreclouds",
+              "imageatts": "moreimage"
+            },
+            ttt = Polymer.dom(this.root).querySelector("#"+tt[t.id]); //console.log(t,tt,ttt);
+
+        if (t.checked) {
+            ttt.classList.remove("hidden");
+        }  else  { // console.log('unchecked');
+            ttt.classList.add("hidden");
+            this.resetForm(t.id);
+        }
       },
 
       setupForm: function(key, oldkey) {
@@ -373,9 +410,10 @@
 
       resetForm : function(rec) {  // console.log("before reset-1",rec, this.outdata); // return; 
 
-          if (!rec || rec.target) rec = "rec"; // console.log("before reset-2. ",rec, this[rec]); // return; 
+          if (!rec || rec.target) rec = "rec";  // console.log("before reset-2. ",rec, this[rec]);  //return; 
           
           var el; 
+
           for (var prop in this[rec]) {  // console.log("reset form for:"+prop, "->"+this.rec[prop]);
             // A. resetting the content of properteis in "FORM"-page 
             if (this[prop]) this[prop] = ""; 
