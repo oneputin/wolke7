@@ -117,9 +117,10 @@
 
       <div class="container margin1 flex-equal-justified"><!--  around-justified flex-horizontal"> -->  
         <div class="formlabel"> more attributes: </div>
-        <paper-toggle-button id="cloudatts" on-change="toggleElements">clouds</paper-toggle-button>
-        
-        <paper-toggle-button id="imageatts" on-change="toggleElements">image</paper-toggle-button>
+
+        <paper-toggle-button id="clouditems" on-change="toggleElements">clouds</paper-toggle-button>
+        <paper-toggle-button id="imageitems" on-change="toggleElements">image</paper-toggle-button>
+      
       </div>
 
       <div id="moreclouds" class="container flex-equal-justified hidden">  
@@ -243,7 +244,7 @@
           value: ""
         },
 
-        rec: {
+        formitems: {
           type: Object,
           value: {
             "url": "",
@@ -256,7 +257,7 @@
           }
         }, 
 
-        cloudatts: {
+        clouditems: {
           type: Object,
           value: {  
             "type-character": "", //cloud specific
@@ -265,13 +266,12 @@
           }
         },
 
-        imageatts: {
+        imageitems: {
           type: Object,
           value: {  
             "type-year": "" //cloud specific
           }
         },
-
 
         indata: {
           type: Object,
@@ -309,8 +309,8 @@
       toggleElements: function(e,b) { 
         var t = e.target,
             tt = {
-              "cloudatts": "moreclouds",
-              "imageatts": "moreimage"
+              "clouditems": "moreclouds",
+              "imageitems": "moreimage"
             },
             ttt = Polymer.dom(this.root).querySelector("#"+tt[t.id]); //console.log(t,tt,ttt);
 
@@ -318,7 +318,7 @@
             ttt.classList.remove("hidden");
         }  else  { // console.log('unchecked');
             ttt.classList.add("hidden");
-            this.resetForm(t.id);
+            this.resetForm(t.id); // ??? 
         }
       },
 
@@ -326,18 +326,18 @@
         console.log("setup spotForm for", key); 
       },
 
-      inCtrl : function(indata,inold) {
-          if (!indata || !Object.keys(indata).length) return; 
-          // var ik = Object.keys(indata); if (!ik.length) return; // console.log("updating form with input data", indata);
-
+      inCtrl : function(indata,inold) { console.log("inCtrl", indata);
           // 1. 
           this.resetForm(); 
 
-          // 2. Transfer ...
-          for (var prop in this.rec) { // extract required form-data from indata (if existing there)  
-            // if (indata[prop]) this.rec[prop] = indata[prop]; 
+          if (!indata || !Object.keys(indata).length) return; 
+          // var ik = Object.keys(indata); if (!ik.length) return; // console.log("updating form with input data", indata);
+
+          // 2. Transfer content from indata-object into direct props
+          for (var prop in this.formitems) { // extract required form-data from indata (if existing there)  
+            // if (indata[prop]) this.formitems[prop] = indata[prop]; 
             if (indata[prop]) this[prop] = indata[prop]; 
-          } // console.log("form refreshed from indata", this.rec);
+          } // console.log("form refreshed from indata", this.formitems);
 
           // 3. Manage disable-status
          
@@ -381,7 +381,7 @@
         else name = "anonym";
         if (!obj) obj = {};
    
-        for (var prop in this.rec) { // console.log(prop, this[prop]);
+        for (var prop in this.formitems) { // console.log(prop, this[prop]);
           if   (set && (obj[prop]!==null)) {  
             // form-props aus object übernehmen 
             
@@ -410,16 +410,17 @@
           
       },
 
-      resetForm : function(rec) {  // console.log("before reset-1",rec, this.outdata); // return; 
+      resetForm : function(setkey) {  // console.log("before reset-1",rec, this.outdata); // return; 
 
-          if (!rec || rec.target) rec = "rec";  // console.log("before reset-2. ",rec, this[rec]);  //return; 
+          if (!setkey || setkey.target) setkey = "formitems";  // console.log("before reset-2. ",rec, this[rec]);  //return; 
           
+          // 1. remove content and/or seletions
           var el; 
-
-          for (var prop in this[rec]) {  // console.log("reset form for:"+prop, "->"+this.rec[prop]);
-            // A. resetting the content of properteis in "FORM"-page 
+          for (var prop in this[setkey]) {  // console.log("reset form for:"+prop, "->"+this.formitems[prop]);
+            // A. resetting the content of properties in "FORM"-page 
             if (this[prop]) this[prop] = ""; 
-            this.rec[prop] = ""; 
+            this[setkey][prop] = ""; 
+
             if (this.outdata) this.outdata[prop] = ""; 
             
             el = Polymer.dom(this.root).querySelector("#"+prop); 
@@ -431,15 +432,20 @@
               }); // console.log("el2:" + prop, el.items);
             }  
           } 
+
+          // 2. hide optional subsets 
+          // this.$.imageitems.checked = false; // does not trigger an action 
+          if (this.$.clouditems.checked) this.$.clouditems.click();  
+          if (this.$.imageitems.checked) this.$.imageitems.click();  
       },
 
       ready: function() {
-        if (this.indata && this.indata.url) this.rec.url = this.indata.url;
+        if (this.indata && this.indata.url) this.formitems.url = this.indata.url;
 
       },
 
       thumbView: function(e){
-        topfunction(e, this, "formimg");
+        popupTop(e, this, "formimg");
       }
 
     });

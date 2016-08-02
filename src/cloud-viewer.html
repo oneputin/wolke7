@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -52,7 +53,7 @@
           z-index: 1000;
       }   
   
-      #spotpop {
+      #quickInfo {
         position: fixed;
         top: 100px;
         /*right: 50px;*/
@@ -64,19 +65,30 @@
 
     </style>
 
-    <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>  
+    <!-- <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>   -->
 
-    <div>Select an imageset using the menues below.</div>
+    <div>Select a set of cloud-images using classifications!</div>
 
-      <paper-dialog 
-        id="spotpop" 
-        entry-animation="scale-up-animation"
-        exit-animation="fade-out-animation"><!--  modal> -->
-        <paper-dialog-scrollable>
-          <h2 id="spottitle">Spotted: key={{spottitle}}</h2>
-          <p  id="spotobj"><pre>{{spotobj}}</pre></p>
-        </paper-dialog-scrollable>
-      </paper-dialog>
+    <paper-dialog 
+      id="quickInfo" 
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation">  <!-- modal> -->
+      <paper-dialog-scrollable>
+        <!-- <h2 id="spottitle">Spotted: key={{spottitle}} </h2> -->
+        <div>
+          <paper-icon-button 
+            icon="build" 
+            on-tap="spotEditCall" 
+            style="color:white;background-color:red;margin-right:20px;">
+          </paper-icon-button>
+          Spotted: key={{spottitle}}
+        </div>        
+
+        <p> <!-- id="spotobj" -->
+          <pre>{{spotobj}}</pre>
+        </p>
+      </paper-dialog-scrollable>
+    </paper-dialog>
 
     <!-- SELECT menues for slide-sets -->
     <div class="flex-horizontal">
@@ -121,10 +133,9 @@
     <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>  <!-- trigger="[[fbtrigger]]" -->
     <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show> <!-- [[imas]] are calculated from {{data}} -->
 
-    <!-- FAB and its fbquery on-tap -->
-
+    <!-- FAB used to trigger query for {{fbspot}} at [[spotpath]]-->
     <paper-fab icon="create" class="main-fab" level="3" on-tap="spotQueryTrigger"></paper-fab>
-    <fire-query app="[[fbapp]]" path="[[spotpath]]" item="_path_" data="{{fbspot}}"></fire-query>
+    <fire-query app="[[fbapp]]" path="[[spotpath]]" item="_path_" data="{{fbspot}}"></fire-query> <!-- _path_ : specific ctrl flag-->
 
   </template>
 
@@ -205,17 +216,24 @@
         fbtrigger: {    // synchronize actual db-query 
           type: Number,
           value: 1,
-          observer: 'trackTrigger'
+          notify: true
+          // observer: 'trackTrigger'
         },
 
         fbspot: {       // synchronizes with cloud-form (over app-shell, cloud-spotter) 
           type: Object,
           notify: true 
-        }
+        }, 
+
+        fbspotter: {       // synchronizes with cloud-form (over app-shell, cloud-spotter) 
+          type: Number,
+          notify: true 
+        } 
+
       },
 
       observers : [
-        'spotQueryAction(fbspot, spotkey, spotoggle)'
+        'spotQueryView(fbspot, spotkey, spotoggle)'
       ], 
 
       ready: function() { 
@@ -226,12 +244,8 @@
         // this.itemvalue = 2002;
       },
 
-      trackTrigger: function(n,o) {
-        // console.log("trackTrigger",n);
-      },
-
-      indexChanged: function(n,o) { // 
-        this.fbspot = undefined;
+      indexChanged: function(n,o) { // trigger 
+        this.fbspot = {}; // undefined;
       },
 
       getAlias: function(type, abbr) { // applied directly in generated HTML. console.log(type, abbr);
@@ -244,19 +258,20 @@
         return abbr; 
       },
 
-
-      spotQueryTrigger: function() {  // related to index of slideview
-        var i   = this.slideindex, 
-            ima = this.imas[i];  // console.log("spotTrigger:", ima);
+      spotQueryTrigger: function() {  
+        // 
+        var i   = this.slideindex,  // related to index of slideview
+            ima = this.imas[i];     // console.log("spotTrigger:", ima);
         if (!ima) return;
         this.spotkey   = ima.fbkey; // was added during slidshow-preparation
         this.spotpath  = this.path+"/"+ima.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
         this.spotoggle = 1; 
       }, 
 
-      spotQueryAction: function (spot, spotkey, toggle) {  // console.log("spotAction-In", spotkey, toggle, spot);
+      spotQueryView: function (spot, spotkey, toggle) {  // console.log("spotAction-In", spotkey, toggle, spot);
         if (!spot.url || !spotkey || !toggle) return; 
-        this.spotoggle = undefined; // prevents spotquery until next triggerAction
+
+        this.spotoggle = undefined; // prevents call of spotQueryView until next triggerSignal
 
         // A. Extend spot for unique identification in other  
         spot.fbkey = spotkey;
@@ -265,11 +280,11 @@
         this.spotobj   = JSON.stringify(spot, null, 2); 
         this.spottitle = spotkey; 
 
-        topfunction(null, this, "spotpop");
+        popupTop(null, this, "quickInfo"); // Opens "quickInfo" with content from this
+      },
 
-        // var spotpup = this.$.spotpop; // console.log("spotAction", spotkey, spot, spotpup);
-        // if (spotpup)   spotpup.open();
-
+      spotEditCall: function () {  console.log("triggered spotEditCall to open cloud-spotter.html");
+        this.fbspotter = 1;
       },
 
       // Initialisierung of elelemnt-selection if sets are updated 

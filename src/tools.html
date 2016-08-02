@@ -1,9 +1,9 @@
 <script>
 	// Support-Functions 
-var topfunction =  function(e, that, popupid) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
+var popupTop =  function(e, that, popupid) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
     // On click-event action from content (image) within a paper-button 
 
-    // A. Transfer popup to top of document to overlap all 
+    // A. Transfer a popup to the top of browser-window to overlap all alements 
 
     var body = document.querySelector('body'),
         popup = body.querySelector('#'+popupid);

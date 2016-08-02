@@ -29,12 +29,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
-<!-- <link rel="import" href="../bower_components/paper-styles/color.html"> -->
-<!-- <link rel="import" href="../bower_components/polymerfire/polymerfire.html"> -->
-<!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
 
 <link rel="import" href="my-icons.html">
-<link rel="import" href="cloud-alias.html">
+<link rel="import" href="cloud-alias.html">  <!-- contains fire-app -->
+<!-- <link rel="import" href="fire-shield.html">  -->
 
 <dom-module id="app-shell">
 
@@ -153,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <!-- create  -->
+    <!-- initialize firebase-instance -->
     <fire-app app="{{fbapp}}" fb="{{fb}}"></fire-app>  
 
     <app-location route="{{route}}"></app-location>
@@ -169,10 +167,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <!-- Drawer content -->
       <app-drawer id="navdrawer">
+        <!-- <fire-shield></fire-shield> -->
         <app-toolbar class="drawer">Services</app-toolbar>
         <iron-selector selected="[[page]]" on-iron-select="closeDrawer" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="viewer"     href="/viewer">Browser of imagegroups</a>
-          <a name="howard"     href="/howard">Sample of imagegroups</a>
+          <a name="viewer" id="viewer" href="/viewer">Classified imagegroups</a>
+          <a name="howard"     href="/howard">Sample of imagegroup</a>
           <a name="categories" href="/categories">Cloud symbols on maps</a>
           <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">Cloud spotter</span></a>
           <a name="starter" id="starter" href="/starter"><span class="hidden">App starter</span></a>
@@ -187,7 +186,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title class="flexchild">Water onAir</div>
-            <paper-icon-button id="editbutton" icon="add-circle" class="hidden" style="color: red;" on-tap="spotopen"></paper-icon-button>
+            <paper-icon-button id="editbutton" icon="add-circle" class="hidden" style="color: red;" on-tap="spotterOpen"></paper-icon-button>
             <paper-icon-button icon="info" style="color: #03a9f4;" on-tap="helpopen"></paper-icon-button>
           </app-toolbar>
         </app-header>
@@ -199,6 +198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fbapp="[[fbapp]]" 
             path ="cp" 
             fbspot="{{fbspot}}"
+            fbspotter="{{fbspotter}}" 
             fbtrigger="{{fbtrigger}}"> 
           </cloud-viewer>
 
@@ -209,8 +209,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </cloud-howard>
 
           <cloud-categories 
-            fbapp="[[fbapp]]" 
-            name="categories">
+            name="categories"
+            fbapp="[[fbapp]]">
           </cloud-categories>
 
           <cloud-spotter    
@@ -264,7 +264,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         apiflag : 0,
         
         fbapp: {
-          type: String
+          type: String,
+          observer: '_appChanged'
         }, 
 
         page: {
@@ -276,20 +277,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         fbspot: {
           type: Object,
           value: {},
-          notify:true
+          notify: true
         },
 
-        fbtrigger : 1 
-      
+        fbtrigger : 0,
+
+        fbspotter: {
+          value: 0,
+          observer: '_spotChanged' 
+        }
+
       },
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_spotChanged(fbspot.url)'
+        // '_spotChanged(fbspot.url, fbspotter)'
       ],
 
       ready: function() {
-        this.fbapp = "wolke7"; 
+        // this.fbapp = "wolke7"; 
+        // fbapp self-detected in fire-app
       },
 
       closeDrawer: function() {
@@ -302,24 +309,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         popup.open();
       },
 
-      spotopen : function(e) { //console.log("spotbutton clicked", e);
-        // this.page = 'spotter'; // does not update the path 
-        this.$.spotter.click(); // simulates navigation-click
+      spotterOpen : function(e) { //console.log("spotbutton clicked", e);
+        this.fbspot = undefined;
+        this.fbspotter = 1; 
       },
 
-      _spotChanged: function(url) { 
-        if (!url) this.$.editbutton.icon="add-circle";
-        else {  //console.log("spot-url (shell):", url)
-           this.$.editbutton.icon="build"; 
+      _spotChanged: function(trigger) { //, url) {// toggle the icon of editStartButton (defined in my-icons.html)
+        // 1. Toggle edit-button  
+        // var icon = "build";
+        // if (!url) icon="add-circle";
+        // this.$.editbutton.icon = icon; 
+
+        // 2. Hard-triggers programmatic navigation-clicks ("#spotter","#viewer")
+        // in the navigation-menu to open an iron-page "<cloud-xxx>" 
+        // optionally with content filled to Obj "fbspot" before
+        if (trigger) {
+          this.$.spotter.click(); 
+        } else {
+          this.$.viewer.click(); 
         } 
       },
 
-      _routePageChanged: function(page) { // console.log("routed page", page, this.route);
+      _appChanged: function(app, appold) { console.log("appKey changed:",app, appold);
+
+      },
+
+      _routePageChanged: function(page) { console.log("routed page changed to ["+page+"]", this.route);
         this.page = page || 'starter';
 
         // show add-button only with viewer-page
         if (page=="viewer") this.$.editbutton.classList.remove("hidden");
         else                this.$.editbutton.classList.add("hidden");
+
+        if (page!=="spotter") { console.log("not spotterpage !", this.fbspotter, this.fbspot)
+          this.fbspotter = 0;  
+          this.fbspot = undefined;
+        }  
       },
 
       _pageChanged: function(page) {  // load page import on demand.

@@ -32,16 +32,16 @@
         fb: {
           type: Object, 
           notify: true
-          // observer: 'getAuth'
         },
 
         authmode:{
           type: String 
         },
 
-        user: {     // authorized user required for fb storage actions 
-          type: Object ,
-          observer: 'objectLog'
+        user: {     // an "authorized user" is required for fb storage actions 
+          type: Object,
+          value: {},
+          observer: 'debugLog'
         },
 
         path:{
@@ -50,7 +50,7 @@
 
         srcfile: {     // triggers upload
           type: Object,
-          observe: 'objectLog' 
+          observe: 'debugLog' 
         },
 
         srcmeta: {     // optional addon to upload
@@ -68,8 +68,8 @@
       },
 
       observers: [
-        'applyStorageQuery(fb, path, queryurl)', //, user)',
-        'applyStorageUpload(fb, srcfile, path)'  //, user)'
+        'applyStorageQuery(fb, path, queryurl, user)',
+        'applyStorageUpload(fb, srcfile, path, user)'
       ],
 
       ready: function() { // console.log("firequery-ready");
@@ -77,33 +77,36 @@
           this.authmode="anonym"; 
         }
       },
-      objectLog: function(obj, objold){ console.log(obj, this);
+      
+      debugLog: function(obj, objold){ console.log("Log of object/context:", obj, this);
 
       },
-      applyStorageUpload: function(fb, file, uploadpath, user) { console.log("start upload", user, uploadpath, fb, file);
-        
+
+      applyStorageUpload: function(fb, file, uploadpath, user) { console.log("start storageUpload ", user, uploadpath, fb, file);
+        // store an Object to fb-storage !! together with metadata !!
+        var that = this;  
+
         var metadata = { // storage-object meta !!
           'contentType': file.type
         }   
+
         if (this.srcmeta) { // created independently
           metadata["customMetadata"] = this.srcmeta;
-        } console.log("uploadmeta of [" + file.name+"]", metadata);
+        } console.log("Metadata of new storageObj [" + file.name+"]", metadata);
 
-        var uploadRef  = fb.storage().ref(uploadpath);        
+        var uploadRef = fb.storage().ref(uploadpath);        
        
-        var uploadTask = uploadRef.child(file.name).put(file, metadata);  // 
+        var storeTask = uploadRef.child(file.name).put(file, metadata);  // STORE-TASK 
 
         // Listen for errors and completion of the upload.
-        var that = this;  
-
-        uploadTask.on('state_changed', 
+        storeTask.on('state_changed', 
           null, 
           function(error) {
             that.serverurl = "" ; // hide the last img !!
-            console.error('Upload failed:', error);
+            console.error('STORETASK failed:', error);
           }, 
           function() {  
-            var snap  = uploadTask.snapshot;  
+            var snap  = storeTask.snapshot;  
             // var bytes = snap.totalBytes; 
             that.response = snap.metadata;   
             // that.storageurl = that.response.downloadURLs[0];  

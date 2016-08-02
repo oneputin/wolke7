@@ -132,7 +132,7 @@
         // save the doc-reference to database
         if (!Object.keys(dbData).length) { console.log("Missing data to submit")
           return; 
-        } // console.log("triggered save at path:", dbPath, dbData);
+        } console.log("triggered to save at path:", dbPath, dbData);
         
         // 1. 
         if (!fb.database().ref().child(dbPath)) { // target-path-node must exist to enable key-generator

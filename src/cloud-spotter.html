@@ -20,7 +20,7 @@
 <link rel="import" href="fire-store.html">
 <link rel="import" href="cloud-form.html">
 <link rel="import" href="fire-query.html">
-<link rel="import" href="fire-login.html">
+<link rel="import" href="fire-shield.html">
 
 <dom-module id="cloud-spotter">
 
@@ -102,56 +102,40 @@
           --paper-fab-background: var(--paper-light-blue-500);
           /*position: fixed;    /*relative to screen*/
           position: absolute; /*relative to parent element*/
-          right: 50%;    
-          top: 10%;
-          /*bottom: 50%;*/
+          right: 5%;    
+          /*top: 10%;*/
+          bottom: 5%;
           z-index: 999;
       }   
       
     </style>
+      
+      <!-- 1. Login-Shield -->
+      <fire-shield user="[[user]]"></fire-shield>
 
-      <fire-login></fire-login>
-          
-      <!-- <div id="top" class="container flex-horizontal"> 
-        <div>Option: Load a cloud-image you want to analyse and/or upload.</div> 
-        <div>Classify and comment an image (new or selected from database) in the form below.</div>
-      </div>  
-      <hr>
-
-      <div class="container flex-end-align"> 
-        <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
-        <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
-        <div class="weak mm">[[status]]</div>
-      </div> -->  
-
+      <!-- 2.1  FAB to open the download popup -->          
       <paper-fab icon="insert-photo" class="main-fab" level="3" on-tap="addopen"></paper-fab>
-
-      <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
-      <!-- The raw query-response (storagemeta) is being translated 
-           into the format of fbspot to refresh the form  -->
-
-      <!-- 2. FORM  -->
-      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
-
-      <!-- 3.  -->
-      <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
-
-      <!-- 4. POPUP to add/upload images -->
+      <!-- 2.2 POPUP to select/upload images -->
       <paper-dialog id="adder">
-
         <h2>Image selection</h2>
-        <!-- <div id="top" class="container flex-horizontal"> 
-          <div>Option: Select a (cloud-)image from your device to analyse and/or upload.</div> 
-          <div>Classify and comment the image in the related form.</div>
-        </div>  
-        <hr> -->
-        
         <div class="container flex-end-align"> 
           <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
           <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
           <div class="weak mm">[[status]]</div>
         </div>          
       </paper-dialog>  
+      
+      <!-- 2.3  -->
+      <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
+      <!-- The raw query-response (storagemeta) is being translated 
+           into the format of fbspot to refresh the form  -->
+
+
+      <!-- 3.1 FORM to edit metadata of image -->
+      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
+
+      <!-- 3.2 Upload/refresh metadata of the image -->
+      <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
 
   </template>
 
@@ -185,16 +169,18 @@
         
         storagemeta: {
           type: Object,
-          value : {} //,
-          // observer: "storageResponse"
+          value : {},
+          observer: "storageResponse"
         },
 
         fbspot: {
           type: Object
         },
         
-        fbtrigger: 1,
-
+        fbtrigger: {
+          value:0
+        },
+         
         formdata: {
           type: Object,
           observer: 'checkFormSubmit'  
@@ -227,11 +213,9 @@
         // '_fileUploaded(file.name, )'
       ],
 
-      ready: function() { console.log("spotter-page ready"); 
- 
-        this.uploadpath = this.path;
- 
-      },
+      ready: function() { // console.log("spotter-page ready"); 
+         // this.uploadpath = this.path;
+       },
 
       addopen : function(e) { //console.log("helpbutton clicked", e);
         var popup = this.$.adder;
@@ -269,27 +253,29 @@
         if (files && files.length) {
           var file  = files[0]; // console.log("input-file-check:", file);
           this.file = file; // the file-object becomes a property of spotter
-          this.status = this.fileStatus(file); console.log("finished fileselect: ", this.status); 
+          this.status = this.fileStatusGet(file); console.log("handleFileSelect. fileStatus= ", this.status); 
         }
+        // show spinner until file is stored (!close in "storageResponse"!) 
         el = this.$.spinner;
         el.active = true;
       },  
 
-      fileStatus: function(file) {
+      fileStatusGet: function(file) {
         var d = file.lastModifiedDate;
             status = d.getFullYear()+"/"+d.getMonth()+"/"+d.getDate();
         return status;
       },  
 
-      storageResponse : function(meta, oldmeta) { 
+      storageResponse: function(meta, oldmeta) { 
        
-        // A. Reset Ctrls related to img-upload 
+        // A. Reset some Ctrls related to img-upload 
         var el = this.$.spinner;
         el.active = false;
 
         var popup = this.$.adder;
         popup.close();
 
+        // 
         var filetype = meta.contentType,
             urls     = meta.downloadURLs; 
         if (!urls || !urls.length) return;  // console.log("storageResponse", meta);
@@ -300,7 +286,6 @@
         } else {
           this.imgurl = this.storageurl;  
         } // console.log("apply downloadurl:", filetype, this.storageurl); // return;
-
         // B. prepare the formular-input extracting some firedb-data from storagemeta
         if (this.storageurl) {
           var clmeta = {"url": this.storageurl};
