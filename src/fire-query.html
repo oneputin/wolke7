@@ -1,10 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script> -->
-<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase-database.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script> -->
+<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-database.js"></script>
 
 <link rel="import" href="fire-app.html">
 
+<!-- 
+
+-->
 <dom-module id="fire-query">
 
   <template>
@@ -69,8 +72,8 @@
 
       observers: [
         'applyPathQuery(fb, path)',//, trigger)',
-        'applyItemQuery(fb, path, item, itemvalue)', // trigger)',
-        'applyPathSave(fb, setdata, path, key)'
+        'applyItemQuery(fb, path, item, itemvalue)',  // trigger)',
+        'applyPathSave(fb, setdata, path, key)'       // 
       ],
 
       ready: function() { // console.log("firequery-ready");
@@ -127,29 +130,29 @@
       applyPathSave: function(fb, dbData, dbPath, dbKey) { 
 
         // save the doc-reference to database
-        if (!dbData || (dbData===null) || !Object.keys(dbData).length) {
-          console.log("missing data to submit")
+        if (!Object.keys(dbData).length) { console.log("Missing data to submit")
           return; 
         } // console.log("triggered save at path:", dbPath, dbData);
         
-        if (!fb.database().ref().child(dbPath)) { // target-node must exist to enable key-generator
+        // 1. 
+        if (!fb.database().ref().child(dbPath)) { // target-path-node must exist to enable key-generator
           fb.database().ref(dbPath).set([]);
         }  
 
-        // 1. Get unique key at the target path
+        // 2. Get unique key for the dataObject at the target path
         if (!dbKey) dbKey = fb.database().ref().child(dbPath).push().key;   // console.log("dbDataSubmit", dbKey, dbData); // return;
 
-        // 2. 
-        var that = this;
-
+        //  3. Store&check the dataObject
+        //  3.1 STORE
         fb.database().ref(dbPath+'/'+dbKey).set(dbData);  // console.log("save at:", dbPath+'/'+dbKey);
         
-        fb.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { 
-            console.log("data saved with key "+dbKey, snapshot.val());
-            that.lastpath = dbPath+'/'+dbKey;
+        //  3.2 CHECK
+        var that = this;
+        fb.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { console.log("data saved with key "+dbKey, snapshot.val());
+            that.lastpath = dbPath+'/'+dbKey; 
         })
 
-        // 3.  reset !! to avoid save with altered data !!
+        // 3.3 reset the key !! to avoid save with altered data !!
         
         this.key = undefined; 
       }  

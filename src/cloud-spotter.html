@@ -22,22 +22,11 @@
 <link rel="import" href="fire-query.html">
 <link rel="import" href="fire-login.html">
 
-<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    "apiKey":        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
-    "authDomain":    "wolke7-fd941.firebaseapp.com",
-    "databaseURL":   "https://wolke7-fd941.firebaseio.com",
-    "storageBucket": "wolke7-fd941.appspot.com"
-  };
-  firebase.initializeApp(config);
-</script>
-
 <dom-module id="cloud-spotter">
 
   <!-- Defines the element's style and local DOM -->
   <template>
+
     <style>
       :host {
         display: block;
@@ -108,73 +97,7 @@
       #top {
         background-color: white;
       }
-<<<<<<< HEAD
 
-      /* Splash Page */
-      #splashpage {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: #0288D1;
-          background: radial-gradient(circle, #039BE5, #01579b);
-          z-index: 10000;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: white;
-          flex-direction: column;
-      }     
-
-    </style>
-
-      <section id="splashpage"> 
-        <h3 class="logo">Editor login</h3>
-        <div>
-          <paper-button on-tap="loginGoogle" raised id="sign-in-button"> Sign in (google)</paper-button>
-          <paper-button on-tap="loginEmail" raised id="sign-in-button-email"> Sign in (email)</paper-button>
-        </div>
-
-        <div id="email-auth-form" class="hidden" style="margin-top: 25px;">
-
-          <div>Login: 
-            <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="email" name="email" placeholder="Email"/>
-            &nbsp;&nbsp;&nbsp;
-            <input class="mdl-textfield__input" style="display:inline;width:auto;" type="password" id="password" name="password" placeholder="Password"/>
-          </div>
-
-          <div>(optional) Profile: 
-            <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="displayname" name="displayname" placeholder="displayName"/>
-            &nbsp;&nbsp;&nbsp;
-            <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="photourl" name="photourl" placeholder="photoUrl"/>
-          </div>
-
-          <br/><br/>
-
-          <paper-button on-tap="emailSignIn" raised id="quickstart-sign-in" name="signin">Sign In</paper-button> <!-- disabled -->
-          &nbsp;&nbsp;&nbsp;
-          <paper-button on-tap="emailSignUp" raised id="quickstart-sign-up" name="signup">Sign Up</paper-button>
-          &nbsp;&nbsp;&nbsp;
-          <paper-button on-tap="sendEmailVerification" raised disabled id="quickstart-verify-email" name="verify-email">Verify account</paper-button>
-          &nbsp;&nbsp;&nbsp;
-          <paper-button on-tap="sendPasswordReset" raised id="quickstart-password-reset" name="verify-email">Reset password</paper-button>
-        
-        </div>
-
-      </section>    
-   
-      <div id="top" class="container flex-horizontal"> 
-        <div>Option: Load a cloud-image you want to analyse and/or upload.</div> 
-        <div>Classify and comment an image (new or selected from database) in the form below.</div>
-      </div>  
-      <hr>
-      <div class="container flex-end-align"> 
-        <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
-        <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
-        <div class="weak mm">[[status]]</div>
-      </div>  
-=======
       .main-fab {
           --paper-fab-background: var(--paper-light-blue-500);
           /*position: fixed;    /*relative to screen*/
@@ -184,32 +107,46 @@
           /*bottom: 50%;*/
           z-index: 999;
       }   
->>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       
     </style>
 
       <fire-login></fire-login>
           
+      <!-- <div id="top" class="container flex-horizontal"> 
+        <div>Option: Load a cloud-image you want to analyse and/or upload.</div> 
+        <div>Classify and comment an image (new or selected from database) in the form below.</div>
+      </div>  
+      <hr>
+
+      <div class="container flex-end-align"> 
+        <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
+        <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
+        <div class="weak mm">[[status]]</div>
+      </div> -->  
+
       <paper-fab icon="insert-photo" class="main-fab" level="3" on-tap="addopen"></paper-fab>
 
       <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
+      <!-- The raw query-response (storagemeta) is being translated 
+           into the format of fbspot to refresh the form  -->
 
-      <!-- B. The raw query-response (storagemeta) is being translated 
-              into the format of fbspot to refresh the form  -->
-
+      <!-- 2. FORM  -->
       <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
 
+      <!-- 3.  -->
       <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
 
+      <!-- 4. POPUP to add/upload images -->
       <paper-dialog id="adder">
+
         <h2>Image selection</h2>
-<!--         <div id="top" class="container flex-horizontal"> 
+        <!-- <div id="top" class="container flex-horizontal"> 
           <div>Option: Select a (cloud-)image from your device to analyse and/or upload.</div> 
           <div>Classify and comment the image in the related form.</div>
         </div>  
-        <hr>
- -->        
-      <div class="container flex-end-align"> 
+        <hr> -->
+        
+        <div class="container flex-end-align"> 
           <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
           <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
           <div class="weak mm">[[status]]</div>
@@ -286,7 +223,7 @@
       },
 
       observers: [
-        '_spotChanged(fbspot.url)'
+        // '_spotChanged(fbspot.url)'
         // '_fileUploaded(file.name, )'
       ],
 
@@ -294,185 +231,13 @@
  
         this.uploadpath = this.path;
  
-        var that = this;
-        var splashpage = this.$.splashpage;
-
-        firebase.auth().onAuthStateChanged(function(user) { console.log("actual user:",user,"splashpage", splashpage);
-          if (user && !user.isAnonymous) {
-              splashpage.style.display = 'none';
-              // A. Log the editing user   
-              // writeUserData(
-              //     user.uid, 
-              //     user.displayName, 
-              //     user.email, 
-              //     user.photoURL
-              // );
-              // B. 
-              // startDatabaseQueries();
-          } else {
-            splashpage.style.display = '';
-          }
-        });
       },
 
-      loginGoogle: function() {
-        // var provider = new firebase.auth.GithubAuthProvider(); // Alternativ
-        var provider = new firebase.auth.GoogleAuthProvider();    // ORIGINAL 
-        firebase.auth().signInWithPopup(provider);
-      },
-
-      loginEmail: function() {
-        // toggle visibility of email-auth-form
-        Polymer.dom(this.root).querySelector('#email-auth-form').classList.toggle('hidden');
-      },
-
-      /**
-       * Handling the email-signIn(signUp)
-       */
-      emailSignIn: function(e, email, password) {
-        if (firebase.auth().currentUser) {
-          // [START signout]
-          firebase.auth().signOut();
-          // [END signout]
-        } else {
-          if (!email)     email    = this.$.email.value;
-          if (!password)  password = this.$.password.value;
-
-          if (email.length < 4) {
-            alert('Please enter an email (ncount>3).');
-            return;
-          }
-          if (password.length < 4) {
-            alert('Please enter a password (ncount>3).');
-            return;
-          } console.log("emailSignIn.LOG:", email, password); 
-          
-          // Sign in with email and pass.
-          // [START authwithemail]
-          firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-
-            // [START_EXCLUDE]
-            if (errorCode === 'auth/wrong-password') {
-              alert('Wrong password.');
-            } else {
-              alert(errorMessage);
-            }
-            console.log("ErrorLog:", error);
-            
-            Polymer.dom(this.root).querySelector('#quickstart-sign-in').disabled = false;
-            // [END_EXCLUDE]
-          });
-          // [END authwithemail]
-        }
-        // document.getElementById('quickstart-sign-in').disabled = true;
-      },
-
-      emailSignUp: function() {
-        var email     = this.$.email.value;
-        var password  = this.$.password.value;
-        if (email.length < 4) {
-          alert('Please enter an email address.');
-          return;
-        }
-        if (password.length < 4) {
-          alert('Please enter a password.');
-          return;
-        }
-        // Sign in with email and pass.
-        // [START createwithemail]
-        var that = this;
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then(function(user) {  console.log("signed up new user:", user);
-            that.setUserProfile(user);
-          })
-          .catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // [START_EXCLUDE]
-            if (errorCode == 'auth/weak-password') {
-              alert('The password is too weak.');
-            } else if (errorCode == 'auth/email-already-in-use') {
-              // if (confirm("The email address is used by existing account. SignIn");
-              alert('The email address is used by existing account.');
-              Polymer.dom(this.root).querySelector('#quickstart-sign-in').disabled = false;
-              // emailSignIn(email, password);
-            } else {
-              alert(errorMessage);
-            }
-            console.log(error);
-            // [END_EXCLUDE]
-        });
-        // [END createwithemail]
-      },
-
-<<<<<<< HEAD
-      /**
-       * [setUserProfile description]
-       */
-      setUserProfile: function(user, displayname, photourl){
-        // some basic features may be managed from client!!
-        if (!displayname) displayname  = this.$.displayname.value;
-        if (!photourl) photourl        = this.$.photourl.value;
-        if (!displayname && !photourl) return;
-
-        user.updateProfile({
-          displayName: displayname,
-          photoURL: photourl
-        }).then(function() {
-          console.log("Profile-Update successful.");
-        }, function(error) {
-          console.log("Profile-Update failed.", error);    // An error happened.
-        });
-      },
-
-      sendEmailVerification: function() {
-        // [START sendemailverification]
-        firebase.auth().currentUser.sendEmailVerification().then(function() {
-          // Email Verification sent!
-          // [START_EXCLUDE]
-          alert('Email Verification Sent!');
-          // [END_EXCLUDE]
-        });
-        // [END sendemailverification]
-      },
-
-      sendPasswordReset: function() {
-        var email = this.$.email.value;
-        // [START sendpasswordemail]
-        firebase.auth().sendPasswordResetEmail(email).then(function() {
-          // Password Reset Email Sent!
-          // [START_EXCLUDE]
-          alert('Password Reset Email Sent!');
-          // [END_EXCLUDE]
-        }).catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // [START_EXCLUDE]
-          if (errorCode == 'auth/invalid-email') {
-            alert(errorMessage);
-          } else if (errorCode == 'auth/user-not-found') {
-            alert(errorMessage);
-          }
-          console.log(error);
-          // [END_EXCLUDE]
-        });
-        // [END sendpasswordemail];
-      },
-
-
-
-=======
       addopen : function(e) { //console.log("helpbutton clicked", e);
         var popup = this.$.adder;
         popup.open();
       },
 
->>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       checkFormSubmit: function(data, dataold) { 
         // prepare submit of x.clouddata and x.fbkey
         var key, fbkey="" ;
@@ -488,9 +253,8 @@
         } 
       },
 
-      _spotChanged: function(url) {
-        // console.log("spot-url (spotter):", url)
-      },
+      // _spotChanged: function(url) { // console.log("spot-url (spotter):", url)
+      // },
 
       // event-action of file-button 
       handleFileSelect: function(evt) { 
@@ -515,8 +279,6 @@
         var d = file.lastModifiedDate;
             status = d.getFullYear()+"/"+d.getMonth()+"/"+d.getDate();
         return status;
-<<<<<<< HEAD
-=======
       },  
 
       storageResponse : function(meta, oldmeta) { 
@@ -533,11 +295,11 @@
         if (!urls || !urls.length) return;  // console.log("storageResponse", meta);
 
         this.storageurl = urls[0]; 
-        if (filetype.indexOf("image") > -1) { 
-          this.imgurl = urls[0] ;  // console.log("apply downloadurl:", filetype, urls[0]); // return;
-        } else {
+        if (filetype.indexOf("image") < 0) { 
           this.imgurl = "../images/app-icon-144.png" ; // default placeholder
-        } 
+        } else {
+          this.imgurl = this.storageurl;  
+        } // console.log("apply downloadurl:", filetype, this.storageurl); // return;
 
         // B. prepare the formular-input extracting some firedb-data from storagemeta
         if (this.storageurl) {
@@ -550,11 +312,6 @@
 
           this.fbspot = clmeta;   // ****  
         }  
-      },
-
-      ready: function() {
-        this.uploadpath = this.path;
->>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       }
 
     });
