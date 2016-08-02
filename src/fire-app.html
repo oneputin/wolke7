@@ -54,6 +54,14 @@
           type:String
         },  // "anonym",
 
+        email: {
+          type:String,
+          value:""
+        },  
+        password: {
+          type:String
+        },  
+
         user: {
            type: Object
         } 
@@ -61,7 +69,7 @@
       },
 
       observers: [
-        'getAuth(fb, authmode)'
+        'getAuth(fb, authmode, email, password)'
       ],
 
       ready: function() { // console.log("firequery-ready");
@@ -69,7 +77,7 @@
       },
 
       fbInit : function(name, oldname) { 
-        if (!fbConfig) { console.log("missing fb-configuration");
+        if (!fbConfig) { console.log("BREAK. MISSING fb-configuration");
           this.fb = null;
           return;
         }
@@ -91,7 +99,7 @@
         } 
       },
 
-      getAuth: function(fb, authmode) {
+      getAuth: function(fb, authmode, email, password) {
         
         var auth = fb.auth(); console.log("is-auth:", auth); 
         if (auth.currentuser) {
@@ -110,16 +118,20 @@
           });
         }  
 
-        if (authmode=="email") { 
+        if (email && password) { // authmode=="email") { 
+          authmode = "email"; 
           auth.signInWithEmailAndPassword(email, password).then(function(user){
+            console.log('Email SignIn Success', user); 
+            this.user = user; // enable uploadbutton after signIn
           })
         }  
 
-        if (authmode=="popup") {
+        if (authmode=="popup") { // Default = "GoogleAuth"
           auth.signInWithPopup().then(function(user){
+            console.log('Popup SignIn Success', user);   
+            this.user = user; // enable uploadbutton after signIn
           })
         }  
-
       }
 
     });
