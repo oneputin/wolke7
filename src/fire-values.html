@@ -75,12 +75,16 @@
 
       filterValues: function(data, olddata) { 
         if (!data) return;
+
         if (!Array.isArray(data)) {
           data =  Object.keys(data).map(function(k){return data[k]});
         } // console.log(data);
 
         // Collect all values used in data-objects (z.B. img-metadata)
-        var queryname = this.item, values=[], nn=data.length;
+        var queryname = this.item, 
+            values=[], 
+            nn=data.length;
+
         data.forEach(function(item,index){  // console.log(index, item);
           if (!item[queryname] || item[queryname] === null || item[queryname] === undefined) return; 
           // values.push(item[queryname]);
@@ -88,8 +92,9 @@
               return self.indexOf(v) === i;
           });
         }); // console.log("values(n="+values.length+")", values);
-        
-        if (values.length && this.filter) { 
+        if (!values.length) return values;
+
+        if (this.filter) { 
           var  arr=[], filter = this.filter; console.log("filter", filter);
           values.forEach(function(item,index){  
             var n = item.indexOf(filter); // console.log(index, item, n);
@@ -97,7 +102,10 @@
             arr.push(item); 
           }); // console.log("fkeys(n="+fkeys.length+")", fkeys);
           values = arr; 
-        } // console.log("values(n="+values.length+")");
+        } else {
+          values.sort();
+        }// console.log("values(n="+values.length+")");
+        
         return values; 
       }
 

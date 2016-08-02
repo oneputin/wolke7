@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script> -->
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.2.0/firebase-database.js"></script>
 
 <link rel="import" href="fire-app.html">
 
@@ -76,8 +78,8 @@
       },
 
       applyPathQuery: function(fb, path, trigger) { 
-        // if (!trigger) return;       // fi 0
-        if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path); 
+        // if (!trigger) return;    // fi 0
+        if (this.item=="_path_") {  // console.log("applyPathQuery, path=", path, fb); 
 
           var that = this; // ALTMODISCH (use bind() instead?)
           fb.database().ref(path).once('value').then(function(snapshot) { 

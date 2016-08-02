@@ -67,6 +67,10 @@
           </template>
         </data-table-column>
         
+        <data-table-column name="Category" width="100px">
+          <template>[[item.name]]</template>
+        </data-table-column>
+        
         <data-table-column name="Samples" width="50px">
           <template>
             <paper-button on-tap="thumbView">
@@ -74,10 +78,6 @@
               </iron-image>
             </paper-button>
           </template>
-        </data-table-column>
-        
-        <data-table-column name="Category" width="100px">
-          <template>[[item.name]]</template>
         </data-table-column>
         
         <data-table-column name="Abbr." width="30px">

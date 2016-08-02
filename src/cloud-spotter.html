@@ -5,7 +5,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
@@ -20,6 +20,7 @@
 <link rel="import" href="fire-store.html">
 <link rel="import" href="cloud-form.html">
 <link rel="import" href="fire-query.html">
+<link rel="import" href="fire-login.html">
 
 <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
 <script>
@@ -107,6 +108,7 @@
       #top {
         background-color: white;
       }
+<<<<<<< HEAD
 
       /* Splash Page */
       #splashpage {
@@ -172,7 +174,24 @@
         <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
         <div class="weak mm">[[status]]</div>
       </div>  
+=======
+      .main-fab {
+          --paper-fab-background: var(--paper-light-blue-500);
+          /*position: fixed;    /*relative to screen*/
+          position: absolute; /*relative to parent element*/
+          right: 50%;    
+          top: 10%;
+          /*bottom: 50%;*/
+          z-index: 999;
+      }   
+>>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       
+    </style>
+
+      <fire-login></fire-login>
+          
+      <paper-fab icon="insert-photo" class="main-fab" level="3" on-tap="addopen"></paper-fab>
+
       <fire-store app="[[fbapp]]" path="[[path]]" srcfile="[[file]]" response="{{storagemeta}}"></fire-store>
 
       <!-- B. The raw query-response (storagemeta) is being translated 
@@ -181,6 +200,21 @@
       <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
 
       <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
+
+      <paper-dialog id="adder">
+        <h2>Image selection</h2>
+<!--         <div id="top" class="container flex-horizontal"> 
+          <div>Option: Select a (cloud-)image from your device to analyse and/or upload.</div> 
+          <div>Classify and comment the image in the related form.</div>
+        </div>  
+        <hr>
+ -->        
+      <div class="container flex-end-align"> 
+          <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
+          <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
+          <div class="weak mm">[[status]]</div>
+        </div>          
+      </paper-dialog>  
 
   </template>
 
@@ -375,6 +409,7 @@
         // [END createwithemail]
       },
 
+<<<<<<< HEAD
       /**
        * [setUserProfile description]
        */
@@ -431,6 +466,13 @@
 
 
 
+=======
+      addopen : function(e) { //console.log("helpbutton clicked", e);
+        var popup = this.$.adder;
+        popup.open();
+      },
+
+>>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       checkFormSubmit: function(data, dataold) { 
         // prepare submit of x.clouddata and x.fbkey
         var key, fbkey="" ;
@@ -473,6 +515,46 @@
         var d = file.lastModifiedDate;
             status = d.getFullYear()+"/"+d.getMonth()+"/"+d.getDate();
         return status;
+<<<<<<< HEAD
+=======
+      },  
+
+      storageResponse : function(meta, oldmeta) { 
+       
+        // A. Reset Ctrls related to img-upload 
+        var el = this.$.spinner;
+        el.active = false;
+
+        var popup = this.$.adder;
+        popup.close();
+
+        var filetype = meta.contentType,
+            urls     = meta.downloadURLs; 
+        if (!urls || !urls.length) return;  // console.log("storageResponse", meta);
+
+        this.storageurl = urls[0]; 
+        if (filetype.indexOf("image") > -1) { 
+          this.imgurl = urls[0] ;  // console.log("apply downloadurl:", filetype, urls[0]); // return;
+        } else {
+          this.imgurl = "../images/app-icon-144.png" ; // default placeholder
+        } 
+
+        // B. prepare the formular-input extracting some firedb-data from storagemeta
+        if (this.storageurl) {
+          var clmeta = {"url": this.storageurl};
+          clmeta["title-main-pict"] = meta.name+"/"+meta.updated+"/"+meta.size;
+          clmeta["disable"] = ["url"]; 
+          // clmeta["type"] = meta.contentType;
+          // clmeta["date"] = meta.updated;
+          // clmeta["size"] = meta.size;
+
+          this.fbspot = clmeta;   // ****  
+        }  
+      },
+
+      ready: function() {
+        this.uploadpath = this.path;
+>>>>>>> 1deddd340b672450355e4c7b37ce9f798efba06a
       }
 
     });
