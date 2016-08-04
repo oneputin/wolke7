@@ -1,19 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-
-<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+<link rel="import" href="fire-base.js">
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script> -->
 <!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-app.js"></script> -->
 <!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-database.js"></script> -->
 <!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-store.js"></script> -->
 
 <script>
-
-  // var firebase = require("firebase/app");
-  // require("firebase/auth");
-  // require("firebase/database");
-
-  // Leave out Storage
-  // require("firebase/storage");
-
 
   var fbConfig = {
       "wolke7": {  
@@ -109,7 +101,7 @@
         }
 
         // ??? 
-        if (this.fbColl[name]) {  console.log("Activate FB [" + name+"]");
+        if (this.fbColl[name]) {  // console.log("Activate FB [" + name+"]");
           this.fb = this.fbColl[name];
         } else { console.log("Initialize new FB [" + name+"]", config);
           this.fb = firebase.initializeApp(config, name);  
@@ -132,7 +124,8 @@
         if (email && password)  authmode=="email";
 
         if (!authmode) authmode="anonym";   console.log("getAuth for authmode, email, password", authmode, email, password);
-          
+         
+
         if (authmode=="anonym") { 
           // Sign the user in anonymously since accessing Storage requires the user to be authorized.
           auth.signInAnonymously().then(function(user) {

@@ -1,4 +1,5 @@
-<script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<!-- <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script> -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 
@@ -11,20 +12,10 @@
 
 <!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
 <link rel="import" href="my-icons.html">
+<link rel="import" href="fire-base.js">
 <link rel="import" href="fire-app.html">
-<!--<link rel="import" href="fire-store.html">
- -->
+<!--<link rel="import" href="fire-store.html"> -->
 
-<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
-<script>  // Initialize Firebase
-  /*var config = {
-    "apiKey":        "AIzaSyC32ZX3rKvRFJTGZ7vVxxQX-WJCDPC01Dk",
-    "authDomain":    "wolke7-fd941.firebaseapp.com",
-    "databaseURL":   "https://wolke7-fd941.firebaseio.com",
-    "storageBucket": "wolke7-fd941.appspot.com"
-  };
-  firebase.initializeApp(config);*/
-</script>
 
 <dom-module id="fire-shield">
 
@@ -34,7 +25,7 @@
     <style>
       :host {
         display: block;
-        padding: 10px;
+        /*padding: 10px;*/
       }
 
       .flex-horizontal {
@@ -68,44 +59,72 @@
           flex-direction: column;
       }     
 
+      .headline {
+        text-align: center;
+        font-size: 14px;  
+        margin: 20px 0px;      
+      }
+
+      #email-auth-form {
+        margin-top: 25px;
+        padding: 5px;
+        background-color: lightgrey;
+        font-size: 14px;
+        color: black;
+      }
+
     </style>
 
     <fire-app app="[[app]]" fb="{{fb}}"></fire-app>
 
-    <section id="splashpage"> 
+    <div id="splashpage"> 
 
-      <h5>Authorization required</h5>
+      <!-- <template is="dom-if" if="{{user.isAdmin}}"> -->
+      <template is="dom-if" if="{{startflag}}">
+
+        <div class="headline" >For basic services signin anonymously</div>
+
+        <paper-button on-tap="loginAnonym" raised>SignIn</paper-button>
+
+        <div class="headline">otherwise</div>
+
+      </template>
+
+      <div class="headline">Authorize as user by</div>
 
       <div>
-        <paper-button on-tap="loginEmail" raised>SignIn byMail</paper-button>
-        <paper-button on-tap="loginGoogle" raised>GoogleAccount</paper-button>
-        <!-- <paper-button on-tap="loginAnonym" > Sign in anonym</paper-button> -->
+        <paper-button on-tap="loginEmail" raised>Mail</paper-button>
+        <paper-button on-tap="loginGoogle" raised>Google</paper-button>
       </div>
 
-      <div id="email-auth-form" class="hidden" style="margin-top: 25px;">
+      <div id="email-auth-form" class="hidden">
 
-        <div class="container flex-horizontal">Login: 
+        <div>Login:</div>
+        <div class="container flex-horizontal"> 
           <paper-input value="{{email}}" id="email" label="Email"></paper-input>
           &nbsp;&nbsp;&nbsp;
           <paper-input type="password" value="{{password}}" id="password" label="Password"></paper-input>
         </div>
 
-        <div  class="container flex-horizontal">(optional) Profile: 
-          <paper-input  value="{{displayname}}" id="displayname" label="displayName"></paper-input>
+        <div>Profile (optional):</div>
+        <div  class="container flex-horizontal"> 
+          <paper-input  value="{{displayname}}" id="displayname" label="stageName"></paper-input>
           &nbsp;&nbsp;&nbsp;
-          <paper-input  value="{{photourl}}" id="photourl" label="photoUrl"></paper-input>
+          <paper-input  value="{{photourl}}" id="photourl" label="stageIcon"></paper-input>
         </div>
 
         <br/><br/>
-
-        <paper-button on-tap="emailSignIn" raised id="quickstart-sign-in" name="signin">Sign In</paper-button> <!-- disabled -->
-        <paper-button on-tap="emailSignUp" raised id="quickstart-sign-up" name="signup">Sign Up</paper-button>
-        <paper-button on-tap="sendEmailVerification" raised disabled id="quickstart-verify-email" name="verify-email">Verify account</paper-button>
-        <paper-button on-tap="sendPasswordReset" raised id="quickstart-password-reset" name="verify-email">Reset password</paper-button>
-      
+        <div>
+          <paper-button on-tap="emailSignIn" raised id="quickstart-sign-in" name="signin">Sign In</paper-button> <!-- disabled -->
+          <paper-button on-tap="emailSignUp" raised id="quickstart-sign-up" name="signup">Sign Up</paper-button>
+        </div>
+        <div>
+          <paper-button on-tap="sendEmailVerification" raised disabled id="quickstart-verify-email" name="verify-email">Verify</paper-button>
+          <paper-button on-tap="sendPasswordReset" raised id="quickstart-password-reset" name="verify-email">Reset pwd</paper-button>
+        </div>
       </div>
 
-    </section>       
+    </div>       
 
   </template>
 
@@ -117,6 +136,8 @@
       is: 'fire-shield',
       
       properties: {
+
+        startflag: 0,
 
         app: {  
           type: String
@@ -142,6 +163,11 @@
         photourl: {
           type: String,
           value: ""
+        },
+        user: {
+          type: Object,
+          value: {}, 
+          notify: true        
         }
       },
 
@@ -157,9 +183,12 @@
         
         var that = this;
         var splashpage = this.$.splashpage;
-        fb.auth().onAuthStateChanged(function(user) { console.log("actual user:",user); //,"splashpage", splashpage);
+        fb.auth().onAuthStateChanged(function(user) { 
           if (user && !user.isAnonymous) {
               splashpage.style.display = 'none';
+
+              that.user = user;
+
               // A. Log the editing user   
               // writeUserData(
               //     user.uid, 
@@ -171,7 +200,7 @@
               // startDatabaseQueries();
           } else {
             splashpage.style.display = '';
-          }
+          } // console.log("user after AuthStateChanged:",that.user); 
         });
       },
 
@@ -188,10 +217,9 @@
       },
 
       loginAnonym: function() { console.log("loginAnonym for", this.fb); 
-        // library 'firebase.js' must be locally available in this element
-        // var provider = new firebase.auth.GoogleAuthProvider();     
-        // var provider = new firebase.auth.GithubAuthProvider(); // Alternativ
-        // this.fb.auth().signInWithPopup(provider);
+
+        var splashpage = this.$.splashpage;
+        splashpage.style.display = 'none';
       },
 
       loginEmail: function() {

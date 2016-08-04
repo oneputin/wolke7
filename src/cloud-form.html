@@ -98,7 +98,7 @@
       <!-- 3 inputs -->
       <div class="container flex-horizontal"> 
 
-        <paper-input value="{{url}}" label="url" id="url" class="flex"></paper-input>
+        <paper-input value="{{url}}" label="url" id="url" class="formitem flex"></paper-input>
 
         <paper-button on-tap="thumbView">
           <iron-image 
@@ -110,25 +110,25 @@
 
       </div>  
 
-      <paper-input value="{{title-main-pict}}" id="title-main-pict" label="title" required></paper-input>
+      <paper-input value="{{title-main-pict}}" id="title-main-pict" label="title" class="formitem"></paper-input>
 
-      <paper-input value="{{title-sub-pict}}" id="title-sub-pict" label="subtitle" class="flex"></paper-input>
-        <!-- <paper-toggle-button checked on-change="toggleElements">clouds</paper-toggle-button> -->
+      <paper-input value="{{title-sub-pict}}" id="title-sub-pict" label="subtitle" class="formitem flex"></paper-input>
+        <!-- <paper-toggle-button checked on-change="toggleFormSegments">clouds</paper-toggle-button> -->
 
       <div class="container margin1 flex-equal-justified"><!--  around-justified flex-horizontal"> -->  
         <div class="formlabel"> more attributes: </div>
 
-        <paper-toggle-button id="clouditems" on-change="toggleElements">clouds</paper-toggle-button>
-        <paper-toggle-button id="imageitems" on-change="toggleElements">image</paper-toggle-button>
+        <paper-toggle-button id="clouditemsToggle" on-change="toggleFormSegments">clouds</paper-toggle-button>
+        <paper-toggle-button id="imageitemsToggle" on-change="toggleFormSegments">image</paper-toggle-button>
       
       </div>
 
-      <div id="moreclouds" class="container flex-equal-justified hidden">  
+      <div id="clouditems" class="formsegment container flex-equal-justified hidden">  
 
-        <div>
+        <div >
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-height" values="{{heights}}"></fire-values> 
           <label class="formlabel" id="label21">Cloud bottom</label> <!-- <paper-checkbox id="height" checked>Height</paper-checkbox> -->
-          <paper-menu class="blue" id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
+          <paper-menu class="formitem blue" id="type-height" aria-labelledby="label21" selected="{{type-height}}" attr-for-selected="value" allowEmptySelection>
               <template is="dom-repeat" items="{{heights}}">
                  <paper-item value="[[item]]">[[getAlias("type-height",item)]]</paper-item>
               </template>        
@@ -140,7 +140,7 @@
         <div>  
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-character" values="{{classes}}"></fire-values>
           <label class="formlabel" id="label11">Cloud class</label> <!-- <paper-checkbox id="character" checked>Class</paper-checkbox> -->
-          <paper-menu class="blue" id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
+          <paper-menu class="formitem blue" id="type-character" aria-labelledby="label11" selected="{{type-character}}" attr-for-selected="value" allowEmptySelection>
               <template is="dom-repeat" items="{{classes}}">
                  <paper-item value="[[item]]">[[item]]</paper-item>
               </template>        
@@ -152,7 +152,7 @@
         <div >          
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-genus" values="{{genuss}}"></fire-values> 
           <paper-dropdown-menu label="Main cloud type">
-            <paper-listbox id="type-genus" class="dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
+            <paper-listbox id="type-genus" class="formitem dropdown-content" attr-for-selected="value" selected="{{type-genus}}">
               <paper-item value="">  </paper-item>
               <template is="dom-repeat" items="{{genuss}}">
                  <paper-item value="[[item]]">{{getAlias("type-genus",item)}}</paper-item>
@@ -165,11 +165,11 @@
 
       <hr>
 
-      <div  id="moreimage" class="container flex-horizontal hidden">    
+      <div  id="imageitems" class="formsegment container flex-horizontal hidden">    
         <div>
           <fire-values app="{{fbapp}}" path="[[path]]" item="type-year" values="{{years}}"></fire-values> <!-- filter="type" --> 
           <paper-dropdown-menu id="yearmenu" label="Calendar year">
-            <paper-listbox id="type-year" class="dropdown-content" attr-for-selected="value" selected="{{type-year}}">
+            <paper-listbox id="type-year" class="formitem dropdown-content" attr-for-selected="value" selected="{{type-year}}">
               <paper-item value="">  </paper-item>
               <template is="dom-repeat" items="{{years}}">
                  <paper-item value="[[item]]">[[item]]</paper-item>
@@ -184,11 +184,12 @@
         <!-- <paper-button id="submitbtn" raised on-click="submitterOpen">Submit</paper-button> -->
         <!-- <paper-button id="submitbtn" raised on-click="submitter.open()">Submit</paper-button> -->
         <paper-button id="submitbtn" raised on-click="formSubmit">Submit</paper-button>
-        <paper-button raised on-click="resetForm" >Reset</paper-button>
+        <paper-button raised on-tap="formResetClick" >Reset</paper-button>
         <div class="flex"></div>
       </div>
 
-      <!-- does not become visible !! -->
+
+      <!-- OPTIONAL : does not become visible !! -->
       <paper-dialog id="submitter" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
         <h2>Confirmation</h2>
         <p>
@@ -197,6 +198,7 @@
         </p>
       </paper-dialog>
 
+      <!-- Preview-Popup  -->
       <paper-dialog 
         id="formimg" 
         modal
@@ -244,34 +246,34 @@
           value: ""
         },
 
-        formitems: {
-          type: Object,
-          value: {
-            "url": "",
-            "title-main-pict":"",
-            "title-sub-pict": "",
-            "type-year":      "",
-            "type-character": "", //cloud specific
-            "type-genus":     "",
-            "type-height":    ""
-          }
-        }, 
+        // formitems: {
+        //   type: Object,
+        //   value: {
+        //     "url": "",
+        //     "title-main-pict":"",
+        //     "title-sub-pict": "",
+        //     "type-year":      "",
+        //     "type-character": "", //cloud specific
+        //     "type-genus":     "",
+        //     "type-height":    ""
+        //   }
+        // }, 
 
-        clouditems: {
-          type: Object,
-          value: {  
-            "type-character": "", //cloud specific
-            "type-genus":     "",
-            "type-height":    ""
-          }
-        },
+        // clouditems: {
+        //   type: Object,
+        //   value: {  
+        //     "type-character": "", //cloud specific
+        //     "type-genus":     "",
+        //     "type-height":    ""
+        //   }
+        // },
 
-        imageitems: {
-          type: Object,
-          value: {  
-            "type-year": "" //cloud specific
-          }
-        },
+        // imageitems: {
+        //   type: Object,
+        //   value: {  
+        //     "type-year": "" //cloud specific
+        //   }
+        // },
 
         indata: {
           type: Object,
@@ -298,27 +300,29 @@
         if (alias[abbr]) { // console.log("alias for type/abbr",type,abbr,alias[abbr]);  
           return alias[abbr];  
         }
-        return abbr; 
+        return abbr;
       },
 
       submitterOpen: function() { // OPTION: starts submit with confirmation 
         this.$.submitter.open();
       },
 
-      // Toggle parts of the form and reset its input-elements to "null" if hidden  
-      toggleElements: function(e,b) { 
-        var t = e.target,
-            tt = {
-              "clouditems": "moreclouds",
-              "imageitems": "moreimage"
-            },
-            ttt = Polymer.dom(this.root).querySelector("#"+tt[t.id]); //console.log(t,tt,ttt);
+      // Toggle visibility of formsegments 
+      // and reset its input-element-values to "null" if hidden  (???)
+      toggleFormSegments: function(e, id) { 
+        var makevisible = true, reset = true;
+        if (e) {
+          id = e.target.id.replace("Toggle", "");
+          makevisible = e.target.checked;
+          reset = false;
+        } 
 
-        if (t.checked) {
-            ttt.classList.remove("hidden");
+        var formsegment = Polymer.dom(this.root).querySelector("#"+id); 
+        if (makevisible) {
+            formsegment.classList.remove("hidden");
         }  else  { // console.log('unchecked');
-            ttt.classList.add("hidden");
-            this.resetForm(t.id); // ??? 
+            formsegment.classList.add("hidden");
+            if (reset) this.formReset(id); // ??? 
         }
       },
 
@@ -326,20 +330,43 @@
         console.log("setup spotForm for", key); 
       },
 
-      inCtrl : function(indata,inold) { console.log("inCtrl", indata);
-          // 1. 
-          this.resetForm(); 
-
+      inCtrl : function(indata,inold) { // console.log("inCtrl", indata);
+          
           if (!indata || !Object.keys(indata).length) return; 
           // var ik = Object.keys(indata); if (!ik.length) return; // console.log("updating form with input data", indata);
 
-          // 2. Transfer content from indata-object into direct props
-          for (var prop in this.formitems) { // extract required form-data from indata (if existing there)  
-            // if (indata[prop]) this.formitems[prop] = indata[prop]; 
-            if (indata[prop]) this[prop] = indata[prop]; 
-          } // console.log("form refreshed from indata", this.formitems);
+          // 1. 
+          
+          this.formReset(); 
 
-          // 3. Manage disable-status
+          // 2. Transfer content from indata-object into form-elements (props)
+          //    Set flag on formsegments that got an indata value 
+          var formitems = Polymer.dom(this.root).querySelectorAll(".formitem"),
+              segments = Polymer.dom(this.root).querySelectorAll(".formsegment"),
+              segmentFlags = {}, that=this, prop;
+
+          formitems.forEach(function(elem, index){  
+            prop = elem.id; // console.log("prop, indata.prop", prop, indata[prop]);
+            
+            // try to extract only indata-items that are defined in "formitems"  
+            if (indata[prop]) {
+              that[prop] = indata[prop]; //console.log(prop, this[prop]);
+
+              // 
+              segments.forEach(function(segment, index){  // console.log("segmentKey, prop", segment.id, prop);
+                if (Polymer.dom(segment).querySelector("#"+prop)) segmentFlags[segment.id] = true;
+              })
+            } 
+          }) 
+
+          // 2.2 make segments visible that contain at least one refreshed element
+          for (var key in segmentFlags) { 
+            Polymer.dom(this.root).querySelector("#"+key+"Toggle").click(); 
+            // this.toggleFormSegments(null, key);
+          }
+          // extract required form-data from indata (if existing there)  
+
+          // 3. Manage disable-status of items marked in indata.disable-array
          
           if (indata.disable) {
             var that = this;
@@ -374,35 +401,42 @@
         } 
       },
 
-      dataObject: function(name, set) {
+      formDataManager: function(name, set) {
         // 
-        var obj;
+        var obj, that=this;
         if (name) obj = this[name];
         else name = "anonym";
         if (!obj) obj = {};
-   
-        for (var prop in this.formitems) { // console.log(prop, this[prop]);
-          if   (set && (obj[prop]!==null)) {  
-            // form-props aus object übernehmen 
-            
-            this[prop] = obj[prop];  
 
-          } else if (this[prop])  { 
+
+        var formitems = Polymer.dom(this.root).querySelectorAll(".formitem"); // console.log("formSegments", typeof segments, segments);          
+
+        formitems.forEach(function(elem, index){  // console.log("segmentKey, prop", segment.id, prop);
+         
+          prop = elem.id;
+         
+          if   (set && (obj[prop]!==null)) {   // form-props aus object übernehmen 
+            
+            that[prop] = obj[prop];  
+
+          } else if (that[prop])  { 
             // object aus form-props aktualisieren
             
-            obj[prop]  = this[prop];
+            obj[prop]  = that[prop];
           }  
-        } // console.log("dataObject ["+name+"] finished: ", obj)       
+        }) // console.log("formDataManager ["+name+"] finished: ", obj)   
+
         return obj;
       } ,
 
       formSubmit: function(event) {
 
-        var data = this.dataObject(); //console.log("submitting data to "+this.fbpath+"//"+this.fbkey, data);
+
+        var data = this.formDataManager(); //console.log("submitting data to "+this.fbpath+"//"+this.fbkey, data);
         
         // console.log("optionally confirm data in custom element:",data);
         // if (confirm("Submit last edits!")) {
-          this.outdata = data;  
+        this.outdata = data;  
         // }
         
         // Option: HIDE the form 
@@ -410,33 +444,56 @@
           
       },
 
-      resetForm : function(setkey) {  // console.log("before reset-1",rec, this.outdata); // return; 
+      formResetClick: function(e) { // console.log("formresetClick", e); 
+        this.formReset();
+      },
 
-          if (!setkey || setkey.target) setkey = "formitems";  // console.log("before reset-2. ",rec, this[rec]);  //return; 
+      formReset : function(segmentid) {  // console.log("formreset"); // return; 
+
+          var formDom  = Polymer.dom(this.root);
+          var elems    = formDom.querySelectorAll(".formitem"); // console.log("formSegments", typeof segments, segments);
+          var segments = formDom.querySelectorAll(".formsegment"); // console.log("formSegments", typeof segments, segments);
+
+          // 1. hide all formsegments an reset ist parameter-objects 
+          var that = this;
+
+          segments.forEach(function(segment, index){  // console.log("segmentKey, prop", segment.id, prop);
+           
+            if (segmentid) {
+              if (segmentid != segment.id) return;
+              elems = Polymer.dom(segment).querySelectorAll(".formitem");
+            }
+            
+            that[segment.id] = {}; // reset the segment-data-object
+
+            var t = formDom.querySelector("#"+segment.id+"Toggle");
+            // console.log("hide segment:"+segment.id, t);
+            if (t && t.checked) t.click(); // sync of toggle and segment-hidden
+            else                segment.classList.add("hidden"); // segment-hidden only
+          })
           
           // 1. remove content and/or seletions
-          var el; 
-          for (var prop in this[setkey]) {  // console.log("reset form for:"+prop, "->"+this.formitems[prop]);
-            // A. resetting the content of properties in "FORM"-page 
-            if (this[prop]) this[prop] = ""; 
-            this[setkey][prop] = ""; 
+          var that=this, prop; 
 
-            if (this.outdata) this.outdata[prop] = ""; 
+          elems.forEach(function(elem, index){  // console.log("segmentKey, prop", segment.id, prop);
+
+            prop = elem.id; 
+           
+            // A. resetting the content of ctrl-objects 
+            if (that[prop]) that[prop] = ""; 
+
+            if (segmentid && that[segmentid]) that[segmentid][prop] = ""; 
+
+            if (that.outdata) that.outdata[prop] = ""; 
             
-            el = Polymer.dom(this.root).querySelector("#"+prop); 
-            // HARD-RESET of iron-selection on elements with item-lists (menus, button-group, ...) 
+            // B. HARD-RESET of iron-selection on elements with item-lists (menus, button-group, ...) 
             // this to avoid backward binding to FORM-properties !!
-            if (el && el.items) { 
-              el.items.forEach(function(it,i){
+            if (elem.items) { 
+              elem.items.forEach(function(it,i){
                 it.classList.remove("iron-selected"); // *** 
-              }); // console.log("el2:" + prop, el.items);
+              });
             }  
-          } 
-
-          // 2. hide optional subsets 
-          // this.$.imageitems.checked = false; // does not trigger an action 
-          if (this.$.clouditems.checked) this.$.clouditems.click();  
-          if (this.$.imageitems.checked) this.$.imageitems.click();  
+          }) 
       },
 
       ready: function() {

@@ -233,7 +233,7 @@
       },
 
       observers : [
-        'spotQueryView(fbspot, spotkey, spotoggle)'
+        'spotQueryView(fbspot, spotkey)'// , spotoggle)'
       ], 
 
       ready: function() { 
@@ -245,7 +245,7 @@
       },
 
       indexChanged: function(n,o) { // trigger 
-        this.fbspot = {}; // undefined;
+        this.fbspot = {}; // or undefined;
       },
 
       getAlias: function(type, abbr) { // applied directly in generated HTML. console.log(type, abbr);
@@ -260,18 +260,20 @@
 
       spotQueryTrigger: function() {  
         // 
-        var i   = this.slideindex,  // related to index of slideview
-            ima = this.imas[i];     // console.log("spotTrigger:", ima);
-        if (!ima) return;
-        this.spotkey   = ima.fbkey; // was added during slidshow-preparation
-        this.spotpath  = this.path+"/"+ima.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
-        this.spotoggle = 1; 
+        var that = this,
+            i   = this.slideindex,  // related to index of slideview
+            imameta = this.imas[i];     //console.log("spotTrigger:", i, this.spotoggle, this.fbspot, imameta);
+        if (!imameta) return;
+        this.spotkey   = imameta.fbkey; // was added during slidshow-preparation
+        this.spotpath  = this.path+"/"+imameta.fbkey;  // console.log("spot on element: "+i, "path="+this.spotpath); 
+        // reset to enable repeated actions
+        setInterval(function(){
+          that.spotpath = undefined;
+        },1000);
       }, 
 
-      spotQueryView: function (spot, spotkey, toggle) {  // console.log("spotAction-In", spotkey, toggle, spot);
-        if (!spot.url || !spotkey || !toggle) return; 
-
-        this.spotoggle = undefined; // prevents call of spotQueryView until next triggerSignal
+      spotQueryView: function (spot, spotkey) {  // console.log("spotAction-In", spotkey, toggle, spot);
+        if (!spot.url || !spotkey) return;  
 
         // A. Extend spot for unique identification in other  
         spot.fbkey = spotkey;

@@ -111,7 +111,7 @@
     </style>
       
       <!-- 1. Login-Shield -->
-      <fire-shield user="[[user]]"></fire-shield>
+      <fire-shield user="{{user}}"></fire-shield>
 
       <!-- 2.1  FAB to open the download popup -->          
       <paper-fab icon="insert-photo" class="main-fab" level="3" on-tap="addopen"></paper-fab>
@@ -205,6 +205,10 @@
         file: {
           type: Object,
           notify: true  
+        },
+        user: {
+          type: Object,
+          value: {}          
         }
       },
 
@@ -222,18 +226,39 @@
         popup.open();
       },
 
-      checkFormSubmit: function(data, dataold) { 
-        // prepare submit of x.clouddata and x.fbkey
-        var key, fbkey="" ;
-        if (this.fbspot) key = this.fbspot.fbkey;
-        if (key) fbkey = key;
-        else     key = "new";  
-        // console.log("checkFormSubmit for key="+key, data);
+      checkFormSubmit: function(formdata, dataold) { 
+        // prepare submit to this.clouddata and this.fbkey
+        var submitdata = {}, key, val, fbkey="", user=this.user ;
 
-        if (confirm("Submit last edits with key "+key+"?")) {
-          this.clouddata = data;
-          this.fbkey  = fbkey;
-          // this.fbspot = undefined;
+        if (this.fbspot) {
+          submitdata = JSON.parse(JSON.stringify(this.fbspot));
+          key = submitdata.fbkey;
+        }
+
+        if (key) fbkey = key;
+        else     key   = "new";  
+        
+        // console.log("checkFormSubmit of data with key="+key, formdata, user);
+        // 1. merge previous data (fbspot) with formdata
+        for (var prop in formdata) { 
+          val = formdata[prop];
+          if (val=="_clear_") delete submitdata[prop]; //  
+          else                submitdata[prop] = val; 
+        }  
+
+        if (user && !user.isAnonymous) {
+          submitdata.uid = user.uid;
+          if (fbkey)  submitdata.edited = user.email;          
+          else        submitdata.created = user.email;          
+        } // console.log("submitdata",submitdata, user);
+
+        // 2. insert user-info if not anonymous
+
+        if (confirm("Submit last form-edits with key "+key+"?")) {
+          this.clouddata = submitdata;
+          this.fbkey     = fbkey;
+          this.fbspot    = undefined; // !!!
+          window.history.back();
         } 
       },
 

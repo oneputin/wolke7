@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script> -->
-<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-database.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-app.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase-database.js"></script> -->
 
 <link rel="import" href="fire-app.html">
 
@@ -132,7 +132,7 @@
         // save the doc-reference to database
         if (!Object.keys(dbData).length) { console.log("Missing data to submit")
           return; 
-        } console.log("triggered to save at path:", dbPath, dbData);
+        } //console.log("triggered to save at path:", dbPath, dbData);
         
         // 1. 
         if (!fb.database().ref().child(dbPath)) { // target-path-node must exist to enable key-generator
@@ -148,7 +148,7 @@
         
         //  3.2 CHECK
         var that = this;
-        fb.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { console.log("data saved with key "+dbKey, snapshot.val());
+        fb.database().ref(dbPath+'/'+dbKey).once('value').then(function(snapshot) { // console.log("data saved with key "+dbKey, snapshot.val());
             that.lastpath = dbPath+'/'+dbKey; 
         })
 
