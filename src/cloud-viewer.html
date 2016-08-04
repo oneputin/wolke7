@@ -19,7 +19,7 @@
 
 <!-- <link rel="import" href="../bower_components/iron-icons/iron-icons.html"> -->
 <link rel="import" href="my-icons.html">
-<!-- <link rel="import" href="cloud-alias.html"> -->
+<link rel="import" href="cloud-alias.html">
 
 <dom-module id="cloud-viewer">
 
@@ -65,7 +65,7 @@
 
     </style>
 
-    <!-- <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>   -->
+    <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>  
 
     <div>Select a set of cloud-images using classifications!</div>
 
@@ -285,7 +285,7 @@
         popupTop(null, this, "quickInfo"); // Opens "quickInfo" with content from this
       },
 
-      spotEditCall: function () {  console.log("triggered spotEditCall to open cloud-spotter.html");
+      spotEditCall: function () {  // console.log("triggered spotEditCall to open cloud-spotter.html");
         this.fbspotter = 1;
       },
 
