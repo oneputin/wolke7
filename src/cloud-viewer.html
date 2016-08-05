@@ -7,6 +7,7 @@
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <link rel="import" href="fire-query.html">
@@ -67,7 +68,7 @@
 
     <cloud-alias app="{{fbapp}}" alias="{{cloudalias}}"></cloud-alias>  
 
-    <div>Select a set of cloud-images using classifications!</div>
+    <div>Select a set of cloud-images!</div>  <!-- using classifications -->
 
     <paper-dialog 
       id="quickInfo" 
@@ -98,7 +99,7 @@
 
         <fire-keys app="[[fbapp]]" path="[[path]]" filter="type" keys="{{queryitems}}"></fire-keys>
         
-        <paper-dropdown-menu label="Classifications">
+        <paper-dropdown-menu label="Classification">
 
           <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{queryitem}}">
             <template is="dom-repeat" items="{{queryitems}}">
@@ -209,6 +210,14 @@
           type: String
         },
 
+        spottitle: {
+          type: String
+        },
+
+        spotobj: {
+          type: Object
+        },
+        
         spotoggle: {
           type: Number
         },
@@ -285,8 +294,9 @@
         popupTop(null, this, "quickInfo"); // Opens "quickInfo" with content from this
       },
 
-      spotEditCall: function () {  // console.log("triggered spotEditCall to open cloud-spotter.html");
-        this.fbspotter = 1;
+      spotEditCall: function (e) {  console.log("spotEditCall to cloud-spotter.html from ", e);
+        this.fbspotter = 1;         // trigger-flag
+        this.$.quickInfo.close();   // close the 
       },
 
       // Initialisierung of elelemnt-selection if sets are updated 
