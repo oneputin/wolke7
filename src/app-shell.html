@@ -202,8 +202,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fbapp="[[fbapp]]" 
             path ="cp" 
             fbspot="{{fbspot}}"
-            navTrigger="{{navTrigger}}" 
-            fbTrigger ="{{fbTrigger}}"> 
+            navtrigger="{{navtrigger}}" 
+            fbtrigger ="{{fbtrigger}}"> 
           </cloud-viewer>
 
           <cloud-howard     
@@ -221,7 +221,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             name ="spotter" 
             fbapp="[[fbapp]]" 
             fbspot="{{fbspot}}" 
-            fbTrigger="{{fbTrigger}}"> 
+            fbtrigger="{{fbtrigger}}"> 
           </cloud-spotter><!-- not routed from nav-list -->
 
           <cloud-preview 
@@ -288,9 +288,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
 
-        fbTrigger : 0,
+        fbtrigger : 0,
 
-        navTrigger: {
+        navtrigger: {
           type: String,        
           observer: '_navForce'
         }, 
@@ -327,19 +327,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       spotterOpen : function(e) { //console.log("spotbutton clicked", e);
         this.fbspot = undefined;
-        this.navTrigger = "spotter"; 
+        this.navtrigger = "spotter"; 
       },
 
-      _navForce: function(n,o) { 
+      _navForce: function(n,o) { console.log("_navForce",n,o);
         if (!n) return; 
-        var nav = Polymer.dom(this.root).querySelector('#'+n); console.log("_navForce",n,nav)
+        var nav = Polymer.dom(this.root).querySelector('#'+n); console.log("_navForce",nav);
         if (nav)  nav.click(); 
       },
 
       _appChanged: function(app, appold) { 
         // console.log("fb-app changed:", this.fbapp, app);
         // setup dependent content
-
       },
 
       _routePageChanged: function(page) { // console.log("routed page changed to ["+page+"]", this.route);
@@ -351,7 +350,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // reset some spotter-variables on other pages
         if (page!=="spotter") { 
-          this.navTrigger = undefined;  
+          this.navtrigger = undefined;  
           this.fbspot = undefined;
         }  
       },
