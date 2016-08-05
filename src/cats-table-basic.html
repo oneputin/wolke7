@@ -40,9 +40,9 @@
 
     <template is="dom-if" if="{{countclasses(categories)}}">
       <!-- Template of MODAL popup window to be "very top" of app in  -->
+     
       <paper-dialog 
         id ='symbolimg' 
-        modal
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation"><!--  modal> -->
         <paper-dialog-scrollable>
@@ -109,7 +109,11 @@
           notify: true
         },
 
-        fullsrc : "",
+        fullsrc : "", // triggers preview-popup
+
+        preview : {   // triggers preview-page
+          type: Object
+        },
         
         thumbclass : "thumb"
 
@@ -134,7 +138,8 @@
       },
 
       thumbView: function(e){
-        popupTop(e, this, "symbolimg");
+        // popupTop(e, this, "symbolimg");
+        previewPage(e, this, "symbolimg")
       }
 
     });

@@ -43,5 +43,36 @@ var popupTop =  function(e, that, popupid) { // console.log("Utility-contentToTo
     popup.open();
 }
 
+var previewPage =  function(e, that, popupid) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
+    // On click-event action from content = image with class="thumb" (within a paper-button) 
+
+    // DETECT if click in x.thumb image element
+
+	if (e) {
+
+	    var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
+	
+	    var preview={}, el, i=0, len=epath.length;
+
+	    for (; i < len; i++) { 
+	        el = epath[i];
+	        if (el.className === "thumb") {
+	            fullsrc = el.src;
+	            break;
+	        }
+	    } 
+		// C. Fill img-content into popup
+	    if (fullsrc) {
+	    	preview.imgurl = fullsrc;
+	    	preview.footer = "<a href='"+fullsrc+"' target='_blank'>download</a>"   
+	    	that.preview = preview; console.log("preview", preview); 
+			
+		}
+	}
+
+
+}
+
+
 </script>
 

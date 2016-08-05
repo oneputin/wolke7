@@ -174,6 +174,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="viewer" id="viewer"   href="/viewer">Classified imagegroups</a>
           <a name="howard"               href="/howard">Sample of imagegroup</a>
           <a name="categories"           href="/categories">Cloud symbols on maps</a>
+          <a name="preview" id="preview" href="/preview">LargeDoc</a>
           <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">Cloud spotter</span></a>
           <a name="starter" id="starter" href="/starter"><span class="hidden">App starter</span></a>
         </iron-selector>
@@ -201,8 +202,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fbapp="[[fbapp]]" 
             path ="cp" 
             fbspot="{{fbspot}}"
-            fbspotter="{{fbspotter}}" 
-            fbtrigger="{{fbtrigger}}"> 
+            navTrigger="{{navTrigger}}" 
+            fbTrigger ="{{fbTrigger}}"> 
           </cloud-viewer>
 
           <cloud-howard     
@@ -219,10 +220,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <cloud-spotter    
             name ="spotter" 
             fbapp="[[fbapp]]" 
-            path ="cp" 
             fbspot="{{fbspot}}" 
-            fbtrigger="{{fbtrigger}}"> 
+            fbTrigger="{{fbTrigger}}"> 
           </cloud-spotter><!-- not routed from nav-list -->
+
+          <cloud-preview 
+            name="preview">
+          </cloud-preview>
 
         </iron-pages>
 
@@ -284,11 +288,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
 
-        fbtrigger : 0,
+        fbTrigger : 0,
 
-        fbspotter: {
-          value: 0,
-          observer: '_spotChanged' 
+        navTrigger: {
+          type: String,        
+          observer: '_navForce'
         }, 
 
         toast: {
@@ -299,13 +303,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       observers: [
-        '_routePageChanged(routeData.page)',
-        // '_spotChanged(fbspot.url, fbspotter)'
+        '_routePageChanged(routeData.page)'
       ],
 
-      ready: function() {
-        this.startflag = 1; // WGP
-        this.toast = "Enjoy our services now!"; 
+      ready: function() {   // WGP
+        this.startflag = 1; // ctrls fire-shield
+        this.toast = "Enjoy our services now!"; // triggers ready-msg
       },
 
       _showToast: function(n,o){
@@ -324,23 +327,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       spotterOpen : function(e) { //console.log("spotbutton clicked", e);
         this.fbspot = undefined;
-        this.fbspotter = 1; 
+        this.navTrigger = "spotter"; 
       },
 
-      _spotChanged: function(trigger) { //, url) {// toggle the icon of editStartButton (defined in my-icons.html)
-        // 1. Toggle edit-button  
-        // var icon = "build";
-        // if (!url) icon="add-circle";
-        // this.$.editbutton.icon = icon; 
-
-        // 2. Hard-triggers programmatic navigation-clicks ("#spotter","#viewer")
-        // in the navigation-menu to open an iron-page "<cloud-xxx>" 
-        // optionally with content filled to Obj "fbspot" before
-        if (trigger) {
-          this.$.spotter.click(); 
-        } else {
-          // this.$.viewer.click(); 
-        } 
+      _navForce: function(n,o) { 
+        if (!n) return; 
+        var nav = Polymer.dom(this.root).querySelector('#'+n); console.log("_navForce",n,nav)
+        if (nav)  nav.click(); 
       },
 
       _appChanged: function(app, appold) { 
@@ -349,7 +342,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
-      _routePageChanged: function(page) { //console.log("routed page changed to ["+page+"]", this.route);
+      _routePageChanged: function(page) { // console.log("routed page changed to ["+page+"]", this.route);
         this.page = page || 'starter';
 
         // show add-button only with viewer-page
@@ -357,8 +350,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         else                this.$.editbutton.classList.add("hidden");
 
         // reset some spotter-variables on other pages
-        if (page!=="spotter") { // console.log("not spotterpage !", this.fbspotter, this.fbspot)
-          this.fbspotter = 0;  
+        if (page!=="spotter") { 
+          this.navTrigger = undefined;  
           this.fbspot = undefined;
         }  
       },

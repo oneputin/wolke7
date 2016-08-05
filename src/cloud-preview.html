@@ -1,0 +1,115 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html"> -->
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="my-icons.html">
+
+<dom-module id="cloud-preview">
+
+    <template>
+
+        <style>
+          :host {
+            display: block;
+            padding: 10px;
+          }
+          section {
+            width: 100%;
+            /*height: 2000px;*/
+            @apply(--layout-vertical);
+          }
+          section paper-dialog-scrollable {
+            @apply(--layout-flex);
+          }
+
+          div.header {
+            padding: 8px 24px;
+            width: 100%;
+            /*border-bottom: 2px solid red;*/
+          }
+          #footer {
+            padding: 8px 24px;
+            text-align: right;
+            /*border-top: 1px solid grey;*/
+          }
+
+          #img {
+            width: 100%;
+            --iron-image-width: 100%;
+          }
+        </style>
+
+        <section>
+
+            <div class="header">
+                <paper-icon-button icon="arrow-back" style="color: #03a9f4;" on-tap="goBack"></paper-icon-button>
+                <span id="header">Alice in Wonderland</span>
+            </div>
+            
+            <iron-image id="img" alt="The Preview image." src="[[preview.imgurl]]">
+            <!-- <iron-image id="img" alt="The Preview image." src="../images/clouds/bild-02.jpg">  -->
+            </iron-image>
+
+            <!-- <paper-dialog-scrollable> -->
+            <div id="html" class="text">
+            </div>    
+            <!-- </paper-dialog-scrollable> -->
+
+            <div id="footer">Lewis Carroll</div>
+        </section>
+
+    </template>
+        
+    <script>
+
+        Polymer({
+            is: 'cloud-preview',
+
+            properties: {
+
+                preview: {
+                  type: Object,
+                  html: "",
+                  imgurl: ""
+                },
+
+                toast: {
+                    type: String,
+                    notify: true
+                }
+
+            },
+
+            observers: [
+                'fillPreview(preview.html, preview.imgurl)'
+            ],
+            
+            fillPreview: function(html, imgurl){ console.log("preview-data:", this.preview);
+                // Update only if content changes (text or image)
+                if (!html) html="";
+                this.$.html.innerHTML = html;
+                // need not change !!
+                this.$.header.innerHTML = this.preview.header;
+                this.$.footer.innerHTML = this.preview.footer;
+                // this.$.img.src = imgurl 
+            },
+
+            goBack: function() {
+                window.history.back();
+            },
+
+            ready: function() { console.log("preview ready");
+                this.toast = "preview ready";  
+                this.preview = {
+                    "html": "<p><i>starttext</i></p>",
+                    "imgurl": "../images/clouds/bild-02.jpg",
+                    "header": "<b>Preview</b>",
+                    "footer": "Preview-End",
+                }
+            }    
+        });
+    </script>
+
+</dom-module>    

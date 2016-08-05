@@ -73,7 +73,7 @@
 
     <div class="card">
         <!-- <p>Placeholder for presentation of categories</p> -->
-        <cats-table-basic data="[[categories]]"></cats-table-basic>
+        <cats-table-basic data="[[categories]]" preview="[[preview]]"></cats-table-basic>
     </div>
    
   </template>
@@ -106,7 +106,12 @@
         categories: {
           type: Object,          
           value: []
-        }  
+        },
+
+        preview: {
+          type: Object
+        }
+
       },
 
       ready: function() { 
@@ -129,9 +134,7 @@
         
         if (fbapp) path = 'categories/' + path; 
         
-        path = path+"/data"; 
-
-        // console.log("category-query-path, cardindex="+index, path, firebase);
+        path = path+"/data";   // console.log("category-query-path, cardindex="+index, path, firebase);
         return path;
       }
       

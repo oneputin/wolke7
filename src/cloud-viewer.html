@@ -131,7 +131,7 @@
     <!-- slider-refresh after MAIN FB-QUERY on change of any of [[queryitem]], [[queryvalue]] 
     and refresh of slide-show (query-outpt {{data}} is translated to [[imas]] to trigger the slider) -->
 
-    <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>  <!-- trigger="[[fbtrigger]]" -->
+    <fire-query app="[[fbapp]]" path="[[path]]" item="[[queryitem]]" itemvalue="[[queryvalue]]" data="{{data}}"></fire-query>  <!-- trigger="[[fbTrigger]]" -->
     <slide-show imas="[[imas]]" selected="{{slideindex}}"></slide-show> <!-- [[imas]] are calculated from {{data}} -->
 
     <!-- FAB used to trigger query for {{fbspot}} at [[spotpath]]-->
@@ -222,7 +222,7 @@
           type: Number
         },
 
-        fbtrigger: {    // synchronize actual db-query 
+        fbTrigger: {    // synchronize actual db-query 
           type: Number,
           value: 1,
           notify: true
@@ -234,8 +234,8 @@
           notify: true 
         }, 
 
-        fbspotter: {       // synchronizes with cloud-form (over app-shell, cloud-spotter) 
-          type: Number,
+        navTrigger: {   // triggers programmatic navigation in app-shell 
+          type: String,
           notify: true 
         } 
 
@@ -292,11 +292,12 @@
         this.spottitle = spotkey; 
 
         popupTop(null, this, "quickInfo"); // Opens "quickInfo" with content from this
+
       },
 
-      spotEditCall: function (e) {  // console.log("spotEditCall to cloud-spotter.html from ", e);
-        this.fbspotter = 1;         // trigger-flag
-        this.$.quickInfo.close();   // close the 
+      spotEditCall: function (e) {   
+        this.navTrigger = "spotter"; console.log("navTrigger", this.navTrigger);   
+        this.$.quickInfo.close();    // close the quickInfo-popup
       },
 
       // Initialisierung of elelemnt-selection if sets are updated 
@@ -312,7 +313,7 @@
         this.fbspot = {};  // reset last spot
         if (!data) return;  
 
-        // this.fbtrigger = 0;
+        // this.fbTrigger = 0;
 
         if (!Array.isArray(data)) {
           data =  Object.keys(data).map(function(k){

@@ -6,6 +6,7 @@
     "src/cloud-spotter.html",  	
     "src/cloud-viewer.html",
     "src/cloud-howard.html",
+    "src/cloud-preview.html",
     "src/cloud-categories.html"
   ]
 }
