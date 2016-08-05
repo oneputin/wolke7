@@ -29,6 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="my-icons.html">
 <link rel="import" href="fire-app.html"> 
@@ -167,12 +168,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <!-- Drawer content -->
       <app-drawer id="navdrawer">
-        <fire-shield startflag="{{startflag}}"></fire-shield>
+        <fire-shield startflag="{{startflag}}" toast="{{toast}}"></fire-shield>
         <app-toolbar class="drawer">Services</app-toolbar>
         <iron-selector selected="[[page]]" on-iron-select="closeDrawer" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="viewer" id="viewer" href="/viewer">Classified imagegroups</a>
-          <a name="howard"     href="/howard">Sample of imagegroup</a>
-          <a name="categories" href="/categories">Cloud symbols on maps</a>
+          <a name="viewer" id="viewer"   href="/viewer">Classified imagegroups</a>
+          <a name="howard"               href="/howard">Sample of imagegroup</a>
+          <a name="categories"           href="/categories">Cloud symbols on maps</a>
           <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">Cloud spotter</span></a>
           <a name="starter" id="starter" href="/starter"><span class="hidden">App starter</span></a>
         </iron-selector>
@@ -193,6 +194,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
 
+          <cloud-starter name="starter"></cloud-starter>
+                  
           <cloud-viewer     
             name ="viewer" 
             fbapp="[[fbapp]]" 
@@ -221,14 +224,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fbtrigger="{{fbtrigger}}"> 
           </cloud-spotter><!-- not routed from nav-list -->
 
-          <div name="starter" class="container flex-vertical">
-            <div>This is a functional and technological testground for intended transfer 
-            of some content of this <a href="http://www.wolkenbilder.de" target="_blank">historical site</a>
-            </div>
-            <div class="flexchild">Test the services from the navigaton menu in the left sidebar.</div>
-            <div>(Performance problems may arise with legacy browsers.)</div>
-          </div>
-        
         </iron-pages>
 
       </app-header-layout>
@@ -244,7 +239,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button dialog-dismiss>Close</paper-button>
       </div>
     </paper-dialog>
-
+    <paper-toast id="toast" text="[[toast]]"></paper-toast>
   </template>
 
   <script>
@@ -294,6 +289,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         fbspotter: {
           value: 0,
           observer: '_spotChanged' 
+        }, 
+
+        toast: {
+          type: String,
+          observer: '_showToast'
         }
 
       },
@@ -305,6 +305,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready: function() {
         this.startflag = 1; // WGP
+        this.toast = "Enjoy our services now!"; 
+      },
+
+      _showToast: function(n,o){
+        this.$.toast.open();
       },
 
       closeDrawer: function() {

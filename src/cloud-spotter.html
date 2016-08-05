@@ -153,6 +153,7 @@
 
         path: {
           type: String,
+          value: "cp"
         },
         
         disabled : false,   
@@ -162,10 +163,6 @@
           notify: true
         },
 
-        path:  {
-          type: String
-        },
-        
         storagemeta: {
           type: Object,
           value : {},
@@ -252,8 +249,8 @@
         } // console.log("submitdata",submitdata, user);
 
         // 2. insert user-info if not anonymous
-
-        if (confirm("Submit last form-edits with key "+key+"?")) {
+        var doit = 1; // confirm("Submit last form-edits with key "+key+"?"); 
+        if (doit) {
           this.clouddata = submitdata;
           this.fbkey     = fbkey;
           this.fbspot    = undefined; // !!!

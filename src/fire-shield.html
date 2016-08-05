@@ -6,6 +6,8 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
 
@@ -46,14 +48,15 @@
           left: 0;
           width: 100%;
           height: 100%;
+          color: white;
           background-color: #0288D1;
           background: radial-gradient(circle, #039BE5, #01579b);
           z-index: 10000;
-          display: flex;
-          justify-content: center;
+
           align-items: center;
-          color: white;
+          display: flex;
           flex-direction: column;
+          justify-content: center;
       }     
 
       .headline {
@@ -61,6 +64,11 @@
         font-size: 14px;  
         margin: 20px 0px;      
       }
+      .guiline {
+        text-align: center;
+        font-size: 12px;  
+        color: grey;
+      } 
 
       #email-auth-form {
         margin-top: 25px;
@@ -76,18 +84,20 @@
 
     <div id="splashpage"> 
 
-      <!-- <template is="dom-if" if="{{user.isAdmin}}"> -->
-      <template is="dom-if" if="{{startflag}}">
+      <div>
+        <!-- <template is="dom-if" if="{{user.isAnonymous}}"> -->
+        <template is="dom-if" if="{{startflag}}">
 
-        <div class="headline">Explore basic services anonymously</div>
+          <div class="headline">Explore basic services anonymously</div>
 
-        <paper-button on-tap="loginAnonym" raised>SignIn</paper-button>
+          <div class="headline"><paper-button on-tap="loginAnonym" raised>SignIn</paper-button></div>
 
-        <div class="headline">otherwise</div>
+          <div class="headline">otherwise</div>
+        
+        </template>
+      </div>
 
-      </template>
-
-      <div class="headline">Authorize as user by</div>
+      <div class="headline">become an authorized user</div>
 
       <div>
         <paper-button on-tap="loginEmail" raised>Mail</paper-button>
@@ -98,30 +108,31 @@
       <div id="email-auth-form" class="hidden">
       
         <div>  
-          <div>Login:</div>
+          <div id="signbuttons">
+            <paper-button on-tap="signInEmailEvent" raised id="signin" name="signin">Sign In</paper-button> <!-- disabled -->
+            <paper-button on-tap="signUpEmailEvent" raised disabled id="signup" name="signup">Sign Up</paper-button>
+          </div>
+   
           <div class="container flex-vertical"> 
             <paper-input value="{{email}}" id="email" label="Email"></paper-input>
             <paper-input type="password" value="{{password}}" id="password" label="Password"></paper-input>
+            <div id="emailverify" class="hidden">
+              <paper-button on-tap="sendEmailVerification" raised name="emailverify">Verify this account</paper-button>
+              <div class="guiline">than SignIn again</div>
+            </div>  
           </div>
         </div>
 
         <div class="hidden" id="userprofile">
-          <div>User-profile (optional):</div>
-          <div  class="container flex-horizontal"> 
+          <paper-toggle-button on-change="signUpProfile">Additional identification</paper-toggle-button>
+          <div id="userprofileform" class="hidden"> 
             <paper-input  value="{{displayname}}" id="displayname" label="stageName"></paper-input>
-            &nbsp;&nbsp;&nbsp;
-            <paper-input  value="{{photourl}}" id="photourl" label="stageIcon"></paper-input>
+            <paper-input  value="{{photourl}}"    id="photourl" label="stageIcon"></paper-input>
           </div>
         </div>
         
-        <div id="signbuttons">
-          <paper-button on-tap="signInEmailEvent" raised id="signin" name="signin">Sign In</paper-button> <!-- disabled -->
-          <paper-button on-tap="signUpEmailEvent" raised id="signup" name="signup">Sign Up</paper-button>
-        </div>
- 
         <div class="hidden" id="usersetup">
-          <paper-button on-tap="sendEmailVerification" raised disabled id="emailverify" name="emailverify">Verify</paper-button>
-          <paper-button on-tap="sendPasswordReset" raised id="emailpassword" name="emailpassword">Pwd</paper-button>
+          <paper-button on-tap="sendPasswordReset" raised id="emailpassword" name="emailpassword">Change Pwd</paper-button>
           <paper-button on-tap="sendGo" raised id="emailgo" name="emailgo">GO</paper-button>
         </div>
       </div>
@@ -170,6 +181,10 @@
           type: Object,
           value: {}, 
           notify: true        
+        }, 
+        toast : {
+          type: String,
+          notify: true
         }
       },
 
@@ -193,24 +208,20 @@
             userpassword= this.$.emailpassword;
 
         fb.auth().onAuthStateChanged(function(user) { 
-          if (user && !user.isAnonymous) {  console.log("userform", usersetup, userprofile, user);
+          if (user && !user.isAnonymous) {  // console.log("new user ", user.email, user.emailVerified);
               
               if (user.emailVerified) {
                 splashpage.style.display = 'none';
+
               } else {
 
                 signbuttons.classList.add("hidden");
-                usersetup.classList.remove("hidden");
-                userverify.disabled = false;
-                usergo.disabled = true;
-                if (!user.displayName) {
-                  userprofile.classList.remove("hidden");
-                } 
+                userverify.classList.remove("hidden");
               }
 
-              // Activate the user
+              // ACTIVATE user in CLIENT
               that.user = user;
-              // Log the user   
+              // LOG user in DB   
               // writeUserData(
               //     user.uid, 
               //     user.displayName, 
@@ -251,8 +262,9 @@
        */
       signInEmailEvent: function(e) { //, email, password) { console.log(e,email,password);
         var currentUser = this.fb.auth().currentUser;
-        if (currentUser) { console.log("signing out:", currentUser);
+        if (currentUser) { // console.log("signing out:", currentUser);
           // [START signout]
+           
           var that = this; 
           this.fb.auth().signOut().then(function(){
             that.signInEmail();
@@ -262,9 +274,10 @@
           this.signInEmail();
         }
       },
+
       signUpEmailEvent: function(e) { //, email, password) { console.log(e,email,password);
         var currentUser = this.fb.auth().currentUser;
-        if (currentUser) { console.log("signing out:", currentUser);
+        if (currentUser) { console.log("signing out:", currentUser.email);
           // [START signout]
           var that = this; 
           this.fb.auth().signOut().then(function(){
@@ -282,11 +295,13 @@
         password = this.password;
 
         if (email.length < 6) {
-          alert('Please enter an email (charcount>5).');
+          this.toast = 'Please enter an email-address (charcount>5).';
+          // alert(this.toast);
           return;
         }
         if (password.length < 6) {
-          alert('Please enter a password (charcount>5).');
+          this.toast = 'Please enter an password (charcount>5).';
+          // alert('Please enter a password (charcount>5).');
           return;
         } // console.log("emailSignIn.LOG:", email, password); 
         
@@ -294,9 +309,9 @@
         // [START authwithemail]
         var that = this; 
         this.fb.auth().signInWithEmailAndPassword(email, password)
-        .then(function(user) {   console.log("EmailLogin OK: ",user.email, user.displayName, user.emailVerified); // , email, password);
-          // if (!user.displayName)    that.$.userprofile.classList.remove("hidden");
-          // if (!user.emailVerified)  that.$.usersetup.classList.remove("hidden");
+        .then(function(user) {   
+          if (user.displayName) that.toast = "You logged in as "+ user.displayName + "!";
+          else    console.log("EmailLogin OK: ",user.email, user.displayName, user.emailVerified); // , email, password);
         }) 
         .catch(function(error) {
           // Handle Errors here.
@@ -305,13 +320,25 @@
 
           // [START_EXCLUDE]
           if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
+            that.toast = 'Wrong password.';
+            // alert();
           } else {
-            alert(errorMessage);
-          }  console.log("ErrorLog:", error);
+            that.toast = errorMessage;  // alert(errorMessage);
+
+            // Try again with signUp as new user 
+            that.$.signin.disabled = true;
+            that.$.signup.disabled = false;
+            that.$.userprofile.classList.remove("hidden");
+
+            // usersetup.classList.remove("hidden");
+            // userverify.disabled = false;
+            // usergo.disabled = true;
+            // if (!user.displayName) {
+            // } 
+
+          } // console.log("ErrorLog:", error);
           
-          // 
-          Polymer.dom(this.root).querySelector('#sign-in').disabled = false;
+
           // [END_EXCLUDE]
         });
         // [END authwithemail]
@@ -321,43 +348,51 @@
       signUpEmail: function() {
         var email     = this.email;
         var password  = this.password;
-        if (email.length < 4) {
-          alert('Please enter an email address.');
+        if (email.length < 6) {
+          this.toast = 'Please enter an email address.';
+          // alert();
           return;
         }
-        if (password.length < 4) {
-          alert('Please enter a password.');
+        if (password.length < 6) {
+          this.toast = 'Please enter a password.';
+          // alert();
           return;
         }
         // SignUp with email and passwd.
         // [START createwithemail]
         var that = this;
         this.fb.auth().createUserWithEmailAndPassword(email, password)
-          .then(function(user) {  console.log("signedUp new user:", user);
-            // that.setUserProfile(user);
-            // that.$.userprofile.classList.remove("hidden");
-            // that.$.usersetup.classList.remove("hidden");
-            Polymer.dom(that.root).querySelector('#verify-email').disabled = false;
+          .then(function(user) {  console.log("signedUp as:", user);
+            that.$.emailverify.classList.remove("hidden");
+            that.$.signin.disabled = false;
+            that.$.signup.disabled = true;
+
+            // 
+            that.setUserProfile(user);
+
           })
-          .catch(function(error) {
-            // Handle Errors here.
+          .catch(function(error) { // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
             // [START_EXCLUDE]
             if (errorCode == 'auth/weak-password') {
-              alert('The password is too weak.');
+              that.toast = 'The password is too weak.';    // alert();
+
             } else if (errorCode == 'auth/email-already-in-use') {
-              // if (confirm("The email address is used by existing account. SignIn");
-              alert('The email address is used by an existing account.');
-              Polymer.dom(this.root).querySelector('#signInEmailEvent').disabled = false;
-              // emailSignIn(email, password);
+              that.toast = 'The email address is used by an existing account.';  // alert();
+              that.$.signin.disabled = false;
+              that.$.signup.disabled = true;
+
             } else {
-              alert(errorMessage);
-            }
-            console.log(error);
+              that.toast = errorMessage;  // alert(errorMessage);
+            } console.log(error);
             // [END_EXCLUDE]
         });
         // [END createwithemail]
+      },
+
+      signUpProfile: function() {
+        this.$.userprofileform.classList.toggle("hidden");
       },
 
       /**
@@ -366,9 +401,11 @@
       setUserProfile: function(user, displayname, photourl){
         // some basic features may be managed from client!!
         if (!displayname) displayname  = this.displayname;
-        if (!photourl) photourl        = this.photourl;
-        if (!displayname && !photourl) return;
-
+        if (!photourl)    photourl     = this.photourl;
+        if (!displayname && !photourl) {
+          this.tast="You may enhance your userprofile later.";
+          return;
+        }  
         user.updateProfile({
           displayName: displayname,
           photoURL: photourl
@@ -381,10 +418,18 @@
 
       sendEmailVerification: function() {
         // [START sendemailverification]
+        var signbuttons = this.$.signbuttons,
+            userverify  = this.$.emailverify,
+            that = this;
+
         this.fb.auth().currentUser.sendEmailVerification().then(function() {
           // Email Verification sent!
           // [START_EXCLUDE]
-          alert('Email Verification Sent!');
+          signbuttons.classList.remove("hidden");
+          userverify.classList.add("hidden");
+          that.toast = 'Email Verification Sent!';
+          // alert();
+
           // [END_EXCLUDE]
         });
         // [END sendemailverification]
@@ -396,7 +441,8 @@
         this.fb.auth().sendPasswordResetEmail(email).then(function() {
           // Password Reset Email Sent!
           // [START_EXCLUDE]
-          alert('Password Reset Email Sent!');
+          that.toast = 'Password Reset Email Sent!'; 
+          // alert();
           // [END_EXCLUDE]
         }).catch(function(error) {
           // Handle Errors here.
@@ -404,9 +450,11 @@
           var errorMessage = error.message;
           // [START_EXCLUDE]
           if (errorCode == 'auth/invalid-email') {
-            alert(errorMessage);
+            that.toast = errorMessage;
+            // alert(errorMessage);
           } else if (errorCode == 'auth/user-not-found') {
-            alert(errorMessage);
+            that.toast = errorMessage;
+            // alert(errorMessage);
           }
           console.log(error);
           // [END_EXCLUDE]
