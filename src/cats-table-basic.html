@@ -111,8 +111,9 @@
 
         fullsrc : "", // triggers preview-popup
 
-        preview : {   // triggers preview-page
-          type: Object
+        snap : {  
+          type: Object,
+          notify: true
         },
         
         thumbclass : "thumb"
@@ -120,7 +121,7 @@
       },
 
       ready: function(){
-        this.fullsrc = "images/clouds/bild-03.jpg";
+        // this.fullsrc = "images/clouds/bild-03.jpg";
       },
 
       getclasses: function(data) { // console.log("raw data to view", data);
@@ -139,7 +140,7 @@
 
       thumbView: function(e){
         // popupTop(e, this, "symbolimg");
-        previewPage(e, this, "symbolimg")
+        getImageSrc(e, this, "snap");
       }
 
     });

@@ -120,7 +120,7 @@
         <div class="container flex-end-align"> 
           <paper-spinner-lite id="spinner" class="thick mm"></paper-spinner-lite>
           <paper-input type="file" id="file" name="file" label="upload image" on-change="handleFileSelect" class="flex mm"></paper-input>
-          <div class="weak mm">[[status]]</div>
+          <div class="weak mm">[[filestatus]]</div>
         </div>          
       </paper-dialog>  
       
@@ -131,7 +131,7 @@
 
 
       <!-- 3.1 FORM to edit metadata of image -->
-      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" ></cloud-form>
+      <cloud-form fbapp="[[fbapp]]" path="[[path]]" file="[[file]]" indata="[[fbspot]]" outdata="{{formdata}}" snap="{{snap}}"></cloud-form>
 
       <!-- 3.2 Upload/refresh metadata of the image -->
       <fire-query app="[[fbapp]]" path="[[path]]" setdata="[[clouddata]]" key=[[fbkey]]></fire-query> <!-- key="[[cloudkey]]" -->
@@ -205,6 +205,22 @@
         user: {
           type: Object,
           value: {}          
+        },
+
+        // trigger 
+        snap: {
+          type: Object,
+          observer: 'triggerPreview'
+        },
+
+        preview: {
+          type: Object,
+          notify: true
+        },
+
+        navtrigger:{
+          type: String,
+          notify: true
         }
       },
 
@@ -213,8 +229,19 @@
         // '_fileUploaded(file.name, )'
       ],
 
+      triggerPreview: function(n,o){
+        var p = n;
+        if (p.imgurl) {
+          p.html   = "<a href='"+p.imgurl+"' target='_blank'>download</a>";
+          p.header = "Fullview";
+          p.footer = "Testphase";
+        }  // console.log(p);
+        this.preview = p; 
+        this.navtrigger = "preview"; 
+      },
+
       ready: function() { // console.log("spotter-page ready"); 
-         // this.uploadpath = this.path;
+
        },
 
       addopen : function(e) { //console.log("helpbutton clicked", e);
@@ -274,7 +301,7 @@
         if (files && files.length) {
           var file  = files[0]; // console.log("input-file-check:", file);
           this.file = file; // the file-object becomes a property of spotter
-          this.status = this.fileStatusGet(file); console.log("handleFileSelect. fileStatus= ", this.status); 
+          this.filestatus = this.fileStatusGet(file); console.log("handleFileSelect. fileStatus= ", this.filestatus); 
         }
         // show spinner until file is stored (!close in "storageResponse"!) 
         el = this.$.spinner;

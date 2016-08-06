@@ -43,7 +43,7 @@ var popupTop =  function(e, that, popupid) { // console.log("Utility-contentToTo
     popup.open();
 }
 
-var previewPage =  function(e, that, popupid) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
+var getImageSrc = function(e, that, target) { // console.log("Utility-contentToTop:", this, "class=" + this.thumbclass)
     // On click-event action from content = image with class="thumb" (within a paper-button) 
 
     // DETECT if click in x.thumb image element
@@ -52,10 +52,10 @@ var previewPage =  function(e, that, popupid) { // console.log("Utility-contentT
 
 	    var epath = Polymer.dom(e).path;  //console.log("event-path-log:", epath)
 	
-	    var preview={}, el, i=0, len=epath.length;
+	    var snap={}, el, i=0, len=epath.length, fullsrc;
 
 	    for (; i < len; i++) { 
-	        el = epath[i];
+	        el = epath[i];  // console.log(el);
 	        if (el.className === "thumb") {
 	            fullsrc = el.src;
 	            break;
@@ -63,14 +63,11 @@ var previewPage =  function(e, that, popupid) { // console.log("Utility-contentT
 	    } 
 		// C. Fill img-content into popup
 	    if (fullsrc) {
-	    	preview.imgurl = fullsrc;
-	    	preview.footer = "<a href='"+fullsrc+"' target='_blank'>download</a>"   
-	    	that.preview = preview; console.log("preview", preview); 
-			
+	    	snap.imgurl = fullsrc;
+	    	// snap.html = "<a href='"+fullsrc+"' target='_blank'>download</a>"; 
+	    	that[target] = snap; 	// console.log("getImageSrc to "+target, preview); 
 		}
 	}
-
-
 }
 
 

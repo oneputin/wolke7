@@ -174,8 +174,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="viewer" id="viewer"   href="/viewer">Classified imagegroups</a>
           <a name="howard"               href="/howard">Sample of imagegroup</a>
           <a name="categories"           href="/categories">Cloud symbols on maps</a>
-          <a name="preview" id="preview" href="/preview">LargeDoc</a>
-          <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">Cloud spotter</span></a>
+          <a name="preview" id="preview" href="/preview"><span class="hidden">PreviewPage</span></a>
+          <a name="spotter" id="spotter" href="/spotter" ><span class="hidden">SpotPage</span></a>
           <a name="starter" id="starter" href="/starter"><span class="hidden">App starter</span></a>
         </iron-selector>
         <p> ( some additional information ) </p>
@@ -214,18 +214,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <cloud-categories 
             name="categories"
-            fbapp="[[fbapp]]">
+            fbapp="[[fbapp]]"
+            navtrigger="{{navtrigger}}"
+            preview={{preview}}>
           </cloud-categories>
 
           <cloud-spotter    
             name ="spotter" 
             fbapp="[[fbapp]]" 
             fbspot="{{fbspot}}" 
-            fbtrigger="{{fbtrigger}}"> 
+            fbtrigger="{{fbtrigger}}"
+            navtrigger="{{navtrigger}}"
+            preview={{preview}}>
           </cloud-spotter><!-- not routed from nav-list -->
 
           <cloud-preview 
-            name="preview">
+            name="preview"
+            preview="{{preview}}">
           </cloud-preview>
 
         </iron-pages>
@@ -295,6 +300,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_navForce'
         }, 
 
+        preview: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+
         toast: {
           type: String,
           observer: '_showToast'
@@ -330,9 +341,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.navtrigger = "spotter"; 
       },
 
-      _navForce: function(n,o) { console.log("_navForce",n,o);
+      _navForce: function(n,o) { // console.log("_navForce",n,o);
         if (!n) return; 
-        var nav = Polymer.dom(this.root).querySelector('#'+n); console.log("_navForce",nav);
+        var nav = Polymer.dom(this.root).querySelector('#'+n); // console.log("_navForce",nav);
         if (nav)  nav.click(); 
       },
 

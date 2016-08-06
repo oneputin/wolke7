@@ -244,46 +244,21 @@
           value: ""
         },
 
-        // formitems: {
-        //   type: Object,
-        //   value: {
-        //     "url": "",
-        //     "title-main-pict":"",
-        //     "title-sub-pict": "",
-        //     "type-year":      "",
-        //     "type-character": "", //cloud specific
-        //     "type-genus":     "",
-        //     "type-height":    ""
-        //   }
-        // }, 
-
-        // clouditems: {
-        //   type: Object,
-        //   value: {  
-        //     "type-character": "", //cloud specific
-        //     "type-genus":     "",
-        //     "type-height":    ""
-        //   }
-        // },
-
-        // imageitems: {
-        //   type: Object,
-        //   value: {  
-        //     "type-year": "" //cloud specific
-        //   }
-        // },
-
         indata: {
           type: Object,
           // value: function(){return {};}, 
-          // value: {}, 
           observer: "inCtrl"
         },  
         
         outdata: {
           type: Object,
           notify: true
-        }  
+        },
+
+        snap: {
+          type: Object,
+          notify: true          
+        }
 
       },
 
@@ -496,11 +471,11 @@
 
       ready: function() {
         if (this.indata && this.indata.url) this.formitems.url = this.indata.url;
-
       },
 
       thumbView: function(e){
-        popupTop(e, this, "formimg");
+        // popupTop(e, this, "formimg");
+        getImageSrc(e, this, "snap");
       }
 
     });

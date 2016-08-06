@@ -228,6 +228,7 @@
           notify: true
           // observer: 'trackTrigger'
         },
+
         navtrigger: {   // triggers programmatic navigation in app-shell 
           type: String,
           notify: true,
@@ -239,14 +240,13 @@
           notify: true 
         } 
 
-
       },
 
       observers : [
         'spotQueryView(fbspot, spotkey)'// , spotoggle)'
       ], 
 
-      checkNav: function(n,o) { console.log("navtrigger", n, o);
+      checkNav: function(n,o) { // console.log("navtrigger", n, o);
       },
 
       ready: function() { 

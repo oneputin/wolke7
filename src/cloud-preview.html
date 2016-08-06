@@ -70,9 +70,8 @@
             properties: {
 
                 preview: {
-                  type: Object,
-                  html: "",
-                  imgurl: ""
+                  type: Object
+                  // observer: 'logPreview'
                 },
 
                 toast: {
@@ -86,7 +85,11 @@
                 'fillPreview(preview.html, preview.imgurl)'
             ],
             
-            fillPreview: function(html, imgurl){ console.log("preview-data:", this.preview);
+            logPreview: function(n,o){
+                console.log("logPreview",n,o);
+            },
+
+            fillPreview: function(html, imgurl){ // console.log("fill preview-data:", this.preview);
                 // Update only if content changes (text or image)
                 if (!html) html="";
                 this.$.html.innerHTML = html;
@@ -100,14 +103,14 @@
                 window.history.back();
             },
 
-            ready: function() { console.log("preview ready");
-                this.toast = "preview ready";  
-                this.preview = {
-                    "html": "<p><i>starttext</i></p>",
-                    "imgurl": "../images/clouds/bild-02.jpg",
-                    "header": "<b>Preview</b>",
-                    "footer": "Preview-End",
-                }
+            ready: function() { // console.log("preview ready");
+                // this.toast = "preview ready";  
+                // this.preview = {
+                //     "html": "<p><i>starttext</i></p>",
+                //     "imgurl": "../images/clouds/bild-02.jpg",
+                //     "header": "<b>Preview</b>",
+                //     "footer": "Preview-End",
+                // }
             }    
         });
     </script>

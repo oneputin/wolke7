@@ -73,7 +73,7 @@
 
     <div class="card">
         <!-- <p>Placeholder for presentation of categories</p> -->
-        <cats-table-basic data="[[categories]]" preview="[[preview]]"></cats-table-basic>
+        <cats-table-basic data="[[categories]]" snap="{{snap}}"></cats-table-basic>
     </div>
    
   </template>
@@ -108,8 +108,19 @@
           value: []
         },
 
-        preview: {
-          type: Object
+        snap: {       // 
+          type: Object,
+          observer: 'createPreview'
+        },
+
+        preview: {      // 
+          type: Object,
+          notify: true
+        },
+
+        navtrigger: {
+          type: String,
+          notify: true
         }
 
       },
@@ -118,6 +129,19 @@
         this.tabindex = 0;
         // this.fbapp  = 1;  
         // console.log("category-page 'ready'", this.categories);
+      },
+
+      createPreview: function(n,o) {  // console.log("createPreview", n,o)
+        if (n && Object.keys(n).length) {
+          var p = n;
+          if (p.imgurl) {
+            p.html   = "<a href='"+p.imgurl+"' target='_blank'>download</a>";
+            p.header = "Cloud Symbol";
+            p.footer = "docpreview";
+          }  // console.log(p);
+          this.preview = p; 
+          this.navtrigger = "preview"; 
+        }  
       },
 
       calcUrl: function() {
